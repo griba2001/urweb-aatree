@@ -19,7 +19,8 @@ val delete [a] (_ : eq a) (_ : ord a) = AATree.delete
 val member [a] (_ : eq a) (_ : ord a) (x: a) = F.compose O.isSome (AATree.lookup x)
 
 val toList [a] = AATree.toList
-(*
-fun fromList [a] (_ : eq a) (_ : ord a) (li: list a): set a = List.foldl (F.flip insert) empty li
+
+(* problem: too-deep unification variable
+fun fromList [a] (_ : eq a) (_ : ord a) (li: list a): set a = List.foldl insert empty li
 *)
 
