@@ -44,7 +44,7 @@ fun getLevel [a] (t: tree a) : int =
      Empty => 0
      | Node {Level = lvl, ...} => lvl
 
-val empty [a] = Empty
+val empty [a] : tree a = Empty
 
 fun null [a] (t: tree a) = case t of
                                Empty => True
@@ -188,10 +188,10 @@ insert x (Node y lv l r) = case compare x y of
         EQ -> Node x lv l r
 *)
 
-fun insert [a] (_: eq a) (_: ord a) (x: a) (t: tree a): tree a =
+fun insert [a] (_: ord a) (x: a) (t: tree a): tree a =
     case t of
         Empty => singleton x
-        | Node {Value = y, Level = lv, Left = l, Right = r} =>
+        | Node {Value = y, Left = l, Right = r, ...} =>
            (case compare x y of
               LT => split (skew (setLeft (insert x l) t))
               | GT => split (skew (setRight (insert x r) t))
@@ -239,7 +239,7 @@ delete x t @ (Node y lv l r) = case compare x y of
                 where predecessor = maximum l
 *)
 
-fun delete [a] (_: eq a) (_: ord a) (x: a) (t: tree a): tree a =
+fun delete [a] (_: ord a) (x: a) (t: tree a): tree a =
     case t of
         Empty => Empty
         | Node {Value = y, Left = l, Right = r, ...} =>
@@ -256,7 +256,7 @@ fun delete [a] (_: eq a) (_: ord a) (x: a) (t: tree a): tree a =
                                    end
                          )
 
-fun lookup [a] (_: eq a) (_: ord a) (x: a) (t: tree a): option a =
+fun lookup [a] (_: ord a) (x: a) (t: tree a): option a =
     case t of
         Empty => None
         | Node {Value = y, Left = l, Right = r, ...} =>
@@ -284,17 +284,5 @@ fun toDList [a] (t: tree a): D.dlist a =
 
 val toList [a] = compose D.toList toDList
 
-fun foldlOnTree [a] (f : a -> tree a -> tree a) (g_acc: tree a) (g_ls: list a): tree a =
-        let
-        fun foldl' acc ls =
-             case ls of
-                [] => acc
-                | x :: ls' => foldl' (f x acc) ls'
-        in
-                foldl' g_acc g_ls
-        end
+fun fromList [a] (_ : ord a) (li: list a) = List.foldl insert empty li
 
-(* fromList: problem: too-deep unification variable
-
-fun fromList [a] (_ : eq a) (_ : ord a) (li: list a) = foldlOnTree insert empty li
-*)

@@ -12,15 +12,13 @@ val null [a] = AATree.null
 
 val singleton [a] = AATree.singleton
 
-val insert [a] (_ : eq a) (_ : ord a) = AATree.insert
+val insert [a] (_ : ord a) = AATree.insert
 
-val delete [a] (_ : eq a) (_ : ord a) = AATree.delete
+val delete [a] (_ : ord a) = AATree.delete
 
-val member [a] (_ : eq a) (_ : ord a) (x: a) = F.compose O.isSome (AATree.lookup x)
+val member [a] (_ : ord a) (x: a) = F.compose O.isSome (AATree.lookup x)
 
 val toList [a] = AATree.toList
 
-(* problem: too-deep unification variable
-fun fromList [a] (_ : eq a) (_ : ord a) (li: list a): set a = List.foldl insert empty li
-*)
+val fromList [a] (_ : ord a) = AATree.fromList
 
