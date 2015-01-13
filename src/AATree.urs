@@ -1,20 +1,20 @@
 
-con tree :: Type -> Type
+con tree :: Type -> Type -> Type
 
-val eq_tree : a ::: Type -> eq a -> eq (tree a)
+val eq_tree : k ::: Type -> v ::: Type -> eq k -> eq (tree k v)
 
-val empty : a ::: Type -> tree a
+val empty : k ::: Type -> v ::: Type -> tree k v
 
-val null : a ::: Type -> tree a -> bool
+val null : k ::: Type -> v ::: Type -> tree k v -> bool
 
-val singleton : a ::: Type -> a -> tree a
+val singleton : k ::: Type -> v ::: Type -> k -> v -> tree k v
 
-val insert: a ::: Type -> ord a -> a -> tree a -> tree a
+val insert: k ::: Type -> v ::: Type -> ord k -> k -> v -> tree k v -> tree k v
 
-val delete: a ::: Type -> ord a -> a -> tree a -> tree a
+val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 
-val lookup: a ::: Type -> ord a -> a -> tree a -> option a
+val lookup: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> option v
 
-val toList : a ::: Type -> tree a -> list a
+val toList : k ::: Type -> v ::: Type -> tree k v -> list (k * v)
 
-val fromList : a ::: Type -> ord a -> list a -> tree a
+val fromList : k ::: Type -> v ::: Type -> ord k -> list (k * v) -> tree k v
