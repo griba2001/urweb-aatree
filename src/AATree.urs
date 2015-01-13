@@ -1,7 +1,7 @@
 
 con tree :: Type -> Type
 
-val eq : a ::: Type -> eq a -> eq (tree a)
+val eq_tree : a ::: Type -> eq a -> eq (tree a)
 
 val empty : a ::: Type -> tree a
 

@@ -4,7 +4,7 @@ structure F = HFunction
 
 type set = AATree.tree
 
-val eq [a] (_ : eq a) = AATree.eq
+val eq_set [a] (_ : eq a) = AATree.eq_tree
 
 val empty [a] = AATree.empty
 

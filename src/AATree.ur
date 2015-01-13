@@ -6,7 +6,7 @@ structure D = HDList
 datatype tree a = Empty | Node of {Value: a, Level: int, Left: tree a, Right: tree a}
 
 (* eq instance *)
-val eq = fn [a] (_ : eq a) =>
+val eq_tree = fn [a] (_ : eq a) =>
         let
                 fun eq' (t1: tree a) (t2: tree a) =
                    case (t1, t2) of
