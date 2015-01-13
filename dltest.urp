@@ -6,10 +6,10 @@ $/option
 src/util/HFunction
 src/util/HList
 src/util/HString
-src/util/HMonad
 src/util/HDList
 src/util/HOrd
 src/AATree
 src/SortedSet
+test/util/HMonad
 test/HUrUnit
 test/dltest
