@@ -282,7 +282,7 @@ fun toDList [a] (t: tree a): D.dlist a =
                 | _ => D.append (toDList l) (D.append (D.singleton x) (toDList r))
                 )
 
-val toList [a] = compose D.toList toDList
+val toList [a] :(tree a -> list a) = compose D.toList toDList
 
-fun fromList [a] (_ : ord a) (li: list a) = List.foldl insert empty li
+fun fromList [a] (_ : ord a) (li: list a): tree a = List.foldl insert empty li
 
