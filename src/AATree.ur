@@ -22,22 +22,22 @@ val eq = fn [a] (_ : eq a) =>
 fun setValue [a] (v: a) (t: tree a) : tree a =
    case t of
      Node r => Node (r -- #Value ++ {Value = v})
-     | t' => t'
+     | _ => error <xml>setNodeField: not a Node</xml>
 
 fun setLevel [a] (v: int) (t: tree a) : tree a =
    case t of
      Node r => Node (r -- #Level ++ {Level = v})
-     | t' => t'
+     | _ => error <xml>setNodeField: not a Node</xml>
 
 fun setLeft [a] (v: tree a) (t: tree a) : tree a =
    case t of
      Node r => Node (r -- #Left ++ {Left = v})
-     | t' => t'
+     | _ => error <xml>setNodeField: not a Node</xml>
 
 fun setRight [a] (v: tree a) (t: tree a) : tree a =
    case t of
      Node r => Node (r -- #Right ++ {Right = v})
-     | t' => t'
+     | _ => error <xml>setNodeField: not a Node</xml>
 
 fun getLevel [a] (t: tree a) : int =
    case t of
