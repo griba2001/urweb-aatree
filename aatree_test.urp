@@ -1,4 +1,4 @@
-rewrite url Dltest/main
+rewrite url Aatree_test/main
 
 $/list
 $/string

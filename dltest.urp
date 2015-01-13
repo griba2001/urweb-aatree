@@ -7,8 +7,6 @@ src/util/HFunction
 src/util/HList
 src/util/HString
 src/util/HDList
-src/util/HOrd
-src/AATree
 test/util/HMonad
 test/HUrUnit
 test/dltest
