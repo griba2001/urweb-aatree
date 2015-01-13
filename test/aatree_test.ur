@@ -9,4 +9,5 @@ val toFromList [a] (_ : ord a): (list a -> list a) = F.compose T.toList T.fromLi
 fun xmlDltest1 (): transaction xbody = U.assertEqual "test1:" testdata (toFromList testdata)
 
 fun main () = test1 <- xmlDltest1 () ;
-              return <xml><body>Failed tests: {test1}<br/>Result: {[toFromList testdata]}</body></xml>
+              return <xml><body>Failed tests: {test1}<br/>
+                                Result: {[toFromList testdata]}</body></xml>
