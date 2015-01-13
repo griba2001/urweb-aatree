@@ -1,8 +1,7 @@
-rewrite url Dltest/main
+rewrite url Dltest/main    
 
 $/list
 $/string
-$/option
 src/util/HFunction
 src/util/HList
 src/util/HString
