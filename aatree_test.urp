@@ -1,0 +1,15 @@
+rewrite url Dltest/main
+
+$/list
+$/string
+$/option
+src/util/HFunction
+src/util/HList
+src/util/HString
+src/util/HDList
+src/util/HOrd
+src/AATree
+src/SortedSet
+test/util/HMonad
+test/HUrUnit
+test/aatree_test
