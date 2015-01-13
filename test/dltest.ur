@@ -2,7 +2,7 @@ structure D = HDList
 structure F = HFunction
 structure U = HUrUnit
 
-val testdata = Cons (1, Cons( 2, Nil))
+val testdata : list int = 1 :: 2 :: []
 
 val toFromList [a]: (list a -> list a) = F.compose D.toList D.fromList
 

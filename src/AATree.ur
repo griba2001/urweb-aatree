@@ -3,45 +3,49 @@ open HFunction
 open HOrd
 structure D = HDList
 
-datatype tree k v = Empty | Node of {Key: k, Value: v, Level: int, Left: tree k v, Right: tree k v}
+datatype tree k v = Empty | Node of {Key: k,
+                                     Value: v,
+                                     Level: int,
+                                     Left: tree k v,
+                                     Right: tree k v}
 
 (* eq instance *)
-val eq_tree = fn [k][v] (_ : eq k) =>
+val eq_tree = fn [k][v] (_ : eq k) (_ : eq v) =>
         let
                 fun eq' (t1: tree k v) (t2: tree k v) =
                    case (t1, t2) of
                         (Empty, Empty) => True
-                        | (Node {Key = k1, Level = l1, Left = lt1, Right = rt1, ...},
-                           Node {Key = k2, Level = l2, Left = lt2, Right = rt2, ...}) =>
-                                  k1 = k2 && l1 = l2 && eq' lt1 lt2 && eq' rt1 rt2
+                        | (Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...},
+                           Node {Key = k2, Value = v2, Left = lt2, Right = rt2, ...}) =>
+                                  k1 = k2 && v1 = v2 && eq' lt1 lt2 && eq' rt1 rt2
                         | _ => False
         in mkEq eq'
         end
 
 fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
-   case t of
-     Node r => Node (r -- #Key ++ {Key = v1})
-     | _ => error <xml>setKey: not a Node</xml>
+    case t of
+        Node r => Node (r -- #Key ++ {Key = v1})
+        | _ => error <xml>setKey: not a Node</xml>
 
 fun setValue [k][v] (v1: v) (t: tree k v): tree k v =
-   case t of
-     Node r => Node (r -- #Value ++ {Value = v1})
-     | _ => error <xml>setValue: not a Node</xml>
+    case t of
+        Node r => Node (r -- #Value ++ {Value = v1})
+        | _ => error <xml>setValue: not a Node</xml>
 
 fun setLevel [k][v] (v1: int) (t: tree k v) : tree k v =
-   case t of
-     Node r => Node (r -- #Level ++ {Level = v1})
-     | _ => error <xml>setLevel: not a Node</xml>
+    case t of
+        Node r => Node (r -- #Level ++ {Level = v1})
+        | _ => error <xml>setLevel: not a Node</xml>
 
 fun setLeft [k][v] (v1: tree k v) (t: tree k v) : tree k v =
-   case t of
-     Node r => Node (r -- #Left ++ {Left = v1})
-     | _ => error <xml>setLeft: not a Node</xml>
+    case t of
+        Node r => Node (r -- #Left ++ {Left = v1})
+        | _ => error <xml>setLeft: not a Node</xml>
 
 fun setRight [k][v] (v1: tree k v) (t: tree k v) : tree k v =
-   case t of
-     Node r => Node (r -- #Right ++ {Right = v1})
-     | _ => error <xml>setRight: not a Node</xml>
+    case t of
+        Node r => Node (r -- #Right ++ {Right = v1})
+        | _ => error <xml>setRight: not a Node</xml>
 
 fun getLevel [k][v] (t: tree k v) : int =
    case t of
@@ -50,11 +54,12 @@ fun getLevel [k][v] (t: tree k v) : int =
 
 val empty [k][v] : tree k v = Empty
 
-fun null [k][v] (t: tree k v) = case t of
-                               Empty => True
-                               | _ => False
+fun null [k][v] (t: tree k v): bool =
+    case t of
+        Empty => True
+        | _ => False
 
-fun singleton [k][v] (k1: k) (v1: v) = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
+fun singleton [k][v] (k1: k) (v1: v): tree k v = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
 
 (* skew: right rotation *)
 fun skew [k][v] (t: tree k v) : tree k v =

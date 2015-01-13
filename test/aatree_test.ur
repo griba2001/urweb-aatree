@@ -2,9 +2,9 @@ structure T = AATree
 structure F = HFunction
 structure U = HUrUnit
 
-val testdata = Cons (1, Cons( 2, Nil))
+val testdata : list (int * string) = (1, "a") :: (2, "b") :: []
 
-val toFromList [a] (_ : ord a): (list a -> list a) = F.compose T.toList T.fromList
+val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.toList T.fromList
 
 fun xmlDltest1 (): transaction xbody = U.assertEqual "test1:" testdata (toFromList testdata)
 
