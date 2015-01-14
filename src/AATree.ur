@@ -309,15 +309,15 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
 fun toList [k][v] (t: tree k v): list (k * v) = D.toList (toDList t)
 *)
 
-fun prepend [a] (x : a) (xs : list a) = x :: xs
+(* toList' with prefix style *)
 
 fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
     case t of
       Empty => li
       | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
           case (l: tree k v, r: tree k v) of
-                (Empty, Empty) => prepend (x, v1) li
-                | _ =>  toList' l (prepend (x, v1) (toList' r li))
+                (Empty, Empty) => (x, v1) :: li
+                | _ =>  toList' l ((x, v1) :: (toList' r li))
 
 fun toList [k][v] (t: tree k v): list (k * v) = toList' t []            
 
