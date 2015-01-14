@@ -12,3 +12,7 @@ fun flip [a][b][c] (f:a -> b -> c) (x: b) (y: a) =  f y x
 fun curry [a][b][c] f x y = f (x, y)
 
 fun uncurry [a][b][c] f (x, y) = f x y
+
+fun fst [a][b] tup = tup.1
+
+fun snd [a][b] tup = tup.2

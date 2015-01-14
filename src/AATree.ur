@@ -135,8 +135,8 @@ fun skewRightRight [k][v] (t: tree k v): tree k v =
         Empty => Empty
         | Node {Right = r, ...} =>
           (case r of
-             Node {Right = s, ...} => let val r' = setRight (skew s) r
-                                          val t' = setRight r' t
+             Node {Right = s, ...} => let val r' : tree k v = setRight (skew s) r
+                                          val t' : tree k v = setRight r' t
                                       in t' end
              | _ => t)
     | _ => t
@@ -173,7 +173,7 @@ fun decreaseLevel [k][v] (t: tree k v): tree k v =
             | Node {Level = lvR, ...} =>
                      let val should_be = 1 + min (getLevel l) (getLevel r)
                      in if lvP > should_be
-                        then let val r' = if lvR > should_be
+                        then let val r' : tree k v = if lvR > should_be
                                             then setLevel should_be r
                                             else r
                                 in setRight r' (setLevel should_be t)
@@ -220,7 +220,7 @@ maximum Empty = error "maximum: empty tree"
 fun minimum [k][v] (t: tree k v): k * v =
     case t of
         Node {Key = x, Value = v1, Left = l, ...} =>
-            (case l of
+            (case l: tree k v of
                Empty => (x, v1)
                | _ => minimum l
                )
@@ -229,7 +229,7 @@ fun minimum [k][v] (t: tree k v): k * v =
 fun maximum [k][v] (t: tree k v): k * v =
     case t of
         Node {Key = x, Value = v1, Right = r, ...} =>
-            (case r of
+            (case r: tree k v of
                Empty => (x, v1)
                | _ => maximum r
                )
@@ -286,7 +286,7 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
     case t of
         Empty => D.empty
         | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
-             (case (l, r) of
+             (case (l: tree k v, r: tree k v) of
                 (Empty, Empty) => D.singleton (x, v1)
                 | _ => D.append (toDList l) (D.append (D.singleton (x, v1)) (toDList r))
                 )
