@@ -6,7 +6,7 @@ structure HS = HString
 open HTuple
 
 val show_option [a] (_:show a): show (option a) =
-        let fun show' opt =
+        let fun show' (opt: option a) =
                case opt of
                   None => "None"
                   | Some v => HS.concat( "Some " :: show v :: [])
