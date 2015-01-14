@@ -1,5 +1,9 @@
 val null : a ::: Type -> eq a -> list a -> bool
 
+val singleton : a ::: Type -> a -> list a
+
+val concat : a ::: Type -> list (list a) -> list a
+
 (*
 val foldl: a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> list a -> b
 

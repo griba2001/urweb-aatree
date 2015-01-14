@@ -12,15 +12,16 @@ fun unDL [a] (dl: dlist a) (x: list a) = let val DL f = dl
 fun fromList [a] (li: list a) = DL (List.append li)
 
 fun toList [a] (dl: dlist a) = unDL dl Nil
-                               
+
+fun prepend [a] (x : a) (xs : list a) = x :: xs                              
 
 val empty [a] : dlist a = DL id
 
-fun singleton [a] (x: a) = DL (curry Cons x)
+fun singleton [a] (x: a) = DL (prepend x)
 
-fun cons [a] (x: a) (dl: dlist a) = DL (compose (curry Cons x) (unDL dl))
+fun cons [a] (x: a) (dl: dlist a) = DL (compose (prepend x) (unDL dl))
 
-fun snoc [a] (dl: dlist a) (x:a) = DL (compose (unDL dl) (curry Cons x))
+fun snoc [a] (dl: dlist a) (x:a) = DL (compose (unDL dl) (prepend x))
 
 fun append [a] (xs: dlist a) (ys: dlist a) = DL (compose (unDL xs) (unDL ys))
 

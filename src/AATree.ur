@@ -4,6 +4,7 @@ open HTuple
 open HOrd
 structure D = HDList
 structure HS = HString
+structure HL = HList
 
 datatype tree k v = Empty | Node of {Key: k,
                                      Value: v,
@@ -305,7 +306,19 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
                 )
 
 (* errors: Anonymous function remains at code generation
-val toList [k][v] :(tree k v -> list (k * v)) = compose D.toList toDList
+fun toList [k][v] (t: tree k v): list (k * v) = D.toList (toDList t)
 *)
+
+fun toList [k][v] (t: tree k v): list (k * v) =
+    case t of
+      Empty => []
+      | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
+          let val pairList : list (k * v) = (x, v1) :: []
+          in case (l: tree k v, r: tree k v) of
+                (Empty, Empty) => pairList
+                | _ => HL.concat (toList l :: pairList :: toList r :: [])
+          end
+            
+
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 

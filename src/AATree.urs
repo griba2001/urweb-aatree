@@ -18,7 +18,7 @@ val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 val lookup: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> option v
 
 (* errors: Anonymous function remains at code generation
-val toList : k ::: Type -> v ::: Type -> tree k v -> list (k * v)
 *)
+val toList : k ::: Type -> v ::: Type -> tree k v -> list (k * v)
 
 val fromList : k ::: Type -> v ::: Type -> ord k -> list (k * v) -> tree k v
