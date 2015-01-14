@@ -1,7 +1,8 @@
-
 val id : a:::Type -> a -> a
 
+(*
 val const : a:::Type -> b:::Type -> a -> b -> a
+*)
 
 val compose : a:::Type -> b:::Type -> c:::Type -> (b -> c) -> (a -> b) -> a -> c
 
