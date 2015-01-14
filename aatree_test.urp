@@ -9,6 +9,8 @@ src/util/HString
 src/util/HTuple
 src/util/HOrd
 src/AATree
+src/SortedSet
+src/SortedMap
 test/util/HMonad
 test/HUrUnit
 test/aatree_test
