@@ -3,6 +3,7 @@ open HFunction
 open HTuple
 open HOrd
 structure D = HDList
+structure HS = HString
 
 datatype tree k v = Empty | Node of {Key: k,
                                      Value: v,
@@ -22,6 +23,17 @@ val eq_tree = fn [k][v] (_ : eq k) (_ : eq v) =>
                         | _ => False
         in mkEq eq'
         end
+
+val show_tree = fn [k][v] (_ : show k) (_ : show v) =>
+        let
+           fun show' (t: tree k v): string =
+              case t of
+                Empty => "Empty"
+                | Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...} =>
+                    HS.concat ("[" :: show' lt1 :: "," :: show (k1, v1) :: "," :: show' rt1 :: "]" :: [])
+        in mkShow show'
+        end        
+                
 
 fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
     case t of
@@ -292,7 +304,8 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
                 | _ => D.concat (toDList l :: D.singleton (x, v1) :: toDList r :: [])
                 )
 
+(* errors: Anonymous function remains at code generation
 val toList [k][v] :(tree k v -> list (k * v)) = compose D.toList toDList
-
+*)
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 
