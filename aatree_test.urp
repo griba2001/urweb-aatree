@@ -6,6 +6,7 @@ $/option
 src/util/HFunction
 src/util/HList
 src/util/HString
+src/util/HTuple
 src/util/HDList
 src/util/HOrd
 src/AATree

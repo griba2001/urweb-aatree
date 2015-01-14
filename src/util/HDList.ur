@@ -1,6 +1,7 @@
 (* dlist following haskell's dlist *)
 
 open HFunction
+open HTuple
 
 datatype dlist a = DL of (list a -> list a)
 

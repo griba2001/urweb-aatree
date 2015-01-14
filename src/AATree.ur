@@ -1,5 +1,6 @@
 
 open HFunction
+open HTuple
 open HOrd
 structure D = HDList
 
