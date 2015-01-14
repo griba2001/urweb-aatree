@@ -28,7 +28,7 @@ fun main () = test1 <- xmlDltest1 () ;
 
 fun main () = let val exp : tree int string = empty
                   val exp2 = insert 2 "b" (insert 1 "a" exp)
-                  val exp3: tree int string = insert 3 "c" (delete 2 (fromList testdata))
+                  val exp3 = insert 3 "c" (delete 2 (fromList testdata))
                   val exp4 = (lookup 3 exp3, lookup 2 exp3) 
               in  
               return <xml><body>{[exp2]}<br/> {[exp3]}<br/> {[exp4]}</body></xml>
