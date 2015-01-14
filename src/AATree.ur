@@ -289,7 +289,7 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
         | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
              (case (l: tree k v, r: tree k v) of
                 (Empty, Empty) => D.singleton (x, v1)
-                | _ => D.append (toDList l) (D.append (D.singleton (x, v1)) (toDList r))
+                | _ => D.concat (toDList l :: D.singleton (x, v1) :: toDList r :: [])
                 )
 
 val toList [k][v] :(tree k v -> list (k * v)) = compose D.toList toDList
