@@ -309,16 +309,17 @@ fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
 fun toList [k][v] (t: tree k v): list (k * v) = D.toList (toDList t)
 *)
 
-fun toList [k][v] (t: tree k v): list (k * v) =
+fun prepend [a] (x : a) (xs : list a) = x :: xs
+
+fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
     case t of
-      Empty => []
+      Empty => li
       | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
-          let val pairList : list (k * v) = (x, v1) :: []
-          in case (l: tree k v, r: tree k v) of
-                (Empty, Empty) => pairList
-                | _ => HL.concat (toList l :: pairList :: toList r :: [])
-          end
-            
+          case (l: tree k v, r: tree k v) of
+                (Empty, Empty) => prepend (x, v1) li
+                | _ =>  toList' l (prepend (x, v1) (toList' r li))
+
+fun toList [k][v] (t: tree k v): list (k * v) = toList' t []            
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 
