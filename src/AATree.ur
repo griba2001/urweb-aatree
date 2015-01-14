@@ -2,7 +2,6 @@
 open HFunction
 open HTuple
 open HOrd
-structure D = HDList
 structure HS = HString
 structure HL = HList
 
@@ -289,27 +288,7 @@ fun lookup [k][v] (_: ord k) (x: k) (t: tree k v): option v =
                 | GT => lookup x r
                 ) 
 
-(* Haskell
-toDList :: Tree a -> D.DList a
-toDList Empty = D.empty
-toDList (Node x _ Empty Empty) = D.singleton x
-toDList (Node x _ l r) = toDList l `D.append` D.singleton x `D.append` toDList r
-*)
-
-fun toDList [k][v] (t: tree k v): D.dlist (k * v) =
-    case t of
-        Empty => D.empty
-        | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
-             (case (l: tree k v, r: tree k v) of
-                (Empty, Empty) => D.singleton (x, v1)
-                | _ => D.concat (toDList l :: D.singleton (x, v1) :: toDList r :: [])
-                )
-
-(* errors: Anonymous function remains at code generation
-fun toList [k][v] (t: tree k v): list (k * v) = D.toList (toDList t)
-*)
-
-(* toList' with prefix style *)
+(* toList' with prepend style *)
 
 fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
     case t of
@@ -317,7 +296,7 @@ fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
       | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
           case (l: tree k v, r: tree k v) of
                 (Empty, Empty) => (x, v1) :: li
-                | _ =>  toList' l ((x, v1) :: (toList' r li))
+                | _ =>  toList' l ((x, v1) :: toList' r li)
 
 fun toList [k][v] (t: tree k v): list (k * v) = toList' t []            
 
