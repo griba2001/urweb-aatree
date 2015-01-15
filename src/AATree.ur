@@ -326,3 +326,4 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
          | Node rc => Node (rc -- #Key -- #Left -- #Right ++ {Key = f rc.Key,
                                                                 Left = mapKeysMonotonic f rc.Left,
                                                                 Right = mapKeysMonotonic f rc.Right})
+
