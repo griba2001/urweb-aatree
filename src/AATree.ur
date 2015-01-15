@@ -34,8 +34,8 @@ val show_tree = fn [k][v] (_ : show k) (_ : show v) =>
         in mkShow show'
         end        
                 
-
 (* Unused
+ 
 fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
     case t of
         Node r => Node (r -- #Key ++ {Key = v1})
@@ -313,3 +313,16 @@ fun toList [k][v] (t: tree k v): list (k * v) = toList' t []
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 
+fun mapValues [k][v][w] (f: v -> w) (t: tree k v): tree k w =
+       case t of
+         Empty => Empty
+         | Node rc => Node (rc -- #Value -- #Left -- #Right ++ {Value = f rc.Value,
+                                                                Left = mapValues f rc.Left,
+                                                                Right = mapValues f rc.Right})
+
+fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
+       case t of
+         Empty => Empty
+         | Node rc => Node (rc -- #Key -- #Left -- #Right ++ {Key = f rc.Key,
+                                                                Left = mapKeysMonotonic f rc.Left,
+                                                                Right = mapKeysMonotonic f rc.Right})
