@@ -13,6 +13,8 @@ val singleton : k ::: Type -> v ::: Type -> k -> v -> tree k v
 
 val insert: k ::: Type -> v ::: Type -> ord k -> k -> v -> tree k v -> tree k v
 
+val insertWith: k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> k -> v -> tree k v -> tree k v
+
 val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 
 val lookup: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> option v

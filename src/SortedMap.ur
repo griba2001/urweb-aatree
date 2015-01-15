@@ -1,6 +1,6 @@
 structure HS = HString
 
-type dict k v = AATree.tree k v
+con dict k v = AATree.tree k v
 
 (*
 val eq_dict [k][v] (_ : eq k) (_ : eq v) = AATree.eq_tree

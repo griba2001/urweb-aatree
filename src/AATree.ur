@@ -35,6 +35,7 @@ val show_tree = fn [k][v] (_ : show k) (_ : show v) =>
         end        
                 
 
+(* Unused
 fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
     case t of
         Node r => Node (r -- #Key ++ {Key = v1})
@@ -44,6 +45,12 @@ fun setValue [k][v] (v1: v) (t: tree k v): tree k v =
     case t of
         Node r => Node (r -- #Value ++ {Value = v1})
         | _ => error <xml>setValue: not a Node</xml>
+*)
+
+fun setKeyAndValue [k][v] (k1: k) (v1: v) (t: tree k v) : tree k v =
+    case t of
+        Node r => Node (r -- #Key -- #Value ++ {Key = k1, Value = v1})
+        | _ => error <xml>setKeyAndValue: not a Node</xml>
 
 fun setLevel [k][v] (v1: int) (t: tree k v) : tree k v =
     case t of
@@ -210,15 +217,19 @@ insert x (Node y lv l r) = case compare x y of
         EQ -> Node x lv l r
 *)
 
-fun insert [k][v] (_: ord k) (x: k) (v1: v) (t: tree k v): tree k v =
+
+fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v): tree k v =
     case t of
-        Empty => singleton x v1
-        | Node {Key = y, Left = l, Right = r, ...} =>
-           (case compare x y of
-              LT => split (skew (setLeft (insert x v1 l) t))
-              | GT => split (skew (setRight (insert x v1 r) t))
-              | EQ => setKey x (setValue v1 t)
+        Empty => singleton k1 v1
+        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
+              LT => split (skew (setLeft (insertWith f k1 v1 l) t))
+              | GT => split (skew (setRight (insertWith f k1 v1 r) t))
+              | EQ => setKeyAndValue k1 (f v1 v0) t
               )
+
+fun insert [k][v] (_: ord k) (k1: k) (v1: v) (t: tree k v): tree k v = insertWith const k1 v1 t
+
 
 (* Haskell
 minimum (Node x _ Empty _) = x
@@ -232,18 +243,18 @@ maximum Empty = error "maximum: empty tree"
 
 fun minimum [k][v] (t: tree k v): k * v =
     case t of
-        Node {Key = x, Value = v1, Left = l, ...} =>
+        Node {Key = k0, Value = v0, Left = l, ...} =>
             (case l: tree k v of
-               Empty => (x, v1)
+               Empty => (k0, v0)
                | _ => minimum l
                )
         | Empty => error <xml>aatree minimum: empty tree</xml>
 
 fun maximum [k][v] (t: tree k v): k * v =
     case t of
-        Node {Key = x, Value = v1, Right = r, ...} =>
+        Node {Key = k0, Value = v0, Right = r, ...} =>
             (case r: tree k v of
-               Empty => (x, v1)
+               Empty => (k0, v0)
                | _ => maximum r
                )
         | Empty => error <xml>aatree maximum: empty tree</xml>
@@ -261,31 +272,31 @@ delete x t @ (Node y lv l r) = case compare x y of
                 where predecessor = maximum l
 *)
 
-fun delete [k][v] (_: ord k) (x: k) (t: tree k v): tree k v =
+fun delete [k][v] (_: ord k) (k1: k) (t: tree k v): tree k v =
     case t of
         Empty => Empty
-        | Node {Key = y, Left = l, Right = r, ...} =>
-           case compare x y of
-              LT => rebalance (setLeft (delete x l) t)
-              | GT => rebalance (setRight (delete x r) t)
+        | Node {Key = k0, Left = l, Right = r, ...} =>
+           case compare k1 k0 of
+              LT => rebalance (setLeft (delete k1 l) t)
+              | GT => rebalance (setRight (delete k1 r) t)
               | EQ => (case (l, r) of
                          (Empty, Empty) => Empty  (* deleted *)
                          | (Empty, _) => let val (succK, succV) = minimum r
-                                       in rebalance (setKey succK (setValue succV (setRight (delete succK r) t)))
+                                       in rebalance (setKeyAndValue succK succV (setRight (delete succK r) t))
                                        end
                          | (_, _) => let val (predK, predV) = maximum l
-                                   in rebalance (setKey predK (setValue predV (setLeft (delete predK l) t)))
+                                   in rebalance (setKeyAndValue predK predV (setLeft (delete predK l) t))
                                    end
                          )
 
-fun lookup [k][v] (_: ord k) (x: k) (t: tree k v): option v =
+fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
     case t of
         Empty => None
-        | Node {Key = y, Value = v1, Left = l, Right = r, ...} =>
-            (case compare x y of
-                EQ => Some v1
-                | LT => lookup x l
-                | GT => lookup x r
+        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+            (case compare k1 k0 of
+                EQ => Some v0
+                | LT => lookup k1 l
+                | GT => lookup k1 r
                 ) 
 
 (* toList' with prepend style *)
@@ -293,10 +304,10 @@ fun lookup [k][v] (_: ord k) (x: k) (t: tree k v): option v =
 fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
     case t of
       Empty => li
-      | Node {Key = x, Value = v1, Left = l, Right = r, ...} =>
+      | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
           case (l: tree k v, r: tree k v) of
-                (Empty, Empty) => (x, v1) :: li
-                | _ =>  toList' l ((x, v1) :: toList' r li)
+                (Empty, Empty) => (k0, v0) :: li
+                | _ =>  toList' l ((k0, v0) :: toList' r li)
 
 fun toList [k][v] (t: tree k v): list (k * v) = toList' t []            
 
