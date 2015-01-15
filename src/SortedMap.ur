@@ -1,5 +1,7 @@
 structure HS = HString
 structure HL = HList
+structure HT = HTuple
+open HFunction
 
 con dict k v = AATree.tree k v
 
@@ -27,15 +29,12 @@ val mapValues [k][v][w] (f: v -> w) (d1: dict k v): dict k w = AATree.mapValues 
 
 val mapKeysMonotonic [k][v][k'] (f: k -> k') (d1: dict k v): dict k' v = AATree.mapKeysMonotonic f d1
 
-fun filter [k][v] (_: ord k) (prop: k -> bool) (t: dict k v): dict k v =
-         let fun prop' (pair: k * v): bool = prop pair.1
-         in
-            fromList (List.filter prop' (toList t))
-         end   
+fun filter [k][v] (_: ord k) (prop: k -> bool) (d1: dict k v): dict k v =
+         fromList (List.filter (compose prop HT.fst) (toList d1))
 
 fun partition [k][v] (_: ord k) (prop: k -> bool) (d1: dict k v): dict k v * dict k v =
-         let fun prop' (pair: k * v): bool = prop pair.1
-             val (pos, neg) = HL.partition prop' (toList d1)
+         let 
+             val (pos, neg) = HL.partition (compose prop HT.fst) (toList d1)
          in
             (fromList pos, fromList neg)
          end

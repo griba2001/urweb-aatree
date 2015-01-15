@@ -19,3 +19,7 @@ val member: a ::: Type -> ord a -> a -> set a -> bool
 val toList : a ::: Type -> set a -> list a
 
 val fromList : a ::: Type -> ord a -> list a -> set a
+
+val filter : a ::: Type -> ord a -> (a -> bool) -> set a -> set a
+
+val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
