@@ -36,7 +36,7 @@ val eq_dict = fn [k][v] (_ : eq k) (_ : eq v) =>
             fun eq' (t1: dict k v) (t2: dict k v) =
                    let val t1' : AATree.tree k v = t1
                        val t2' : AATree.tree k v = t2
-                   in t1 = t2
+                   in t1' = t2'
                    end
         in
             mkEq eq'

@@ -20,7 +20,7 @@ val eq_set = fn [a] (_ : eq a) =>
             fun eq' (t1: set a) (t2: set a) =
                    let val t1' : AATree.tree a unit = t1
                        val t2' : AATree.tree a unit = t2
-                   in t1 = t2
+                   in t1' = t2'
                    end 
         in
             mkEq eq'
