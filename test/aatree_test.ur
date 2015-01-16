@@ -2,6 +2,7 @@ structure T = AATree
 structure F = HFunction
 structure U = HUrUnit
 structure HS = HString
+structure SM = SortedMap
 
 open HTuple
 
@@ -20,9 +21,16 @@ val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.
 
 fun xmlDltest1 (): transaction xbody = U.assertEqual "test1:" testdata (toFromList testdata)
 
+fun xmlDltest2 (): transaction xbody = U.assertEqual "test2:" (SM.fromList testdata) (SM.fromList testdata)
+
+
 fun main () = test1 <- xmlDltest1 () ;
-              return <xml><body>Failed tests: {test1}<br/>
-                                Result: {[toFromList testdata]}</body></xml>
+              test2 <- xmlDltest2 () ; 
+              let val tests = join test1 test2 
+              in return <xml><body>Failed tests: {tests}<br/>
+                                Result: {[toFromList testdata]}<br/>
+                     </body></xml>
+              end
 (*
 
 fun main () = let val exp : tree int string = empty

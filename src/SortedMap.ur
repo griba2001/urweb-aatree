@@ -3,11 +3,7 @@ structure HL = HList
 structure HT = HTuple
 open HFunction
 
-con dict = AATree.tree
-
-(*
-val eq_dict [k][v] (_ : eq k) (_ : eq v) = AATree.eq_tree
-*)
+con dict k v = AATree.tree k v
 
 val empty [k][v]: dict k v = AATree.empty
 
@@ -28,6 +24,27 @@ val lookup [k][v] (_: ord k): (k -> dict k v -> option v) = AATree.lookup
 val toList [k][v]: (dict k v -> list (k * v)) = AATree.toList
 
 val fromList [k][v] (_ : ord k): (list (k * v) -> dict k v) = AATree.fromList
+
+(* eq instance *)
+val eq_dict = fn [k][v] (_ : eq k) (_ : eq v) =>
+        let
+            fun eq' (t1: dict k v) (t2: dict k v) =
+                   let val t1' : AATree.tree k v = t1
+                       val t2' : AATree.tree k v = t2
+                   in t1 = t2
+                   end
+        in
+            mkEq eq'
+        end
+
+(* show instance *)
+val show_dict = fn [k][v] (_ : show (k * v)) =>
+        let
+            fun show' (t1: dict k v)  = "dict fromList: " ^ show (toList t1)
+        in
+            mkShow show' : show (dict k v)
+        end
+
 
 val mapValues [k][v][w] (f: v -> w) (d1: dict k v): dict k w =
 

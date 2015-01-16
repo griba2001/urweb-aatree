@@ -8,9 +8,24 @@ open HFunction
 
 con set a = AATree.tree a unit
 
-(*
-val eq_set [a] (_ : eq a) = AATree.eq_tree
-*)
+val eq_unit: eq (unit) = let
+                 fun eq' (x: unit) (y: unit) = True
+        in
+            mkEq eq'
+        end
+             
+
+val eq_set = fn [a] (_ : eq a) =>
+        let
+            fun eq' (t1: set a) (t2: set a) =
+                   let val t1' : AATree.tree a unit = t1
+                       val t2' : AATree.tree a unit = t2
+                   in t1 = t2
+                   end 
+        in
+            mkEq eq'
+        end
+
 
 val empty [a]: set a = AATree.empty
 
@@ -32,6 +47,15 @@ val fromList [a] (_ : ord a): (list a -> set a) =
         let val f = fn (v: a) => (v, ())
         in F.compose AATree.fromList (List.mp f)
         end
+
+
+val show_set = fn [a] (_ : show a) =>
+        let
+            fun show' (t1: set a)  = "set fromList: " ^ show (toList t1)
+        in
+            mkShow show'
+        end
+
 
 fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) =
         F.compose fromList (F.compose (List.filter prop) toList)

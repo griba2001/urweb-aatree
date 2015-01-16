@@ -1,8 +1,8 @@
 con dict :: Type -> Type -> Type
 
-(*
-val eq_dict : k ::: Type -> v ::: Type -> eq k -> eq v -> eq (dict a)
-*)
+val eq_dict : k ::: Type -> v ::: Type -> eq k -> eq v -> eq (dict k v)
+
+val show_dict : k ::: Type -> v ::: Type -> show (k * v) -> show (dict k v)
 
 val empty : k ::: Type -> v ::: Type -> dict k v
 
