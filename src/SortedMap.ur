@@ -3,7 +3,7 @@ structure HL = HList
 structure HT = HTuple
 open HFunction
 
-con dict k v = AATree.tree k v
+con dict = AATree.tree
 
 (*
 val eq_dict [k][v] (_ : eq k) (_ : eq v) = AATree.eq_tree
