@@ -10,7 +10,11 @@ val null : k ::: Type -> v ::: Type -> dict k v -> bool
 
 val singleton : k ::: Type -> v ::: Type -> k -> v -> dict k v
 
+val size : k ::: Type -> v ::: Type -> dict k v -> int
+
 val insert : k ::: Type -> v ::: Type -> ord k -> k -> v -> dict k v -> dict k v
+
+val adjust: k ::: Type -> v ::: Type -> ord k -> (v -> v) -> k -> dict k v -> dict k v
 
 val delete : k ::: Type -> v ::: Type -> ord k -> k -> dict k v -> dict k v
 

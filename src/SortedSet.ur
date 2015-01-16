@@ -18,6 +18,8 @@ val null [a]: set a -> bool = AATree.null
 
 val singleton [a] (v: a): set a = AATree.singleton v ()
 
+val size [a] : (set a -> int) = AATree.size
+
 val insert [a] (_ : ord a) (v: a): (set a -> set a) = AATree.insert v ()
 
 val delete [a] (_ : ord a) (v: a): (set a -> set a) = AATree.delete v

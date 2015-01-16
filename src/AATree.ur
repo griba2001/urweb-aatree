@@ -40,12 +40,12 @@ fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
     case t of
         Node r => Node (r -- #Key ++ {Key = v1})
         | _ => error <xml>setKey: not a Node</xml>
+*)
 
 fun setValue [k][v] (v1: v) (t: tree k v): tree k v =
     case t of
         Node r => Node (r -- #Value ++ {Value = v1})
         | _ => error <xml>setValue: not a Node</xml>
-*)
 
 fun setKeyAndValue [k][v] (k1: k) (v1: v) (t: tree k v) : tree k v =
     case t of
@@ -80,6 +80,11 @@ fun null [k][v] (t: tree k v): bool =
         | _ => False
 
 fun singleton [k][v] (k1: k) (v1: v): tree k v = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
+
+fun size [k][v] (t: tree k v) : int =
+    case t of
+     Empty => 0
+     | Node {Left = l, Right = r, ...} => 1 + size l + size r
 
 (* skew: right rotation *)
 fun skew [k][v] (t: tree k v) : tree k v =
@@ -229,6 +234,17 @@ fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v):
               )
 
 val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1
+
+fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
+    case t of
+        Empty => t
+        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
+              LT => split (skew (setLeft (adjust f k1 l) t))
+              | GT => split (skew (setRight (adjust f k1 r) t))
+              | EQ => setValue (f v0) t
+              )
+
 
 
 (* Haskell

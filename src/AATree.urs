@@ -11,9 +11,13 @@ val null : k ::: Type -> v ::: Type -> tree k v -> bool
 
 val singleton : k ::: Type -> v ::: Type -> k -> v -> tree k v
 
+val size : k ::: Type -> v ::: Type -> tree k v -> int
+
 val insert: k ::: Type -> v ::: Type -> ord k -> k -> v -> tree k v -> tree k v
 
 val insertWith: k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> k -> v -> tree k v -> tree k v
+
+val adjust: k ::: Type -> v ::: Type -> ord k -> (v -> v) -> k -> tree k v -> tree k v
 
 val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 

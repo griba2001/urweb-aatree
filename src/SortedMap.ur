@@ -15,7 +15,11 @@ val null [k][v]: (dict k v -> bool) = AATree.null
 
 val singleton [k][v]: (k -> v -> dict k v) = AATree.singleton
 
+val size [k][v]: (dict k v -> int) = AATree.size
+
 val insert [k][v] (_: ord k): (k -> v -> dict k v -> dict k v) = AATree.insert
+
+val adjust [k][v] (_: ord k): ((v -> v) -> k -> dict k v -> dict k v) = AATree.adjust
 
 val delete [k][v] (_: ord k): (k -> dict k v -> dict k v) = AATree.delete
 

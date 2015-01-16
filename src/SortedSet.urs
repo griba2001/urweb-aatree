@@ -10,6 +10,8 @@ val null : a ::: Type -> set a -> bool
 
 val singleton : a ::: Type -> a -> set a
 
+val size : a ::: Type -> set a -> int
+
 val insert: a ::: Type -> ord a -> a -> set a -> set a
 
 val delete: a ::: Type -> ord a -> a -> set a -> set a
