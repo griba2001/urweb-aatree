@@ -18,5 +18,6 @@ fun fst [a][b] (p: a * b) = p.1
 
 fun snd [a][b] (p: a * b) = p.2
 
-  
+fun swap [a][b] (p: a * b): b * a = (p.2, p.1)
 
+fun fmap [a][b][c] (f: b -> c) (p: a * b): a * c = (p.1, f p.2)

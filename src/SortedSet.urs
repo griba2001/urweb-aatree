@@ -2,6 +2,8 @@ con set :: Type -> Type
 
 val eq_set : a ::: Type -> eq a -> eq (set a)
 
+val show_set : a ::: Type -> show a -> show (set a)
+
 val empty : a ::: Type -> set a
 
 val null : a ::: Type -> set a -> bool

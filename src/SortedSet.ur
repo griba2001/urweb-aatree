@@ -1,5 +1,6 @@
 
 structure O = Option
+structure HO = HOption
 structure F = HFunction
 structure HL = HList
 structure HT = HTuple
@@ -48,21 +49,9 @@ val fromList [a] (_ : ord a): (list a -> set a) =
         in F.compose AATree.fromList (List.mp f)
         end
 
-val findMin [a] : (set a -> option a) =
-        let val f: (option (a * unit) -> option a) = fn v =>
-                        (case v of
-                        Some (x, _) => Some x
-                        | None => None) 
-        in F.compose f AATree.findMin
-        end   
+val findMin [a] : (set a -> option a) = F.compose (HO.fmap HT.fst) AATree.findMin
 
-val findMax [a] : (set a -> option a) =
-        let val f: (option (a * unit) -> option a) = fn v =>
-                        (case v of
-                        Some (x, _) => Some x
-                        | None => None)
-        in F.compose f AATree.findMax
-        end
+val findMax [a] : (set a -> option a) = F.compose (HO.fmap HT.fst) AATree.findMax
 
 val show_set = fn [a] (_ : show a) =>
         let

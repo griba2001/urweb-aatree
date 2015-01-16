@@ -8,6 +8,7 @@ src/util/HList
 src/util/HString
 src/util/HTuple
 src/util/HOrd
+src/util/HOption
 src/util/HDList
 src/AATree
 src/SortedSet
