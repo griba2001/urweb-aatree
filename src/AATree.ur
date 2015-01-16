@@ -204,8 +204,8 @@ fun decreaseLevel [k][v] (t: tree k v): tree k v =
 (* Haskell
 rebalance = decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
 *)
-fun rebalance [k][v] (t: tree k v): tree k v =
-    andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight)))) t
+val rebalance [k][v] : (tree k v -> tree k v) =
+    andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight))))
 
 
 (* Haskell:
@@ -228,7 +228,7 @@ fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v):
               | EQ => setKeyAndValue k1 (f v1 v0) t
               )
 
-fun insert [k][v] (_: ord k) (k1: k) (v1: v) (t: tree k v): tree k v = insertWith const k1 v1 t
+val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1
 
 
 (* Haskell

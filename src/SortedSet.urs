@@ -23,3 +23,9 @@ val fromList : a ::: Type -> ord a -> list a -> set a
 val filter : a ::: Type -> ord a -> (a -> bool) -> set a -> set a
 
 val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
+
+val union: a ::: Type -> ord a -> set a -> set a -> set a
+
+val difference: a ::: Type -> ord a -> set a -> set a -> set a
+
+val intersection: a ::: Type -> ord a -> set a -> set a -> set a

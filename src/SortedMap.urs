@@ -10,7 +10,7 @@ val null : k ::: Type -> v ::: Type -> dict k v -> bool
 
 val singleton : k ::: Type -> v ::: Type -> k -> v -> dict k v
 
-val put : k ::: Type -> v ::: Type -> ord k -> k -> v -> dict k v -> dict k v
+val insert : k ::: Type -> v ::: Type -> ord k -> k -> v -> dict k v -> dict k v
 
 val delete : k ::: Type -> v ::: Type -> ord k -> k -> dict k v -> dict k v
 
@@ -27,3 +27,7 @@ val mapKeysMonotonic : k ::: Type -> v ::: Type -> k' ::: Type -> (k -> k') -> d
 val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v
 
 val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v * dict k v
+
+val union : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
+
+val difference : k ::: Type -> v ::: Type -> ord k -> list k -> dict k v -> dict k v

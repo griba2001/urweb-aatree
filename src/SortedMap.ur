@@ -15,7 +15,7 @@ val null [k][v]: (dict k v -> bool) = AATree.null
 
 val singleton [k][v] (k1: k) (v1: v): dict k v = AATree.singleton k1 v1
 
-val put [k][v] (_: ord k) (k1: k) (v1: v) (d1: dict k v): dict k v = AATree.insert k1 v1 d1
+val insert [k][v] (_: ord k) (k1: k) (v1: v) (d1: dict k v): dict k v = AATree.insert k1 v1 d1
 
 val delete [k][v] (_: ord k) (k1: k) (d1: dict k v): dict k v = AATree.delete k1 d1
 
@@ -38,3 +38,11 @@ fun partition [k][v] (_: ord k) (prop: k -> bool) (d1: dict k v): dict k v * dic
          in
             (fromList pos, fromList neg)
          end
+
+fun union [k][v] (_: ord k) (d1: dict k v) (d2: dict k v): dict k v =
+
+    List.foldl (HT.uncurry insert) d2 (toList d1)  (* in collision d1 prevales *)
+
+fun difference [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
+
+    List.foldl delete d1 ks
