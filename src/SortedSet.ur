@@ -1,6 +1,6 @@
 
 structure O = Option
-structure HO = HOption
+structure M = Monad
 structure F = HFunction
 structure HL = HList
 structure HT = HTuple
@@ -49,9 +49,9 @@ val fromList [a] (_ : ord a): (list a -> set a) =
         in F.compose AATree.fromList (List.mp f)
         end
 
-val findMin [a] : (set a -> option a) = F.compose (HO.fmap HT.fst) AATree.findMin
+val findMin [a] : (set a -> option a) = F.compose (M.mp HT.fst) AATree.findMin
 
-val findMax [a] : (set a -> option a) = F.compose (HO.fmap HT.fst) AATree.findMax
+val findMax [a] : (set a -> option a) = F.compose (M.mp HT.fst) AATree.findMax
 
 val show_set = fn [a] (_ : show a) =>
         let
@@ -73,7 +73,7 @@ fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
 
 fun union [a] (_: ord a) (s1: set a) (s2: set a): set a =
 
-    List.foldl insert s2 (toList s1)  (* in collision s1 prevales *)
+    List.foldl insert s2 (toList s1)  (* in collision s1 prevails *)
 
 fun difference [a] (_: ord a) (s1: set a) (s2: set a): set a =
 
