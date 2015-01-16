@@ -49,9 +49,9 @@ val fromList [a] (_ : ord a): (list a -> set a) =
         in F.compose AATree.fromList (List.mp f)
         end
 
-val findMin [a] : (set a -> option a) = F.compose (M.mp HT.fst) AATree.findMin
+val findMin [a] : (set a -> option a) = F.compose (M.liftM HT.fst) AATree.findMin
 
-val findMax [a] : (set a -> option a) = F.compose (M.mp HT.fst) AATree.findMax
+val findMax [a] : (set a -> option a) = F.compose (M.liftM HT.fst) AATree.findMax
 
 val show_set = fn [a] (_ : show a) =>
         let
