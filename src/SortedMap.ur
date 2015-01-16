@@ -52,6 +52,6 @@ fun union [k][v] (_: ord k) (d1: dict k v) (d2: dict k v): dict k v =
 
     List.foldl (HT.uncurry insert) d2 (toList d1)  (* in collision d1 prevales *)
 
-fun difference [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
+fun deleteAll [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
 
     List.foldl delete d1 ks

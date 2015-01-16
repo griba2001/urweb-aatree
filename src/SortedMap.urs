@@ -34,4 +34,4 @@ val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> 
 
 val union : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 
-val difference : k ::: Type -> v ::: Type -> ord k -> list k -> dict k v -> dict k v
+val deleteAll : k ::: Type -> v ::: Type -> ord k -> list k -> dict k v -> dict k v
