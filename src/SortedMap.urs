@@ -28,6 +28,10 @@ val mapValues :  k ::: Type -> v ::: Type -> w ::: Type -> (v -> w) -> dict k v 
 
 val mapKeysMonotonic : k ::: Type -> v ::: Type -> k' ::: Type -> (k -> k') -> dict k v -> dict k' v
 
+val findMin : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
+
+val findMax : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
+
 val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v
 
 val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v * dict k v

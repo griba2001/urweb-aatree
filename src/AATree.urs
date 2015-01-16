@@ -30,3 +30,7 @@ val fromList : k ::: Type -> v ::: Type -> ord k -> list (k * v) -> tree k v
 val mapValues :  k ::: Type -> v ::: Type -> w ::: Type -> (v -> w) -> tree k v -> tree k w
 
 val mapKeysMonotonic : k ::: Type -> v ::: Type -> k' ::: Type -> (k -> k') -> tree k v -> tree k' v
+
+val findMin : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
+
+val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)

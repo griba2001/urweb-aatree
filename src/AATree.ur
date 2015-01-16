@@ -257,23 +257,33 @@ maximum (Node x _ _ r) = maximum r
 maximum Empty = error "maximum: empty tree"
 *)
 
-fun minimum [k][v] (t: tree k v): k * v =
+fun findMin [k][v] (t: tree k v): option (k * v) =
     case t of
         Node {Key = k0, Value = v0, Left = l, ...} =>
             (case l: tree k v of
-               Empty => (k0, v0)
-               | _ => minimum l
+               Empty => Some (k0, v0)
+               | _ => findMin l
                )
-        | Empty => error <xml>aatree minimum: empty tree</xml>
+        | Empty => None
 
-fun maximum [k][v] (t: tree k v): k * v =
+fun minimum [k][v] (t: tree k v): k * v =
+    case findMin t of
+        Some x => x
+        | None => error <xml>aatree minimum: empty tree</xml>
+
+fun findMax [k][v] (t: tree k v): option (k * v) =
     case t of
         Node {Key = k0, Value = v0, Right = r, ...} =>
             (case r: tree k v of
-               Empty => (k0, v0)
-               | _ => maximum r
+               Empty => Some (k0, v0)
+               | _ => findMax r
                )
-        | Empty => error <xml>aatree maximum: empty tree</xml>
+        | Empty => None
+
+fun maximum [k][v] (t: tree k v): k * v =
+    case findMax t of
+        Some x => x
+        | None => error <xml>aatree maximum: empty tree</xml>
 
 (* Haskell
 delete x Empty = Empty

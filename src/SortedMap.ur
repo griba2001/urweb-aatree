@@ -25,6 +25,11 @@ val toList [k][v]: (dict k v -> list (k * v)) = AATree.toList
 
 val fromList [k][v] (_ : ord k): (list (k * v) -> dict k v) = AATree.fromList
 
+val findMin [k][v] : (dict k v -> option (k * v)) = AATree.findMin
+
+val findMax [k][v] : (dict k v -> option (k * v)) = AATree.findMax
+
+
 (* eq instance *)
 val eq_dict = fn [k][v] (_ : eq k) (_ : eq v) =>
         let

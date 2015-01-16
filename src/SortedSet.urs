@@ -20,6 +20,10 @@ val toList : a ::: Type -> set a -> list a
 
 val fromList : a ::: Type -> ord a -> list a -> set a
 
+val findMin : a ::: Type -> set a -> option a
+
+val findMax : a ::: Type -> set a -> option a
+
 val filter : a ::: Type -> ord a -> (a -> bool) -> set a -> set a
 
 val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
