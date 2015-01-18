@@ -69,9 +69,4 @@ val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
 fun difference [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
 
-fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
-
-    let val memberOf = flip member
-        val common = List.filter (memberOf s1) (toList s2)
-    in List.foldl insert empty common
-    end
+fun intersection [a] (_: ord a): (set a -> set a -> set a) = AATree.intersection

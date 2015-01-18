@@ -46,3 +46,5 @@ val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 val union : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
 
 val difference : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
+
+val intersection : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v

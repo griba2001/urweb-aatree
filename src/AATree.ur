@@ -2,6 +2,7 @@
 open HFunction
 open HTuple
 open HOrd
+open Option 
 structure HS = HString
 structure HL = HList
 
@@ -381,4 +382,11 @@ fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (unc
 fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
     let fun delete' (p: k * v) (t:tree k v): tree k v = delete p.1 t
     in foldr delete' t1 t2
+    end
+
+val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (lookup k1)
+
+fun intersection [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
+    let fun memberOf (t: tree k v) (p: k * v): bool = flip member t p.1
+    in filterFoldr (memberOf t1) (uncurry insert) empty t2
     end
