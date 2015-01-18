@@ -63,12 +63,7 @@ val show_set = fn [a] (_ : show a) =>
 
 fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = AATree.filter prop 
 
-fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
-         let
-             val (pos, neg) = HL.partition prop (toList s1)
-         in
-            (fromList pos, fromList neg)
-         end
+fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) = AATree.partition prop
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 

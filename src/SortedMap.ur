@@ -59,16 +59,9 @@ val mapKeysMonotonic [k][v][k'] (f: k -> k') (d1: dict k v): dict k' v =
 
     AATree.mapKeysMonotonic f d1
 
-fun filter [k][v] (_: ord k) (prop: k -> bool) (d1: dict k v): dict k v =
+fun filter [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v) = AATree.filter
 
-    fromList (List.filter (compose prop HT.fst) (toList d1))
-
-fun partition [k][v] (_: ord k) (prop: k -> bool) (d1: dict k v): dict k v * dict k v =
-         let 
-             val (pos, neg) = HL.partition (compose prop HT.fst) (toList d1)
-         in
-            (fromList pos, fromList neg)
-         end
+fun partition [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v * dict k v) = AATree.partition
 
 val union [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.union
 

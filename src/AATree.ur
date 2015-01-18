@@ -348,6 +348,15 @@ fun filter [k][v] (_:ord k) (prop: k -> bool) (t: tree k v): tree k v =
     in filterFoldr prop' (uncurry insert) empty t
     end
 
+fun partition [k][v] (_:ord k) (prop: k -> bool) (t: tree k v): tree k v * tree k v =
+    let fun prop' (pair: k * v): bool = prop pair.1
+        fun op (kv: k * v) (pt: tree k v * tree k v): tree k v * tree k v =
+                          if prop' kv then (insert kv.1 kv.2 pt.1, pt.2)
+                          else (pt.1, insert kv.1 kv.2 pt.2)
+    in foldr op (empty, empty) t
+    end 
+
+
 fun toList [k][v] (t: tree k v): list (k * v) = filterFoldr' (const True) (curry Cons) t []
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
