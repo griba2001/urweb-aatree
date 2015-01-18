@@ -23,6 +23,8 @@ val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 
 val lookup: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> option v
 
+val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> tree k v -> b
+
 val toList : k ::: Type -> v ::: Type -> tree k v -> list (k * v)
 
 val fromList : k ::: Type -> v ::: Type -> ord k -> list (k * v) -> tree k v
@@ -34,3 +36,6 @@ val mapKeysMonotonic : k ::: Type -> v ::: Type -> k' ::: Type -> (k -> k') -> t
 val findMin : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 
 val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
+
+val union : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
+

@@ -71,9 +71,9 @@ fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
             (fromList pos, fromList neg)
          end
 
-fun union [a] (_: ord a) (s1: set a) (s2: set a): set a =
+val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
-    List.foldl insert s2 (toList s1)  (* in collision s1 prevails *)
+    (* List.foldl insert s2 (toList s1) *) (* in collision s1 prevails *)
 
 fun difference [a] (_: ord a) (s1: set a) (s2: set a): set a =
 

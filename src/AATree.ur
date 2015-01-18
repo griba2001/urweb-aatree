@@ -326,7 +326,7 @@ fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
                 ) 
 
 (* toList' with prepend style *)
-
+(*
 fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
     case t of
       Empty => li
@@ -335,7 +335,20 @@ fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
                 (Empty, Empty) => (k0, v0) :: li
                 | _ =>  toList' l ((k0, v0) :: toList' r li)
 
-fun toList [k][v] (t: tree k v): list (k * v) = toList' t []            
+fun toList [k][v] (t: tree k v): list (k * v) = toList' t []
+*)
+
+fun foldr' [k][v][b] (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
+    case t of
+      Empty => acc
+      | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+          (case (l: tree k v, r: tree k v) of
+                (Empty, Empty) => op (k0, v0)  acc
+                | _ =>  foldr' op l (op (k0, v0) (foldr' op r acc))
+                )
+fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (t: tree k v): b = foldr' op t acc
+
+fun toList [k][v] (t: tree k v): list (k * v) = foldr' (curry Cons) t []
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 
@@ -353,3 +366,4 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
                                                                 Left = mapKeysMonotonic f rc.Left,
                                                                 Right = mapKeysMonotonic f rc.Right})
 
+fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (uncurry insert) t2 t1
