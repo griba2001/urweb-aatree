@@ -73,14 +73,13 @@ fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
-    (* List.foldl insert s2 (toList s1) *) (* in collision s1 prevails *)
-
 fun difference [a] (_: ord a) (s1: set a) (s2: set a): set a =
 
     List.foldl delete s1 (toList s2)  (* s1 - s2 *)
 
 fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
 
-    let val common = List.filter (flip member s1) (toList s2)
+    let val memberOf = flip member
+        val common = List.filter (memberOf s1) (toList s2)
     in List.foldl insert empty common
     end

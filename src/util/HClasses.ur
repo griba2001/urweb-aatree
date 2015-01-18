@@ -17,7 +17,7 @@ val monoid_list [a]: monoid (list a) = mkMonoid []
 
 con foldable t a b = {Foldr: (a -> b -> b) -> b -> t a -> b}
 fun mkFoldable [t][a][b] (rc: {Foldr: (a -> b -> b) -> b -> t a -> b}): foldable t a b = rc
-val ffoldr [t][a][b] (f: foldable t a b): (a -> b -> b) -> b -> t a -> b = f.Foldr
+val foldr [t][a][b] (f: foldable t a b): (a -> b -> b) -> b -> t a -> b = f.Foldr
 
 val foldable_list[a][b]: foldable list a b = {Foldr = List.foldr}
 

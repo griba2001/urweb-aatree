@@ -16,7 +16,7 @@ val monoid_list: a:::Type -> monoid (list a)
 
 class foldable :: (Type -> Type) -> Type -> Type -> Type
 val mkFoldable: t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> {Foldr: (a -> b -> b) -> b -> t a -> b} -> foldable t a b
-val ffoldr: t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> foldable t a b -> (a -> b -> b) -> b -> t a -> b
+val foldr: t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> foldable t a b -> (a -> b -> b) -> b -> t a -> b
 
 val foldable_list: a ::: Type -> b ::: Type -> foldable list a b
 
