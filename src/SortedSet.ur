@@ -61,8 +61,7 @@ val show_set = fn [a] (_ : show a) =>
         end
 
 
-fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) =
-        F.compose fromList (F.compose (List.filter prop) toList)
+fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = AATree.filter prop 
 
 fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
          let
@@ -73,9 +72,7 @@ fun partition [a] (_: ord a) (prop: a -> bool) (s1: set a): set a * set a =
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
-fun difference [a] (_: ord a) (s1: set a) (s2: set a): set a =
-
-    List.foldl delete s1 (toList s2)  (* s1 - s2 *)
+fun difference [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
 
 fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
 

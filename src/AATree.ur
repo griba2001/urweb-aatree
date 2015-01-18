@@ -325,30 +325,30 @@ fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
                 | GT => lookup k1 r
                 ) 
 
-(* toList' with prepend style *)
-(*
-fun toList' [k][v] (t: tree k v) (li: list (k*v)): list (k * v) =
-    case t of
-      Empty => li
-      | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-          case (l: tree k v, r: tree k v) of
-                (Empty, Empty) => (k0, v0) :: li
-                | _ =>  toList' l ((k0, v0) :: toList' r li)
-
-fun toList [k][v] (t: tree k v): list (k * v) = toList' t []
-*)
-
-fun foldr' [k][v][b] (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
+fun filterFoldr' [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
+    let fun op' (pair: k * v) (acc: b): b =
+            if prop pair then op pair acc
+            else acc
+    in   
     case t of
       Empty => acc
       | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
           (case (l: tree k v, r: tree k v) of
                 (Empty, Empty) => op (k0, v0)  acc
-                | _ =>  foldr' op l (op (k0, v0) (foldr' op r acc))
+                | _ =>  filterFoldr' prop op l (op' (k0, v0) (filterFoldr' prop op r acc))
                 )
-fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (t: tree k v): b = foldr' op t acc
+    end
 
-fun toList [k][v] (t: tree k v): list (k * v) = foldr' (curry Cons) t []
+fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (t: tree k v): b = filterFoldr' prop op t acc
+
+fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (t: tree k v): b = filterFoldr' (const True) op t acc
+
+fun filter [k][v] (_:ord k) (prop: k -> bool) (t: tree k v): tree k v =
+    let fun prop' (pair: k * v): bool = prop pair.1
+    in filterFoldr prop' (uncurry insert) empty t
+    end
+
+fun toList [k][v] (t: tree k v): list (k * v) = filterFoldr' (const True) (curry Cons) t []
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
 
@@ -367,3 +367,8 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
                                                                 Right = mapKeysMonotonic f rc.Right})
 
 fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (uncurry insert) t2 t1
+
+fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
+    let fun delete' (p: k * v) (t:tree k v): tree k v = delete p.1 t
+    in foldr delete' t1 t2
+    end
