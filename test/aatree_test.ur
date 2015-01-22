@@ -25,8 +25,8 @@ fun xmlDltest2 (): transaction xbody = U.assertEqual "test2:" (SM.fromList testd
 
 
 fun main () = test1 <- xmlDltest1 () ;
-              test2 <- xmlDltest2 () ; 
-              let val tests = join test1 test2 
+              test2 <- xmlDltest2 () ;
+              let val tests = join test1 test2
               in return <xml><body>Failed tests: {tests}<br/>
                                 Result: {[toFromList testdata]}<br/>
                      </body></xml>
