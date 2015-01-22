@@ -41,7 +41,7 @@ structure Foldable : sig
     val mkFoldable : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> ((a -> b -> b) -> b -> t a -> b) -> foldable t a b
     val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> foldable t a b -> (a -> b -> b) -> b -> t a -> b
 end = struct
-    type foldable t a b = (a -> b -> b) -> b -> t a -> b
+    type foldable t = fn a b => (a -> b -> b) -> b -> t a -> b
     fun mkFoldable [t][a][b](f: (a -> b -> b) -> b -> t a -> b) = f
     val foldr [t][a][b] (f: foldable t a b): (a -> b -> b) -> b -> t a -> b = f
 end
