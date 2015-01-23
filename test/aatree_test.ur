@@ -6,15 +6,6 @@ structure SM = SortedMap
 
 open HTuple
 
-val show_option [a] (_:show a): show (option a) =
-        let fun show' (opt: option a) =
-               case opt of
-                  None => "None"
-                  | Some v => HS.concat( "Some " :: show v :: [])
-        in mkShow show'
-        end
-
-
 val testdata : list (int * string) = (1, "a") :: (2, "b") :: []
 
 val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.toList T.fromList

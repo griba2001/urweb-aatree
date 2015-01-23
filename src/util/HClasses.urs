@@ -5,6 +5,7 @@ structure Semigroup : sig
 end
 
 val semigroup_int: Semigroup.semigroup int
+val semigroup_string: Semigroup.semigroup string
 val semigroup_list: a:::Type -> Semigroup.semigroup (list a)
 
 structure Monoid : sig
@@ -15,6 +16,7 @@ structure Monoid : sig
 end
 
 val monoid_int: Monoid.monoid int
+val monoid_string: Monoid.monoid string
 val monoid_list: a:::Type -> Monoid.monoid (list a)
 
 structure Foldable : sig

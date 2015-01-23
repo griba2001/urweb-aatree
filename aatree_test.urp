@@ -9,12 +9,12 @@ src/util/HList
 src/util/HString
 src/util/HTuple
 src/util/HOrd
+src/util/HOption
 src/util/HDList
 src/util/HClasses
 src/AATree
 src/SortedSet
 src/SortedMap
 test/util/HMonad
-test/util/HUnitTest
 test/HUrUnit
 test/aatree_test

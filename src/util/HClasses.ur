@@ -13,6 +13,7 @@ open Semigroup
 
 (* semigroup instances *)
 val semigroup_int: semigroup int = mkSemigroup plus
+val semigroup_string : semigroup string = mkSemigroup String.append
 val semigroup_list [a]: semigroup (list a) = mkSemigroup List.append
 
 (* Monoid *)
@@ -32,6 +33,7 @@ end
 open Monoid
 
 val monoid_int: monoid int = mkMonoid 0
+val monoid_string: monoid string = mkMonoid ""
 val monoid_list [a]: monoid (list a) = mkMonoid []
 
 (* Foldable *)
