@@ -15,5 +15,6 @@ src/AATree
 src/SortedSet
 src/SortedMap
 test/util/HMonad
+test/util/HUnitTest
 test/HUrUnit
 test/aatree_test
