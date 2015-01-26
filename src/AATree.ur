@@ -246,8 +246,6 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
               | EQ => setValue (f v0) t
               )
 
-
-
 (* Haskell
 minimum (Node x _ Empty _) = x
 minimum (Node x _ l _) = minimum l
