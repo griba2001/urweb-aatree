@@ -21,5 +21,5 @@ src/SortedSet
 src/SortedMap
 test/util/HMonad
 test/HUrUnit
-test/util/HNowRandom
+test/util/HRandom
 test/aatree_test
