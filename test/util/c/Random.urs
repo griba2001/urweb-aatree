@@ -1,0 +1,1 @@
+val urandom: unit -> transaction (option int)

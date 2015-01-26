@@ -1,20 +1,25 @@
 rewrite url Aatree_test/main
+ffi test/util/c/Random
+include test/util/c/Random.h
+link test/util/c/Random.o
+benignEffectful Random.urandom
 
 $/list
 $/string
 $/option
 $/monad
 src/util/HFunction
+src/util/HNum
 src/util/HList
 src/util/HString
 src/util/HTuple
 src/util/HOrd
 src/util/HOption
-src/util/HDList
 src/util/HClasses
 src/AATree
 src/SortedSet
 src/SortedMap
 test/util/HMonad
 test/HUrUnit
+test/util/HNowRandom
 test/aatree_test

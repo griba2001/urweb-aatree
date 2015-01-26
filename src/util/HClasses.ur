@@ -39,16 +39,19 @@ val monoid_list [a]: monoid (list a) = mkMonoid []
 (* Foldable *)
 
 structure Foldable : sig
-    class foldable :: (Type -> Type) -> Type -> Type -> Type
-    val mkFoldable : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> ((a -> b -> b) -> b -> t a -> b) -> foldable t a b
-    val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> foldable t a b -> (a -> b -> b) -> b -> t a -> b
+     class foldable :: (Type -> Type) -> Type
+     val mkFoldable : t ::: (Type -> Type) -> (a ::: Type -> b ::: Type ->
+                                               ((a -> b -> b) -> b -> t a -> b)) -> foldable t
+     val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type ->
+                 foldable t -> (a -> b -> b) -> b -> t a -> b
 end = struct
-    type foldable t = fn a b => (a -> b -> b) -> b -> t a -> b
-    fun mkFoldable [t][a][b](f: (a -> b -> b) -> b -> t a -> b) = f
-    val foldr [t][a][b] (f: foldable t a b): (a -> b -> b) -> b -> t a -> b = f
+     type foldable t = a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> t a -> b
+     fun mkFoldable [t] (f: a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> t a -> b) = @@f
+
+     fun foldr [t][a][b] (f: foldable t): (a -> b -> b) -> b -> t a -> b = f
 end
 
 open Foldable
 
-val foldable_list [a][b]: foldable list a b = mkFoldable List.foldr
+val foldable_list : foldable list = mkFoldable @@List.foldr
 

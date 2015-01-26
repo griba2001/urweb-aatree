@@ -20,9 +20,11 @@ val monoid_string: Monoid.monoid string
 val monoid_list: a:::Type -> Monoid.monoid (list a)
 
 structure Foldable : sig
-    class foldable :: (Type -> Type) -> Type -> Type -> Type
-    val mkFoldable : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> ((a -> b -> b) -> b -> t a -> b) -> foldable t a b
-    val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> foldable t a b -> (a -> b -> b) -> b -> t a -> b
+     class foldable :: (Type -> Type) -> Type
+     val mkFoldable : t ::: (Type -> Type) -> (a ::: Type -> b ::: Type ->
+                                               ((a -> b -> b) -> b -> t a -> b)) -> foldable t
+     val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type ->
+                 foldable t -> (a -> b -> b) -> b -> t a -> b
 end
 
-val foldable_list: a:::Type -> b:::Type -> Foldable.foldable list a b
+val foldable_list: Foldable.foldable list

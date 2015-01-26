@@ -15,3 +15,18 @@ fun partition [a] (p: a -> bool) (ls: list a) : list a * list a =
     in
         part [] [] ls
     end
+
+fun elem [a] (_: eq a) (x: a) (li: list a): bool =
+    case li of
+      [] => False
+      | y :: ys => x = y || elem x ys
+
+fun nub [a] (_: eq a) (li: list a): list a =
+   let fun nub' li' ls =
+       case li' of
+         x :: xs => if elem x ls
+                      then nub' xs ls
+                      else x :: nub' xs (x :: ls)
+         | [] => []
+   in nub' li []
+   end
