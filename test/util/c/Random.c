@@ -5,7 +5,7 @@
 #include <urweb/urweb.h>
 
 /* Ur signature in Random.urs
-val urandom: unit -> option int
+val urandom: unit -> transaction (option int)
  */
 uw_Basis_int * uw_Random_urandom(uw_context ctx, uw_unit u) {
 
