@@ -9,6 +9,8 @@ open HTuple
 
 structure HM = HMonad
 structure HR = HRandom
+open HOrd
+
 
 fun getTestData (): transaction (list (int * string)) =
     let fun f (i: int): int * string = (i, str1 (chr (i + 48)))
@@ -18,24 +20,20 @@ fun getTestData (): transaction (list (int * string)) =
 
 val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.toList T.fromList
 
+
+fun gtByFst[a][b] (_:ord a) (x: a * b) (y: a * b): bool = comparing fst x y = GT
+
 fun xmlDltest1 (): transaction (xbody * list(int*string)) =
     testdata <- getTestData () ;
-    res <- U.assertEqual "test1:" testdata (toFromList testdata) ;
+    res <- U.assertEqual "test1:" (List.sort gtByFst testdata) (toFromList testdata) ;
     return (res, testdata)
-
-fun xmlDltest2 (): transaction (xbody * list(int*string)) =
-    testdata <- getTestData () ;
-    res <- U.assertEqual "test2:" (SM.fromList testdata) (SM.fromList testdata) ;
-    return (res, testdata)
-
+  
 
 fun main () =
               (test1, td1) <- xmlDltest1 () ;
-              (test2, td2) <- xmlDltest2 () ;
-              let val tests = join test1 test2
+              let val tests = test1 (* join test1 test2 // Data2: {[td2]}<br/> *)
               in return <xml><body>Failed tests: {tests}<br/>
                                 Data1: {[td1]}<br/>
-                                Data2: {[td2]}<br/>
                                 Result: {[toFromList td1]}<br/>
                      </body></xml>
               end
