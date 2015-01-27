@@ -14,3 +14,5 @@ val snd: a:::Type -> b:::Type -> a * b -> b
 val swap: a:::Type -> b:::Type -> a * b -> b * a
 
 val fmap: a:::Type -> b:::Type -> c:::Type -> (b -> c) -> a * b -> a * c
+
+val gtByFst: a:::Type -> b:::Type -> ord a -> a * b -> a * b -> bool

@@ -7,10 +7,10 @@ structure HS = HString
 structure HL = HList
 
 datatype tree k v = Empty | Node of {Key: k,
-                                     Value: v,
-                                     Level: int,
-                                     Left: tree k v,
-                                     Right: tree k v}
+                                Value: v,
+                                Level: int,
+                                Left: tree k v,
+                                Right: tree k v}
 
 (* eq instance *)
 val eq_tree = fn [k][v] (_ : eq k) (_ : eq v) =>
@@ -388,3 +388,93 @@ fun intersection [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
     let fun memberOf (t: tree k v) (p: k * v): bool = flip member t p.1
     in filterFoldr (memberOf t1) (uncurry insert) empty t2
     end
+
+(* AATree prop1: Leaf nodes have level 1
+* Haskell code: 
+prop1 (Node _ lv Nil Nil) = lv == 1
+prop1 (Node _ _ l r) = prop1 l && prop1 r
+prop1 Nil = True
+*)
+
+fun prop1 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => lvl = 1
+      | Node {Left = l, Right = r, ...} => prop1 l && prop1 r
+
+(* AATree prop2: if there is a left child, the level of the parent is one greater than the left child's one
+* Haskell code:
+prop2 (Node _ lvParent l @ (Node _ lvLChild _ _) r) = lvParent == 1 + lvLChild
+                                                      && prop2 l && prop2 r
+prop2 (Node _ _ l r) = prop2 l && prop2 r
+prop2 Nil = True
+*)
+
+fun prop2 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node rc => (case rc: {Key: k,
+                                Value: v,
+                                Level: int,
+                                Left: tree k v,
+                                Right: tree k v} of
+                     {Left = Node {Level = lvLChild, ...}, Level = lvParent, ...} =>
+                                 lvParent = (1 + lvLChild) && prop2 rc.Left && prop2 rc.Right
+
+                     | _ => prop2 rc.Left && prop2 rc.Right
+                     ) 
+
+(* AATree prop3: if there is a right child, the level of the parent is 0 or 1 more than the level of the right child
+* Haskell code:
+prop3 (Node _ lvParent l r @ (Node _ lvRChild _ _)) = lvParent - lvRChild <= 1 && prop3 l && prop3 r
+prop3 (Node _ _ l r) = prop3 l && prop3 r
+prop3 Nil = True
+ *)
+fun prop3 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node rc => (case rc: {Key: k,
+                                Value: v,
+                                Level: int,
+                                Left: tree k v,
+                                Right: tree k v} of
+                     {Right = Node {Level = lvRChild, ...}, Level = lvParent, ...} =>
+                           lvParent - lvRChild <= 1 && prop3 rc.Left && prop3 rc.Right
+                     | _ => prop3 rc.Left && prop3 rc.Right
+                     ) 
+
+(* AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
+* Haskell:
+prop4 (Node _ lvParent l r @ (Node _ lvRChild _ (Node _ lvRGChild _ _))) = lvRGChild < lvParent && prop4 l && prop4 r
+prop4 (Node _ _ l r) = prop4 l && prop4 r
+prop4 Nil = True
+*)
+
+fun prop4 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node rc => (case rc: {Key: k,
+                                Value: v,
+                                Level: int,
+                                Left: tree k v,
+                                Right: tree k v} of
+                      {Right = Node {Right = Node {Level = lvRGChild, ...}, ...}, Level = lvParent, ...} =>
+                                        lvRGChild < lvParent && prop4 rc.Left && prop4 rc.Right
+                      | _ => prop4 rc.Left && prop4 rc.Right
+                      )
+
+(* AATree prop5: all nodes with level > 1 have two children
+* Haskell:
+prop5 (Node _ lv l r)
+    | lv > 1 = (not . null $ l) && (not . null $ r) && prop5 l && prop5 r
+    | otherwise = prop5 l && prop5 r
+prop5 Nil = True
+*)
+
+fun prop5 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node {Level = lvl, Left = l, Right = r, ...} =>
+             if lvl > 1
+                then not (null l) && not (null r) && prop5 l && prop5 r
+                else prop5 l && prop5 r

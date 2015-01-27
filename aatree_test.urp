@@ -12,14 +12,14 @@ src/util/HFunction
 src/util/HNum
 src/util/HList
 src/util/HString
-src/util/HTuple
 src/util/HOrd
+src/util/HTuple
 src/util/HOption
 src/util/HClasses
 src/AATree
 src/SortedSet
 src/SortedMap
 test/util/HMonad
-test/HUrUnit
+test/util/HUrUnit
 test/util/HRandom
 test/aatree_test
