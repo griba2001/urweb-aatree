@@ -2,7 +2,6 @@ structure T = AATree
 structure F = HFunction
 structure U = HUrUnit
 structure HS = HString
-structure SM = SortedMap
 structure HL = HList
 
 structure HM = HMonad
