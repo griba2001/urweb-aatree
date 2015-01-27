@@ -13,11 +13,11 @@ fun assertBool msg b = HM.xunless b (assertFailure msg)
 
 fun assertEqual [a] (_: eq a) (_: show a) (preface: string) (expected: a) (actual: a) =
      let val pref : string = if HS.null preface then "" else S.append preface "\n"
-         val xmsg : xbody = (let val x1 = str2xml (HS.concat (pref :: "expected: " :: show expected :: []))
-                                 val x2 = <xml><br/></xml>
-                                 val x3 = str2xml (HS.concat ( "but got: " :: show actual :: []))
+         val xmsg : xbody = (let val sep = <xml><br/></xml>
+                                 val x1 = str2xml (HS.concat (pref :: "expected: " :: show expected :: []))
+                                 val x2 = str2xml (HS.concat ( "but got: " :: show actual :: []))
                             in
-                              join x1 (join x2 x3)
+                              join x1 (join sep (join x2 sep))
                             end)   
      in
         HM.xunless (actual = expected) (assertFailureX xmsg)

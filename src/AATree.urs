@@ -48,3 +48,9 @@ val union : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k 
 val difference : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
 
 val intersection : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
+
+val prop1 : k ::: Type -> v ::: Type -> tree k v -> bool
+val prop2 : k ::: Type -> v ::: Type -> tree k v -> bool
+val prop3 : k ::: Type -> v ::: Type -> tree k v -> bool
+val prop4 : k ::: Type -> v ::: Type -> tree k v -> bool
+val prop5 : k ::: Type -> v ::: Type -> tree k v -> bool
