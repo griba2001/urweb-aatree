@@ -3,22 +3,12 @@ ffi test/util/c/Random
 include test/util/c/Random.h
 link test/util/c/Random.o
 benignEffectful Random.urandom
+library lib_aatree
 
 $/list
 $/string
 $/option
 $/monad
-src/util/HFunction
-src/util/HNum
-src/util/HList
-src/util/HString
-src/util/HOrd
-src/util/HTuple
-src/util/HOption
-src/util/HClasses
-src/AATree
-src/SortedSet
-src/SortedMap
 test/util/HMonad
 test/util/HUrUnit
 test/util/HRandom

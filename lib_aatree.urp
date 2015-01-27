@@ -1,0 +1,15 @@
+$/list
+$/string
+$/option
+$/monad
+src/util/HFunction
+src/util/HNum
+src/util/HList
+src/util/HString
+src/util/HOrd
+src/util/HTuple
+src/util/HOption
+src/util/HClasses
+src/AATree
+src/SortedSet
+src/SortedMap
