@@ -23,6 +23,8 @@ val delete: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> tree k v
 
 val lookup: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> option v
 
+val member: k ::: Type -> v ::: Type -> ord k -> k -> tree k v -> bool
+
 val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> tree k v -> b
 
 val filterFoldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> bool) -> (k * v -> b -> b) -> b -> tree k v -> b
