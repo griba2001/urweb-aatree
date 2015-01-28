@@ -12,4 +12,5 @@ src/util/HOption
 src/util/HClasses
 src/AATree
 src/SortedSet
+src/SortedSetInstances
 src/SortedMap

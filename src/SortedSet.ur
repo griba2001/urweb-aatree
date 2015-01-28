@@ -4,6 +4,7 @@ structure M = Monad
 structure F = HFunction
 structure HL = HList
 structure HT = HTuple
+structure HC = HClasses
 open HFunction
 
 
@@ -60,6 +61,11 @@ val show_set = fn [a] (_ : show a) =>
             mkShow show'
         end
 
+fun foldr [a][b] (myop: a -> b -> b) (acc: b) (t: set a): b =
+    let
+        fun myop' (p: a * unit): b -> b = myop p.1
+    in AATree.foldr myop' acc t
+    end
 
 fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = AATree.filter prop 
 

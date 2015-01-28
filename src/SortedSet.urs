@@ -26,6 +26,8 @@ val findMin : a ::: Type -> set a -> option a
 
 val findMax : a ::: Type -> set a -> option a
 
+val foldr : a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> set a -> b
+
 val filter : a ::: Type -> ord a -> (a -> bool) -> set a -> set a
 
 val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
