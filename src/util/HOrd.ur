@@ -15,3 +15,6 @@ fun compare [a] (_: ord a) (x: a) (y: a) =
   else GT
 
 fun comparing [a][b] (_: ord b) (p: a -> b) (x: a) (y: a) = compare (p x) (p y)
+
+(* gtBy to use with List.sort *)
+fun gtBy[a][b] (_:ord b) (proj:a -> b) (x: a) (y: a): bool = comparing proj x y = GT

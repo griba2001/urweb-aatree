@@ -7,6 +7,7 @@ structure HL = HList
 structure HM = HMonad
 structure HR = HRandom
 structure HT = HTuple
+structure HO = HOrd
 
 fun getTestData (): transaction (list (int * string)) =
     let fun f (i: int): int * string = (i, str1 (chr (i + 48)))
@@ -19,7 +20,7 @@ val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.
 fun xmlTest1 (): transaction (xbody * list(int*string)) =
         testdata <- getTestData () ;
         let val keys: list int = List.mp HT.fst testdata
-            val expected : list(int*string) = List.sort HT.gtByFst testdata 
+            val expected : list(int*string) = List.sort (HO.gtBy HT.fst) testdata
             val actual : list(int*string) = toFromList testdata
             val treeData: T.tree int string = T.fromList testdata
             val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
