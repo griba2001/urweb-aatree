@@ -59,6 +59,8 @@ val mapKeysMonotonic [k][v][k'] (f: k -> k') (d1: dict k v): dict k' v =
 
     AATree.mapKeysMonotonic f d1
 
+fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (d1: dict k v): b = AATree.foldr op acc d1
+
 fun filter [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v) = AATree.filter
 
 fun partition [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v * dict k v) = AATree.partition

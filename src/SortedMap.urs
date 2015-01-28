@@ -32,6 +32,8 @@ val findMin : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
 
 val findMax : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
 
+val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> dict k v -> b
+
 val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v
 
 val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v * dict k v
