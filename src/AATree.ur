@@ -410,6 +410,7 @@ prop2 (Node _ _ l r) = prop2 l && prop2 r
 prop2 Nil = True
 *)
 
+(*
 fun prop2 [k][v] (t: tree k v): bool =
     case t of
       Empty => True
@@ -422,7 +423,18 @@ fun prop2 [k][v] (t: tree k v): bool =
                                  lvParent = (1 + lvLChild) && prop2 rc.Left && prop2 rc.Right
 
                      | _ => prop2 rc.Left && prop2 rc.Right
-                     ) 
+                     )
+*)
+
+fun prop2 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node {Left = l, Right = r, Level = lvParent, ...} =>
+          (case (l: tree k v) of
+             Empty => prop2 r  (* l is Empty *)
+             | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild &&
+                                               prop2 l && prop2 r
+             )
 
 (* AATree prop3: if there is a right child, the level of the parent is 0 or 1 more than the level of the right child
 * Haskell code:
@@ -430,6 +442,7 @@ prop3 (Node _ lvParent l r @ (Node _ lvRChild _ _)) = lvParent - lvRChild <= 1 &
 prop3 (Node _ _ l r) = prop3 l && prop3 r
 prop3 Nil = True
  *)
+(*
 fun prop3 [k][v] (t: tree k v): bool =
     case t of
       Empty => True
@@ -442,6 +455,16 @@ fun prop3 [k][v] (t: tree k v): bool =
                            lvParent - lvRChild <= 1 && prop3 rc.Left && prop3 rc.Right
                      | _ => prop3 rc.Left && prop3 rc.Right
                      ) 
+*)
+fun prop3 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node {Left = l, Right = r, Level = lvParent, ...} =>
+          (case (r: tree k v) of
+             Empty => prop3 l (* r is Empty *)
+             | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1 &&
+                                               prop3 l && prop3 r
+             )
 
 (* AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
 * Haskell:
@@ -450,6 +473,7 @@ prop4 (Node _ _ l r) = prop4 l && prop4 r
 prop4 Nil = True
 *)
 
+(*
 fun prop4 [k][v] (t: tree k v): bool =
     case t of
       Empty => True
@@ -462,6 +486,17 @@ fun prop4 [k][v] (t: tree k v): bool =
                                         lvRGChild < lvParent && prop4 rc.Left && prop4 rc.Right
                       | _ => prop4 rc.Left && prop4 rc.Right
                       )
+*)
+
+fun prop4 [k][v] (t: tree k v): bool =
+    case t of
+      Empty => True
+      | Node {Left = l, Right = r, Level = lvParent, ...} =>
+          (case (r: tree k v) of
+             Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent &&
+                                                                  prop4 l && prop4 r
+             | _ => prop4 l && prop4 r
+             )
 
 (* AATree prop5: all nodes with level > 1 have two children
 * Haskell:
