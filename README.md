@@ -22,7 +22,7 @@ cd ../../..
 urweb aatree_test
 
 # execution
-./aatree_test.exe -p 8081    # -p <server port>
+./aatree_test.exe -p 8081 &   # -p <server port>
 
 browser localhost:8081/
 ```
