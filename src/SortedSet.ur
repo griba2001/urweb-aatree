@@ -4,7 +4,6 @@ structure M = Monad
 structure F = HFunction
 structure HL = HList
 structure HT = HTuple
-structure HC = HClasses
 open HFunction
 
 
