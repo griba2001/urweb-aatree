@@ -12,8 +12,8 @@ has been tested with QuickCheck and passes tests for all AATree properties
 ### to build it (because there is an FFI module)
 
 ```bash
-export C_INCLUDE_PATH=/your-path-to-urweb-installation/include
-export LIBRARY_PATH=/your-path-to-urweb-installation/lib
+export C_INCLUDE_PATH=/your-path-to-your-urweb-installation/include
+export LIBRARY_PATH=/your-path-to-your-urweb-installation/lib
 
 cd test/util/c
 gcc -c Random.c
