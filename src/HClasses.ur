@@ -36,7 +36,10 @@ val monoid_int: monoid int = mkMonoid 0
 val monoid_string: monoid string = mkMonoid ""
 val monoid_list [a]: monoid (list a) = mkMonoid []
 
-(* Foldable *)
+(* Foldable
+
+with the help of Adam Chlipala
+ *)
 
 structure Foldable : sig
      class foldable :: (Type -> Type) -> Type
