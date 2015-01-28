@@ -26,7 +26,7 @@ urweb aatree_test
 
 browser http://localhost:8081/
 
-# when done
+# when done, if the server has been started in background
 killall -TERM aatree_test.exe
 ```
 
