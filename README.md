@@ -20,4 +20,14 @@ gcc -c Random.c
 cd ../../..
 
 urweb aatree_test
+
+# execution
+./aatree_test.exe -p 8081    # -p &lt;server port&gt;
+
+browser localhost:8081/
 ```
+
+
+
+
+
