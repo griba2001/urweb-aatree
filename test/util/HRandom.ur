@@ -6,12 +6,12 @@ structure HM = HMonad
 fun rndToRange (from:int) (to:int) (rnd: int): int = mod (HN.abs rnd) (to - from) + from
 
 fun getRandomPosInt (from:int) (to:int): transaction int =
-    if not (from >= 0 && to >= from) then return (-1)
+    if not (from >= 0 && to >= from) then error <xml>getRandomPosInt: illegal values</xml>
     else
         rnd <- R.urandom () ;
         case rnd of
                 Some v => return (rndToRange from to v)
-                | None => return (-1)
+                | None => error <xml>getRandomPosInt: failure reading /dev/urandom</xml>
 
 fun nextp (from:int) (to:int) (cnt: int): transaction (option (option int * int)) =
     if cnt > 0 then optRnd <- R.urandom () ;
