@@ -24,7 +24,7 @@ urweb aatree_test
 # execution
 ./aatree_test.exe -p 8081 &   # -p <server port>
 
-browser localhost:8081/
+browser http://localhost:8081/
 ```
 
 
