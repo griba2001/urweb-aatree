@@ -13,4 +13,5 @@ test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HRandom
+test/AATree_UnitTest
 test/aatree_test

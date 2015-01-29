@@ -1,13 +1,7 @@
-structure T = AATree
-structure F = HFunction
-structure U = HUrUnit
-structure HS = HString
 structure HL = HList
-
-structure HM = HMonad
 structure HR = HRandom
-structure HT = HTuple
-structure HO = HOrd
+
+structure ATUT = AATree_UnitTest
 
 fun getTestData (): transaction (list (int * string)) =
     let fun f (i: int): int * string = (i, str1 (chr (i + 48)))
@@ -15,44 +9,15 @@ fun getTestData (): transaction (list (int * string)) =
        return (List.mp f (HL.nub li))
     end
 
-val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.toList T.fromList
-
-fun xmlTest1 (): transaction (xbody * list(int*string)) =
-        testdata <- getTestData () ;
-        let val keys: list int = List.mp HT.fst testdata
-            val expected : list(int*string) = List.sort (HO.gtBy HT.fst) testdata
-            val actual : list(int*string) = toFromList testdata
-            val treeData: T.tree int string = T.fromList testdata
-            val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
-            val treeWithdeletions: T.tree int string = List.foldl T.delete treeData keysToDel
-            val memberOf = F.flip T.member
-            val propDeletedAreNotMember: bool =
-                       List.all (F.compose not (memberOf treeWithdeletions)) keysToDel
-            val propNonDeletedAreMember: bool =
-                       List.all (memberOf treeWithdeletions) keysNotToDel
-        in   
-                tst0 <- U.assertEqual "test1:" expected actual ;
-                tst1 <- U.assertBool "prop1 fails" (T.prop1 treeData) ;
-                tst2 <- U.assertBool "prop2 fails" (T.prop2 treeData) ;
-                tst3 <- U.assertBool "prop3 fails" (T.prop3 treeData) ;
-                tst4 <- U.assertBool "prop4 fails" (T.prop4 treeData) ;
-                tst5 <- U.assertBool "prop5 fails" (T.prop5 treeData) ;
-                tst6 <- U.assertBool "propDeletedAreNotMember fails" propDeletedAreNotMember ; 
-                tst7 <- U.assertBool "propNonDeletedAreMember fails" propNonDeletedAreMember ;
-                let val testsResults = tst0 :: tst1 :: tst2 :: tst3 :: tst4 :: tst5 :: tst6 :: tst7 :: Nil
-                    val xmlJoinedResults = List.foldr join <xml/> testsResults
-                in return (xmlJoinedResults, testdata)
-                end  
-        end
-
 
 fun main () =
-        (test1, td1) <- xmlTest1 () ;
+        testdata <- getTestData () ;
+        (failedResults, listFromTree) <- ATUT.unitTest (testdata) ;
         return <xml>
-<body>Failed tests: {test1}<br/>
+<body>Failed tests: {failedResults}<br/>
 <p>
-         Data1       : {[td1]}<br/>
-         Through tree: {[toFromList td1]}<br/>
+         Data1       : {[testdata]}<br/>
+         Through tree: {[listFromTree]}<br/>
 </p>
 </body></xml>
 
