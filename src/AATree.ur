@@ -234,18 +234,7 @@ fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v):
               | EQ => setKeyAndValue k1 (f v1 v0) t
               )
 
-val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1
-
-fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
-    case t of
-        Empty => t
-        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-           (case compare k1 k0 of
-              LT => setLeft (adjust f k1 l) t
-              | GT => setRight (adjust f k1 r) t
-              | EQ => setValue (f v0) t
-              )
-
+val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1   
 
 (* Haskell
 minimum (Node x _ Empty _) = x
@@ -383,6 +372,20 @@ val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (look
 fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
     foldr (compose delete fst) t1 t2
 
+fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
+    case t of
+        Empty => t
+        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
+              LT => setLeft (adjust' f k1 l) t
+              | GT => setRight (adjust' f k1 r) t
+              | EQ => setValue (f v0) t
+              )
+
+fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
+    if member k1 t
+       then adjust' f k1 t
+       else t
 
 
 (* AATree prop1: Leaf nodes have level 1
