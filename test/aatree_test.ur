@@ -14,10 +14,11 @@ fun main () =
         testdata <- getTestData () ;
         (failedResults, listFromTree) <- ATUT.unitTest (testdata) ;
         return <xml>
-<body>Failed tests: {failedResults}<br/>
+<body><br/>
 <p>
          Data1       : {[testdata]}<br/>
          Through tree: {[listFromTree]}<br/>
 </p>
+<p>Failed tests: <br/> {failedResults}</p>
 </body></xml>
 
