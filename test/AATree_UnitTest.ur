@@ -23,7 +23,7 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
             val propNonDeletedAreMember: bool =
                        List.all (memberOf treeWithdeletions) keysNotToDel
         in
-                tst0 <- U.assertEqual "test1:" sortedInput inputFromTree ;
+                tst0 <- U.assertEqual "through Tree conversion fails: " sortedInput inputFromTree ;
                 tst1 <- U.assertBool "prop1 fails" (T.prop1 treeData) ;
                 tst2 <- U.assertBool "prop2 fails" (T.prop2 treeData) ;
                 tst3 <- U.assertBool "prop3 fails" (T.prop3 treeData) ;
