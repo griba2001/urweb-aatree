@@ -55,11 +55,11 @@ val show_dict = fn [k][v] (_ : show (k * v)) =>
 
 val mapValues [k][v][w] (f: v -> w) (d1: dict k v): dict k w =
 
-    AATree.mapValues f d1
+      AATree.mapValues f d1
 
 val mapKeysMonotonic [k][v][k'] (f: k -> k') (d1: dict k v): dict k' v =
 
-    AATree.mapKeysMonotonic f d1
+      AATree.mapKeysMonotonic f d1
 
 fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (d1: dict k v): b = AATree.foldr op acc d1
 
@@ -69,10 +69,12 @@ fun partition [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v * dict k v
 
 val union [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.union
 
-fun unionWith [k][v] (_: ord k)(f: v -> v -> v) (d1: dict k v) (d2: dict k v): dict k v = foldr (HT.uncurry (insertWith f)) d2 d1
+fun unionWith [k][v] (_: ord k)(f: v -> v -> v) (d1: dict k v) (d2: dict k v): dict k v =
+
+      foldr (HT.uncurry (insertWith f)) d2 d1
 
 val difference [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.difference
 
 fun deleteAll [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
 
-    List.foldl delete d1 ks
+      List.foldl delete d1 ks
