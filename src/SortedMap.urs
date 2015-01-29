@@ -14,6 +14,8 @@ val size : k ::: Type -> v ::: Type -> dict k v -> int
 
 val insert : k ::: Type -> v ::: Type -> ord k -> k -> v -> dict k v -> dict k v
 
+val insertWith : k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> k -> v -> dict k v -> dict k v
+
 val adjust: k ::: Type -> v ::: Type -> ord k -> (v -> v) -> k -> dict k v -> dict k v
 
 val delete : k ::: Type -> v ::: Type -> ord k -> k -> dict k v -> dict k v
@@ -39,6 +41,8 @@ val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dic
 val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v * dict k v
 
 val union : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
+
+val difference : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 
 val unionWith : k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> dict k v -> dict k v -> dict k v
 
