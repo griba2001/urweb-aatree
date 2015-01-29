@@ -241,10 +241,11 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
         Empty => t
         | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
-              LT => split (skew (setLeft (adjust f k1 l) t))
-              | GT => split (skew (setRight (adjust f k1 r) t))
+              LT => setLeft (adjust f k1 l) t
+              | GT => setRight (adjust f k1 r) t
               | EQ => setValue (f v0) t
               )
+
 
 (* Haskell
 minimum (Node x _ Empty _) = x
