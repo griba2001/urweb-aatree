@@ -9,6 +9,7 @@ $/list
 $/string
 $/option
 $/monad
+test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HRandom

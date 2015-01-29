@@ -3,7 +3,6 @@ $/string
 $/option
 $/monad
 src/util/HFunction
-src/util/HNum
 src/util/HList
 src/util/HString
 src/util/HOrd
