@@ -30,6 +30,8 @@ browser http://localhost:8081/
 killall -TERM aatree_test.exe
 ```
 
+Repeating page retrieval makes the test use different input random data.
+
 
 
 
