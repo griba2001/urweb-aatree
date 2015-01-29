@@ -2,7 +2,7 @@
 
 based on AATree [(wikipedia version)](https://en.wikipedia.org/wiki/AA_tree).
 
-with tests on inserts, deletes, membership and AATree properties,
+with tests on inserts, membership after deletes, and AATree properties.
 
 with ramdom list generator based on reading system /dev/urandom.
 
