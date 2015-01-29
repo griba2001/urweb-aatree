@@ -72,6 +72,12 @@ fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) = AATr
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
-fun difference [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
+fun difference [a] (_: ord a): (set a -> set a -> set a) = foldr delete
 
-fun intersection [a] (_: ord a): (set a -> set a -> set a) = AATree.intersection
+fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
+   let 
+       fun insertIfMemberOf (s: set a) (x: a) (acc: set a): set a =
+             if member x s then insert x acc else acc
+
+   in foldr (insertIfMemberOf s1) empty s2
+   end
