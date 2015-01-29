@@ -81,3 +81,5 @@ fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
 
    in foldr (insertIfMemberOf s1) empty s2
    end
+
+val mapMonotonic [a][b]: (a -> b) -> set a -> set b = AATree.mapKeysMonotonic 
