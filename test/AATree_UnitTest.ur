@@ -12,8 +12,8 @@ val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.
 fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * string)) =
 
         let val keys: list int = List.mp HT.fst testdata
-            val expected : list(int*string) = List.sort (HO.gtBy HT.fst) testdata
-            val actual : list(int*string) = toFromList testdata
+            val sortedInput : list (int * string) = List.sort (HO.gtBy HT.fst) testdata
+            val inputFromTree : list (int * string) = toFromList testdata
             val treeData: T.tree int string = T.fromList testdata
             val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
             val treeWithdeletions: T.tree int string = List.foldl T.delete treeData keysToDel
@@ -23,7 +23,7 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
             val propNonDeletedAreMember: bool =
                        List.all (memberOf treeWithdeletions) keysNotToDel
         in
-                tst0 <- U.assertEqual "test1:" expected actual ;
+                tst0 <- U.assertEqual "test1:" sortedInput inputFromTree ;
                 tst1 <- U.assertBool "prop1 fails" (T.prop1 treeData) ;
                 tst2 <- U.assertBool "prop2 fails" (T.prop2 treeData) ;
                 tst3 <- U.assertBool "prop3 fails" (T.prop3 treeData) ;
@@ -33,6 +33,6 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
                 tst7 <- U.assertBool "propNonDeletedAreMember fails" propNonDeletedAreMember ;
                 let val testsResults = tst0 :: tst1 :: tst2 :: tst3 :: tst4 :: tst5 :: tst6 :: tst7 :: Nil
                     val xmlJoinedResults = List.foldr join <xml/> testsResults
-                in return (xmlJoinedResults, actual)
+                in return (xmlJoinedResults, inputFromTree)
                 end
         end
