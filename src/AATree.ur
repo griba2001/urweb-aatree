@@ -379,19 +379,10 @@ fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (unc
 
 val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (lookup k1)
 
-(*
 fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
-    let
-        fun delete' (p: k * v): (tree k v -> tree k v) = delete p.1
-    in foldr delete' t1 t2
-    end
+    foldr (compose delete fst) t1 t2
 
-fun intersection [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
-    let
-        fun memberOf (t: tree k v): (k * v -> bool) = compose (flip member t) fst 
-    in filterFoldr (memberOf t1) (uncurry insert) empty t2
-    end
-*)
+
 
 (* AATree prop1: Leaf nodes have level 1
 * Haskell code: 
