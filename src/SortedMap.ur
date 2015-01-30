@@ -89,10 +89,10 @@ fun partition [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v) : dict k v * di
     end
 
 fun partitionWithKey [k][v] (_: ord k) (prop: k -> v -> bool) (d1: dict k v) : dict k v * dict k v =
-    let fun prop' (p: k * v): bool = prop p.1 p.2
-        fun op (kv: k * v) (pt: dict k v * dict k v): dict k v * dict k v =
-                          if prop' kv then (uncurry insert kv pt.1, pt.2)
-                          else (pt.1, uncurry insert kv pt.2)
+    let fun op (kv: k * v) (pt: dict k v * dict k v): dict k v * dict k v =
+               if uncurry prop kv
+                   then (uncurry insert kv pt.1, pt.2)
+                   else (pt.1, uncurry insert kv pt.2)
     in foldr op (empty, empty) d1
     end
 
