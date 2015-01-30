@@ -76,10 +76,9 @@ fun filter [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v): dict k v =
       end
 
 fun filterWithKey [k][v] (_: ord k) (prop: k -> v -> bool) (d1: dict k v): dict k v =
-      let fun prop' (p: k * v): bool = prop p.1 p.2
-      in
-         filterFoldr prop' (uncurry insert) empty d1
-      end
+
+      filterFoldr (uncurry prop) (uncurry insert) empty d1
+
 
 fun partition [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v) : dict k v * dict k v =
     let fun prop' (p: k * v): bool = prop p.2
