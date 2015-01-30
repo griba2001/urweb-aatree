@@ -89,9 +89,9 @@ fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) =
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
-fun difference [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
+fun diff [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
 
-fun intersection [a] (_: ord a) (s1: set a) (s2: set a): set a =
+fun intersect [a] (_: ord a) (s1: set a) (s2: set a): set a =
    let
       val memberOf = flip member
    in

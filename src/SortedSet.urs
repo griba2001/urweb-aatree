@@ -36,8 +36,8 @@ val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
 
 val union: a ::: Type -> ord a -> set a -> set a -> set a
 
-val difference: a ::: Type -> ord a -> set a -> set a -> set a
+val diff: a ::: Type -> ord a -> set a -> set a -> set a
 
-val intersection: a ::: Type -> ord a -> set a -> set a -> set a
+val intersect: a ::: Type -> ord a -> set a -> set a -> set a
 
 val mapMonotonic : a ::: Type -> b ::: Type -> (a -> b) -> set a -> set b

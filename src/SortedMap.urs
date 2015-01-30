@@ -48,7 +48,7 @@ val partitionWithKey : k ::: Type -> v ::: Type -> ord k -> (k -> v -> bool) -> 
 
 val union : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 
-val difference : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
+val diff : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 
 val unionWith : k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> dict k v -> dict k v -> dict k v
 
