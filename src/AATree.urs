@@ -29,10 +29,6 @@ val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> t
 
 val filterFoldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> bool) -> (k * v -> b -> b) -> b -> tree k v -> b
 
-val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> tree k v -> tree k v
-
-val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> tree k v -> tree k v * tree k v
-
 val toList : k ::: Type -> v ::: Type -> tree k v -> list (k * v)
 
 val fromList : k ::: Type -> v ::: Type -> ord k -> list (k * v) -> tree k v

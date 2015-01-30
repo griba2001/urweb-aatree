@@ -74,9 +74,18 @@ fun filterFoldr [a][b] (prop: a -> bool) (myop: a -> b -> b) (acc: b) : (set a -
     in foldr myop' acc
     end
 
-fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = AATree.filter prop
+fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = (* AATree.filter prop *)
 
-fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) = AATree.partition prop
+      filterFoldr prop insert empty
+
+fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) =  (* AATree.partition prop *)
+    let
+        fun myop (x: a) (pair: set a * set a): set a * set a =
+                          if prop x then (insert x pair.1, pair.2)
+                          else (pair.1, insert x pair.2)
+    in
+        foldr myop (empty, empty)
+    end
 
 val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
 
