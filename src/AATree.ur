@@ -222,7 +222,7 @@ fun decreaseLevel [k][v] (t: tree k v): tree k v =
 (* Haskell
 rebalance = decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
 *)
-val rebalance [k][v] : (tree k v -> tree k v) =
+val rebalance [k][v] : (tree k v -> tree k v) = (* with left to right function composition *)
     andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight))))
 
 
