@@ -97,4 +97,6 @@ fun intersect [a] (_: ord a) (s1: set a) (s2: set a): set a =
       filterFoldr (memberOf s1) insert empty s2
    end
 
+fun mp [a][b] (_: ord b) (f: a -> b): set a -> set b = andThen toList (andThen (List.mp f) fromList)
+
 val mapMonotonic [a][b]: (a -> b) -> set a -> set b = AATree.mapKeysMonotonic 
