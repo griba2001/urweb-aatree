@@ -36,9 +36,15 @@ val findMax : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
 
 val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> dict k v -> b
 
-val filter : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v
+val filterFoldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> bool) -> (k * v -> b -> b) -> b -> dict k v -> b
 
-val partition : k ::: Type -> v ::: Type -> ord k -> (k -> bool) -> dict k v -> dict k v * dict k v
+val filter : k ::: Type -> v ::: Type -> ord k -> (v -> bool) -> dict k v -> dict k v
+
+val filterWithKey : k ::: Type -> v ::: Type -> ord k -> (k -> v -> bool) -> dict k v -> dict k v
+
+val partition : k ::: Type -> v ::: Type -> ord k -> (v -> bool) -> dict k v -> dict k v * dict k v
+
+val partitionWithKey : k ::: Type -> v ::: Type -> ord k -> (k -> v -> bool) -> dict k v -> dict k v * dict k v
 
 val union : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 

@@ -1,6 +1,6 @@
 structure HS = HString
 structure HL = HList
-structure HT = HTuple
+open HTuple
 open HFunction
 
 con dict k v = AATree.tree k v
@@ -61,17 +61,47 @@ val mapKeysMonotonic [k][v][k'] (f: k -> k') (d1: dict k v): dict k' v =
 
       AATree.mapKeysMonotonic f d1
 
-fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (d1: dict k v): b = AATree.foldr op acc d1
+fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (d1: dict k v): b =
 
-fun filter [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v) = AATree.filter
+      AATree.foldr op acc d1
 
-fun partition [k][v] (_: ord k): ((k -> bool) -> dict k v -> dict k v * dict k v) = AATree.partition
+fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (d1: dict k v): b =
+
+      AATree.filterFoldr prop op acc d1
+
+fun filter [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v): dict k v =
+      let fun prop' (p: k * v): bool = prop p.2
+      in 
+         filterFoldr prop' (uncurry insert) empty d1
+      end
+
+fun filterWithKey [k][v] (_: ord k) (prop: k -> v -> bool) (d1: dict k v): dict k v =
+      let fun prop' (p: k * v): bool = prop p.1 p.2
+      in
+         filterFoldr prop' (uncurry insert) empty d1
+      end
+
+fun partition [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v) : dict k v * dict k v =
+    let fun prop' (p: k * v): bool = prop p.2
+        fun op (kv: k * v) (pt: dict k v * dict k v): dict k v * dict k v =
+                          if prop' kv then (uncurry insert kv pt.1, pt.2)
+                          else (pt.1, uncurry insert kv pt.2)
+    in foldr op (empty, empty) d1
+    end
+
+fun partitionWithKey [k][v] (_: ord k) (prop: k -> v -> bool) (d1: dict k v) : dict k v * dict k v =
+    let fun prop' (p: k * v): bool = prop p.1 p.2
+        fun op (kv: k * v) (pt: dict k v * dict k v): dict k v * dict k v =
+                          if prop' kv then (uncurry insert kv pt.1, pt.2)
+                          else (pt.1, uncurry insert kv pt.2)
+    in foldr op (empty, empty) d1
+    end
 
 val union [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.union
 
 fun unionWith [k][v] (_: ord k)(f: v -> v -> v) (d1: dict k v) (d2: dict k v): dict k v =
 
-      foldr (HT.uncurry (insertWith f)) d2 d1
+      foldr (uncurry (insertWith f)) d2 d1
 
 val difference [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.difference
 
