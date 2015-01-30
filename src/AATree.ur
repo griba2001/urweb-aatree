@@ -138,8 +138,12 @@ splitRight (Node x lv l r) = Node x lv l (split r)
 
 fun splitRight [k][v] (t: tree k v): tree k v =
     case t of
-        Empty => Empty
-        | Node {Right = r, ...} => setRight (split r) t
+        Empty => t
+        | Node {Right = r, ...} =>
+           (case r of
+             Empty => t
+             | _ => setRight (split r) t
+             )
 
 (* Haskell
 skewRight Empty = Empty
@@ -148,8 +152,12 @@ skewRight (Node x lv l r) = Node x lv l (skew r)
 
 fun skewRight [k][v] (t: tree k v): tree k v =
     case t of
-        Empty => Empty
-        | Node {Right = r, ...} => setRight (skew r) t
+        Empty => t
+        | Node {Right = r, ...} =>
+           (case r of
+              Empty => t
+              | _ => setRight (skew r) t
+              )
 
 (* Haskell
 skewRightRight (Node x lv l (Node x' lv' l' r')) = Node x lv l (Node x' lv' l' (skew r'))
@@ -161,9 +169,13 @@ fun skewRightRight [k][v] (t: tree k v): tree k v =
         Empty => Empty
         | Node {Right = r, ...} =>
           (case r of
-             Node {Right = s, ...} => let val r' : tree k v = setRight (skew s) r
-                                          val t' : tree k v = setRight r' t
-                                      in t' end
+             Node {Right = s, ...} =>
+               (case s of
+                  Empty => t
+                  | _ => let val r' : tree k v = setRight (skew s) r
+                         in setRight r' t
+                         end
+                  )
              | _ => t)
     | _ => t
 
