@@ -373,12 +373,7 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
                                Right = mapKeysMonotonic f rc.Right})
          | Empty => Empty
 
-fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (uncurry insert) t2 t1
-
 val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (lookup k1)
-
-fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
-    foldr (compose delete fst) t1 t2
 
 fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
     case t of
@@ -395,16 +390,15 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
        then adjust' f k1 t
        else t
 
-fun keys [k][v] (t: tree k v) = List.mp fst (toList t)
 
-fun values [k][v] (t: tree k v) = List.mp snd (toList t)
-
+(*
 fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
     let
         fun myop (pair: k * v) (b: bool): bool = b && prop pair.1
     in
       foldr myop True t
     end
+*)
 
 (* BST property worth checking after MapKeysMonotonic:
        all nodes on the left branch have lesser key values,

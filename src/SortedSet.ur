@@ -86,9 +86,9 @@ fun partition [a] (_: ord a) (prop: a -> bool) : (set a -> set a * set a) =
         foldr myop (empty, empty)
     end
 
-val union [a] (_: ord a): (set a -> set a -> set a) = AATree.union
+fun union [a] (_: ord a) (s1: set a) (s2: set a): set a = foldr insert s2 s1
 
-fun diff [a] (_: ord a): (set a -> set a -> set a) = AATree.difference
+fun diff [a] (_: ord a) (s1: set a) (s2: set a): set a = foldr delete s1 s2
 
 fun intersect [a] (_: ord a) (s1: set a) (s2: set a): set a =
    let

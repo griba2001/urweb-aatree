@@ -96,18 +96,34 @@ fun partitionWithKey [k][v] (_: ord k) (prop: k -> v -> bool) (d1: dict k v) : d
     in foldr op (empty, empty) d1
     end
 
-val union [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.union
+fun union [k][v] (_: ord k) (d1: dict k v) (d2: dict k v): dict k v = foldr (uncurry insert) d2 d1
 
 fun unionWith [k][v] (_: ord k)(f: v -> v -> v) (d1: dict k v) (d2: dict k v): dict k v =
 
       foldr (uncurry (insertWith f)) d2 d1
 
-val diff [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.difference
+fun diff [k][v] (_: ord k) (d1: dict k v) (d2: dict k v): dict k v = foldr (compose delete fst) d1 d2
 
 fun deleteAll [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
 
       List.foldl delete d1 ks
 
-val keys [k][v]: dict k v -> list k = AATree.keys
+fun keys [k][v] (d1: dict k v): list k = List.mp fst (toList d1)
 
-val values [k][v]: dict k v -> list v = AATree.values
+val values [k][v] (d1: dict k v): list v = List.mp snd (toList d1)
+
+(*
+fun all [k][v] (prop: k * v -> bool) (t: tree k v) =
+    let
+        fun myop (pair: k * v) (b: bool): bool = b && prop pair
+    in
+      foldr myop True t
+    end
+
+fun any [k][v] (prop: k * v -> bool) (t: tree k v) =
+    let
+        fun myop (pair: k * v) (b: bool): bool = b || prop pair
+    in
+      foldr myop False t
+    end
+*)

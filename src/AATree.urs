@@ -41,14 +41,6 @@ val findMin : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 
 val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 
-val union : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
-
-val difference : k ::: Type -> v ::: Type -> ord k -> tree k v -> tree k v -> tree k v
-
-val keys : k ::: Type -> v ::: Type -> tree k v -> list k
-
-val values : k ::: Type -> v ::: Type -> tree k v -> list v
-
 (* invariants *)
 
 val propBST : k ::: Type -> v ::: Type -> ord k -> tree k v -> bool
