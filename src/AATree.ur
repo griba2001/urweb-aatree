@@ -388,7 +388,7 @@ fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
               | GT => setRight (adjust' f k1 r) t
               | EQ => setValue (f v0) t
               )
-        | Empty => t (* case unreached if key membership is filtered *)
+        | Empty => t (* case unreached if key non-membership is filtered *)
 
 fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
     if member k1 t
@@ -398,6 +398,13 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
 fun keys [k][v] (t: tree k v) = List.mp fst (toList t)
 
 fun values [k][v] (t: tree k v) = List.mp snd (toList t)
+
+fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
+    let
+        fun myop (pair: k * v) (b: bool): bool = b && prop pair.1
+    in
+      foldr myop True t
+    end
 
 (* BST property worth checking after MapKeysMonotonic:
        all nodes on the left branch have lesser values,
@@ -410,8 +417,8 @@ prop0 (Node x _ l r) = L.all (< x) (toList l) &&
 *)
 fun propBST [k][v] (_: ord k) (t: tree k v): bool =
     case t of
-      Node {Key = k0, Left = l, Right = r, ...} => List.all (gt k0) (keys l) &&
-                                                   List.all (lt k0) (keys r) &&
+      Node {Key = k0, Left = l, Right = r, ...} => allKeys (gt k0) l &&
+                                                   allKeys (lt k0) r &&
                                                    propBST l && propBST r
       | Empty => True
 

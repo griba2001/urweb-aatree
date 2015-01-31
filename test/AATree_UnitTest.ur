@@ -31,7 +31,8 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
                 tst5 <- U.assertBool "prop5 fails" (T.prop5 treeData) ;
                 tst6 <- U.assertBool "propDeletedAreNotMember fails" propDeletedAreNotMember ;
                 tst7 <- U.assertBool "propNonDeletedAreMember fails" propNonDeletedAreMember ;
-                let val testsResults = tst0 :: tst1 :: tst2 :: tst3 :: tst4 :: tst5 :: tst6 :: tst7 :: Nil
+                tst8 <- U.assertBool "propBST fails" (T.propBST treeData) ;
+                let val testsResults = tst0 :: tst1 :: tst2 :: tst3 :: tst4 :: tst5 :: tst6 :: tst7 :: tst8 :: Nil
                     val xmlJoinedResults = List.foldr join <xml/> testsResults
                 in return (xmlJoinedResults, inputFromTree)
                 end
