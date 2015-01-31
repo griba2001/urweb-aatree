@@ -17,10 +17,10 @@ val eq_tree = fn [k][v] (_ : eq k) (_ : eq v) =>
         let
                 fun eq' (t1: tree k v) (t2: tree k v) =
                    case (t1, t2) of
-                        (Empty, Empty) => True
                         | (Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...},
                            Node {Key = k2, Value = v2, Left = lt2, Right = rt2, ...}) =>
                                   k1 = k2 && v1 = v2 && eq' lt1 lt2 && eq' rt1 rt2
+                        | (Empty, Empty) => True
                         | _ => False
         in mkEq eq'
         end
@@ -29,9 +29,9 @@ val show_tree = fn [k][v] (_ : show k) (_ : show v) =>
         let
            fun show' (t: tree k v): string =
               case t of
-                Empty => "Empty"
                 | Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...} =>
                     HS.concat ("[" :: show' lt1 :: "," :: show (k1, v1) :: "," :: show' rt1 :: "]" :: [])
+                | Empty => "Empty"
         in mkShow show'
         end        
                 
@@ -70,8 +70,8 @@ fun setRight [k][v] (v1: tree k v) (t: tree k v) : tree k v =
 
 fun getLevel [k][v] (t: tree k v) : int =
    case t of
-     Empty => 0
      | Node {Level = lvl, ...} => lvl
+     | Empty => 0
 
 val empty [k][v] : tree k v = Empty
 
@@ -84,8 +84,8 @@ fun singleton [k][v] (k1: k) (v1: v): tree k v = Node {Key = k1, Value = v1, Lev
 
 fun size [k][v] (t: tree k v) : int =
     case t of
-     Empty => 0
      | Node {Left = l, Right = r, ...} => 1 + size l + size r
+     | Empty => 0
 
 (* skew: right rotation *)
 fun skew [k][v] (t: tree k v) : tree k v =
@@ -138,12 +138,12 @@ splitRight (Node x lv l r) = Node x lv l (split r)
 
 fun splitRight [k][v] (t: tree k v): tree k v =
     case t of
-        Empty => t
         | Node {Right = r, ...} =>
            (case r of
-             Empty => t
-             | _ => setRight (split r) t
+             | Node {...} => setRight (split r) t
+             | Empty => t
              )
+        | Empty => t
 
 (* Haskell
 skewRight Empty = Empty
@@ -152,12 +152,12 @@ skewRight (Node x lv l r) = Node x lv l (skew r)
 
 fun skewRight [k][v] (t: tree k v): tree k v =
     case t of
-        Empty => t
-        | Node {Right = r, ...} =>
+        Node {Right = r, ...} =>
            (case r of
-              Empty => t
-              | _ => setRight (skew r) t
+              Node {...} => setRight (skew r) t
+              | Empty => t
               )
+        | Empty => t
 
 (* Haskell
 skewRightRight (Node x lv l (Node x' lv' l' r')) = Node x lv l (Node x' lv' l' (skew r'))
@@ -166,18 +166,18 @@ skewRightRight t = t
 
 fun skewRightRight [k][v] (t: tree k v): tree k v =
     case t of
-        Empty => Empty
-        | Node {Right = r, ...} =>
+        Node {Right = r, ...} =>
           (case r of
              Node {Right = s, ...} =>
                (case s of
-                  Empty => t
-                  | _ => let val r' : tree k v = setRight (skew s) r
-                         in setRight r' t
-                         end
+                  Node {...} => let val r' : tree k v = setRight (skew s) r
+                                  in setRight r' t
+                                  end
+                  | Empty => t
                   )
-             | _ => t)
-    | _ => t
+             | _ => t
+             )
+       | _ => t
 
 (* Haskell
 
@@ -200,15 +200,9 @@ decreaseLevel t @ (Node _ lvP l r @ (Node _ lvR _ _))
 
 fun decreaseLevel [k][v] (t: tree k v): tree k v =
     case t of
-      Empty => Empty
-      | Node {Level = lvP, Left = l, Right = r, ...} =>
-          case r of
-            Empty => let val should_be = 1 + getLevel l
-                     in if lvP > should_be
-                           then setLevel should_be t
-                           else t
-                     end
-            | Node {Level = lvR, ...} =>
+      Node {Level = lvP, Left = l, Right = r, ...} =>
+          (case r of
+            Node {Level = lvR, ...} =>
                      let val should_be = 1 + min (getLevel l) (getLevel r)
                      in if lvP > should_be
                         then let val r' : tree k v = if lvR > should_be
@@ -217,7 +211,14 @@ fun decreaseLevel [k][v] (t: tree k v): tree k v =
                                 in setRight r' (setLevel should_be t)
                                 end
                         else t
-                     end 
+                     end
+            | Empty => let val should_be = 1 + getLevel l
+                     in if lvP > should_be
+                           then setLevel should_be t
+                           else t
+                     end
+            )  
+      | Empty => Empty
 
 (* Haskell
 rebalance = decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
@@ -238,13 +239,13 @@ insert x (Node y lv l r) = case compare x y of
 
 fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v): tree k v =
     case t of
-        Empty => singleton k1 v1
-        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
               LT => split (skew (setLeft (insertWith f k1 v1 l) t))
               | GT => split (skew (setRight (insertWith f k1 v1 r) t))
               | EQ => setKeyAndValue k1 (f v1 v0) t
               )
+        | Empty => singleton k1 v1
 
 val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1   
 
@@ -301,9 +302,8 @@ delete x t @ (Node y lv l r) = case compare x y of
 
 fun delete [k][v] (_: ord k) (k1: k) (t: tree k v): tree k v =
     case t of
-        Empty => Empty
-        | Node {Key = k0, Left = l, Right = r, ...} =>
-           case compare k1 k0 of
+        Node {Key = k0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
               LT => rebalance (setLeft (delete k1 l) t)
               | GT => rebalance (setRight (delete k1 r) t)
               | EQ => (case (l, r) of
@@ -315,25 +315,27 @@ fun delete [k][v] (_: ord k) (k1: k) (t: tree k v): tree k v =
                                    in rebalance (setKeyAndValue predK predV (setLeft (delete predK l) t))
                                    end
                          )
+              )
+        | Empty => Empty
 
 fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
     case t of
-        Empty => None
-        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
             (case compare k1 k0 of
                 EQ => Some v0
                 | LT => lookup k1 l
                 | GT => lookup k1 r
                 ) 
+        | Empty => None
 
 fun foldr' [k][v][b] (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
     case t of
-      Empty => acc
-      | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+      Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
           (case (l: tree k v, r: tree k v) of
                 (Empty, Empty) => op (k0, v0)  acc
                 | _ =>  foldr' op l (op (k0, v0) (foldr' op r acc))
                 )
+      | Empty => acc
 
 fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (t: tree k v): b =
     let fun op' (pair: k * v) (acc: b): b =
@@ -351,17 +353,19 @@ fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncur
 
 fun mapValues [k][v][w] (f: v -> w) (t: tree k v): tree k w =
        case t of
-         Empty => Empty
-         | Node rc => Node (rc -- #Value -- #Left -- #Right ++ {Value = f rc.Value,
-                                                                Left = mapValues f rc.Left,
-                                                                Right = mapValues f rc.Right})
+         Node rc => Node (rc -- #Value -- #Left -- #Right ++
+                               {Value = f rc.Value,
+                               Left = mapValues f rc.Left,
+                               Right = mapValues f rc.Right})
+         | Empty => Empty
 
 fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
        case t of
-         Empty => Empty
-         | Node rc => Node (rc -- #Key -- #Left -- #Right ++ {Key = f rc.Key,
-                                                                Left = mapKeysMonotonic f rc.Left,
-                                                                Right = mapKeysMonotonic f rc.Right})
+         Node rc => Node (rc -- #Key -- #Left -- #Right ++
+                               {Key = f rc.Key,
+                               Left = mapKeysMonotonic f rc.Left,
+                               Right = mapKeysMonotonic f rc.Right})
+         | Empty => Empty
 
 fun union [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v = foldr (uncurry insert) t2 t1
 
@@ -372,13 +376,13 @@ fun difference [k][v] (_: ord k) (t1: tree k v) (t2: tree k v): tree k v =
 
 fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
     case t of
-        Empty => t
-        | Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
               LT => setLeft (adjust' f k1 l) t
               | GT => setRight (adjust' f k1 r) t
               | EQ => setValue (f v0) t
               )
+        | Empty => t (* case unreached if key membership is filtered *)
 
 fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
     if member k1 t
@@ -395,9 +399,9 @@ prop1 Nil = True
 
 fun prop1 [k][v] (t: tree k v): bool =
     case t of
-      Empty => True
       | Node {Left = Empty, Right = Empty, Level = lvl, ...} => lvl = 1
       | Node {Left = l, Right = r, ...} => prop1 l && prop1 r
+      | Empty => True
 
 (* AATree prop2: if there is a left child, the level of the parent is one greater than the left child's one
 * Haskell code:
@@ -409,13 +413,13 @@ prop2 Nil = True
 
 fun prop2 [k][v] (t: tree k v): bool =
     case t of
-      Empty => True
       | Node {Left = l, Right = r, Level = lvParent, ...} =>
           (case (l: tree k v) of
              Empty => prop2 r  (* l is Empty *)
              | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild &&
                                                prop2 l && prop2 r
              )
+      | Empty => True
 
 (* AATree prop3: if there is a right child, the level of the parent is 0 or 1 more than the level of the right child
 * Haskell code:
@@ -426,13 +430,13 @@ prop3 Nil = True
 
 fun prop3 [k][v] (t: tree k v): bool =
     case t of
-      Empty => True
       | Node {Left = l, Right = r, Level = lvParent, ...} =>
           (case (r: tree k v) of
              Empty => prop3 l (* r is Empty *)
              | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1 &&
                                                prop3 l && prop3 r
              )
+      | Empty => True
 
 (* AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
 * Haskell:
@@ -443,13 +447,13 @@ prop4 Nil = True
 
 fun prop4 [k][v] (t: tree k v): bool =
     case t of
-      Empty => True
       | Node {Left = l, Right = r, Level = lvParent, ...} =>
           (case (r: tree k v) of
              Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent &&
                                                                   prop4 l && prop4 r
              | _ => prop4 l && prop4 r
              )
+      | Empty => True
 
 (* AATree prop5: all nodes with level > 1 have two children
 * Haskell:
@@ -461,8 +465,8 @@ prop5 Nil = True
 
 fun prop5 [k][v] (t: tree k v): bool =
     case t of
-      Empty => True
       | Node {Level = lvl, Left = l, Right = r, ...} =>
              if lvl > 1
                 then not (null l) && not (null r) && prop5 l && prop5 r
                 else prop5 l && prop5 r
+      | Empty => True
