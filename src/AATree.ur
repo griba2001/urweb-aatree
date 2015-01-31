@@ -407,8 +407,8 @@ fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
     end
 
 (* BST property worth checking after MapKeysMonotonic:
-       all nodes on the left branch have lesser values,
-       all nodes on the right branch have greater values,
+       all nodes on the left branch have lesser key values,
+       all nodes on the right branch have greater key values,
 *)
 fun propBST' [k][v] (_: ord k) (t: tree k v): (bool * k * k) = (* returns (propHolds, minKey, maxKey) *)
     case t of
