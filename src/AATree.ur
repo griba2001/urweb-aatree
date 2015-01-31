@@ -416,7 +416,7 @@ fun propBST [k][v] (_: ord k) (t: tree k v): bool =
           (case (l: tree k v, r: tree k v) of
              | (Empty, Empty) => True
              | (Empty, Node {Key = kr, ...}) => k0 < kr && propBST r
-             | (Node {Key = kl, ...}, Empty) => k0 < kl && propBST l
+             | (Node {Key = kl, ...}, Empty) => kl < k0 && propBST l
              | (Node {Key = kl, ...}, Node {Key = kr, ...}) => kl < k0 && k0 < kr && propBST l && propBST r
              )
       | Empty => True
