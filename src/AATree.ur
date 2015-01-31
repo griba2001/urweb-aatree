@@ -410,16 +410,41 @@ fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
        all nodes on the left branch have lesser values,
        all nodes on the right branch have greater values,
 *)
-fun propBST [k][v] (_: ord k) (t: tree k v): bool =
+fun propBST' [k][v] (_: ord k) (t: tree k v): (bool * k * k) = (* returns (propHolds, minKey, maxKey) *)
     case t of
+      | Empty => error <xml>propBST': empty tree</xml>
       | Node {Key = k0, Left = l, Right = r, ...} =>
           (case (l: tree k v, r: tree k v) of
-             | (Empty, Empty) => True
-             | (Empty, Node {...}) => k0 < fst (minimum r) && propBST r
-             | (Node {Key = kl, ...}, Empty) => fst (maximum l) < k0 && propBST l
-             | (Node {Key = kl, ...}, Node {Key = kr, ...}) => fst (maximum l) < k0 && k0 < fst (minimum r) && propBST l && propBST r
+             | (Empty, Empty) => (True, k0, k0)
+             | (Empty, Node {...}) => let val (propR, minR, maxR) = propBST' r
+                                          val holdsThis = propR && k0 < minR
+                                          val minThis = min k0 minR
+                                          val maxThis = max k0 maxR
+                                      in (holdsThis, minThis, maxThis)
+                                      end 
+             | (Node {...}, Empty) =>
+                                      let val (propL, minL, maxL) = propBST' l
+                                          val holdsThis = propL && k0 > maxL
+                                          val minThis = min k0 minL
+                                          val maxThis = max k0 maxL
+                                      in (holdsThis, minThis, maxThis)
+                                      end 
+             | (Node {...}, Node {...}) =>
+                                      let val (propR, minR, maxR) = propBST' r
+                                          val (propL, minL, maxL) = propBST' l
+                                          val holdsThis = propL && propR && k0 > maxL && k0 < minR
+                                          val minThis = min k0 (min minL minR)
+                                          val maxThis = max k0 (max maxL maxR)
+                                      in (holdsThis, minThis, maxThis)
+                                      end
              )
+
+fun propBST [k][v] (_: ord k) (t: tree k v): bool =
+    case t of
       | Empty => True
+      | Node {...} => let val (propHolds, _, _) = propBST' t
+                      in propHolds
+                      end  
 
 (* AATree prop1: Leaf nodes have level 1
 * Haskell code: 
