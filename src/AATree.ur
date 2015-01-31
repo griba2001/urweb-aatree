@@ -409,17 +409,16 @@ fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
 (* BST property worth checking after MapKeysMonotonic:
        all nodes on the left branch have lesser values,
        all nodes on the right branch have greater values,
-
-prop0 :: Ord a => Tree a -> Bool
-prop0 Nil = True
-prop0 (Node x _ l r) = L.all (< x) (toList l) &&
-                       L.all (> x) (toList r) && prop0 l && prop0 r
 *)
 fun propBST [k][v] (_: ord k) (t: tree k v): bool =
     case t of
-      Node {Key = k0, Left = l, Right = r, ...} => allKeys (gt k0) l &&
-                                                   allKeys (lt k0) r &&
-                                                   propBST l && propBST r
+      | Node {Key = k0, Left = l, Right = r, ...} =>
+          (case (l: tree k v, r: tree k v) of
+             | (Empty, Empty) => True
+             | (Empty, Node {Key = kr, ...}) => k0 < kr && propBST r
+             | (Node {Key = kl, ...}, Empty) => k0 < kl && propBST l
+             | (Node {Key = kl, ...}, Node {Key = kr, ...}) => kl < k0 && k0 < kr && propBST l && propBST r
+             )
       | Empty => True
 
 (* AATree prop1: Leaf nodes have level 1
