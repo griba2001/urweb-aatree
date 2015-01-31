@@ -107,3 +107,7 @@ val diff [k][v] (_: ord k): (dict k v -> dict k v -> dict k v) = AATree.differen
 fun deleteAll [k][v] (_: ord k) (ks: list k) (d1: dict k v): dict k v =
 
       List.foldl delete d1 ks
+
+val keys [k][v]: dict k v -> list k = AATree.keys
+
+val values [k][v]: dict k v -> list v = AATree.values

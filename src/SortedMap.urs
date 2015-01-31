@@ -53,3 +53,7 @@ val diff : k ::: Type -> v ::: Type -> ord k -> dict k v -> dict k v -> dict k v
 val unionWith : k ::: Type -> v ::: Type -> ord k -> (v -> v -> v) -> dict k v -> dict k v -> dict k v
 
 val deleteAll : k ::: Type -> v ::: Type -> ord k -> list k -> dict k v -> dict k v
+
+val keys : k ::: Type -> v ::: Type -> dict k v -> list k
+
+val values : k ::: Type -> v ::: Type -> dict k v -> list v

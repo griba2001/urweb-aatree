@@ -181,6 +181,8 @@ fun skewRightRight [k][v] (t: tree k v): tree k v =
 
 (* Haskell
 
+(.$) = flip ($)
+
 decreaseLevel :: Tree a -> Tree a
 decreaseLevel Empty = Empty
 decreaseLevel t @ (Node _ lvP l Empty)
@@ -228,6 +230,8 @@ val rebalance [k][v] : (tree k v -> tree k v) = (* with left to right function c
 
 
 (* Haskell:
+
+(.$) = flip ($)
 
 insert x Empty = singleton x
 insert x (Node y lv l r) = case compare x y of
@@ -288,6 +292,8 @@ fun maximum [k][v] (t: tree k v): k * v =
         | None => error <xml>aatree maximum: empty tree</xml>
 
 (* Haskell
+(.$) = flip ($)
+
 delete x Empty = Empty
 delete x t @ (Node y lv l r) = case compare x y of
         LT -> Node y lv (delete x l) r .$ rebalance
@@ -389,6 +395,25 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
        then adjust' f k1 t
        else t
 
+fun keys [k][v] (t: tree k v) = List.mp fst (toList t)
+
+fun values [k][v] (t: tree k v) = List.mp snd (toList t)
+
+(* BST property worth checking after MapKeysMonotonic:
+       all nodes on the left branch have lesser values,
+       all nodes on the right branch have greater values,
+
+prop0 :: Ord a => Tree a -> Bool
+prop0 Nil = True
+prop0 (Node x _ l r) = L.all (< x) (toList l) &&
+                       L.all (> x) (toList r) && prop0 l && prop0 r
+*)
+fun propBST [k][v] (_: ord k) (t: tree k v): bool =
+    case t of
+      Node {Key = k0, Left = l, Right = r, ...} => List.all (gt k0) (keys l) &&
+                                                   List.all (lt k0) (keys r) &&
+                                                   propBST l && propBST r
+      | Empty => True
 
 (* AATree prop1: Leaf nodes have level 1
 * Haskell code: 
