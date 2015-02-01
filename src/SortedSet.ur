@@ -103,14 +103,14 @@ fun mp [a][b] (_: ord b) (f: a -> b): set a -> set b =
 
 val mapMonotonic [a][b]: (a -> b) -> set a -> set b = AATree.mapKeysMonotonic
 
-fun all [a] (prop: a -> bool) (s1: set a) =
+fun all [a] (prop: a -> bool) (s1: set a): bool =
     let
         fun myop (x: a) (b: bool): bool = b && prop x
     in
       foldr myop True s1
     end
 
-fun any [a] (prop: a -> bool) (s1: set a) =
+fun any [a] (prop: a -> bool) (s1: set a): bool =
     let
         fun myop (x: a) (b: bool): bool = b || prop x
     in

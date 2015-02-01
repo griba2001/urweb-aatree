@@ -112,18 +112,30 @@ fun keys [k][v] (d1: dict k v): list k = List.mp fst (toList d1)
 
 val values [k][v] (d1: dict k v): list v = List.mp snd (toList d1)
 
-(*
-fun all [k][v] (prop: k * v -> bool) (t: tree k v) =
+fun all [k][v] (prop: v -> bool) (t: dict k v): bool =
     let
-        fun myop (pair: k * v) (b: bool): bool = b && prop pair
+        fun myop (pair: k * v) (b: bool): bool = b && prop pair.2
     in
       foldr myop True t
     end
 
-fun any [k][v] (prop: k * v -> bool) (t: tree k v) =
+fun any [k][v] (prop: v -> bool) (t: dict k v): bool =
     let
-        fun myop (pair: k * v) (b: bool): bool = b || prop pair
+        fun myop (pair: k * v) (b: bool): bool = b || prop pair.2
     in
       foldr myop False t
     end
-*)
+
+fun allWithKey [k][v] (prop: k -> v -> bool) (t: dict k v): bool =
+    let
+        fun myop (pair: k * v) (b: bool): bool = b && uncurry prop pair
+    in
+      foldr myop True t
+    end
+
+fun anyWithKey [k][v] (prop: k -> v -> bool) (t: dict k v): bool =
+    let
+        fun myop (pair: k * v) (b: bool): bool = b || uncurry prop pair
+    in
+      foldr myop False t
+    end

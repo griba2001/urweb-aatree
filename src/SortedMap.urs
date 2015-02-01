@@ -57,3 +57,11 @@ val deleteAll : k ::: Type -> v ::: Type -> ord k -> list k -> dict k v -> dict 
 val keys : k ::: Type -> v ::: Type -> dict k v -> list k
 
 val values : k ::: Type -> v ::: Type -> dict k v -> list v
+
+val all : k ::: Type -> v ::: Type -> (v -> bool) -> dict k v -> bool
+
+val any : k ::: Type -> v ::: Type -> (v -> bool) -> dict k v -> bool
+
+val allWithKey : k ::: Type -> v ::: Type -> (k -> v -> bool) -> dict k v -> bool
+
+val anyWithKey : k ::: Type -> v ::: Type -> (k -> v -> bool) -> dict k v -> bool
