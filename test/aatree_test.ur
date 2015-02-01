@@ -5,7 +5,7 @@ structure ATUT = AATree_UnitTest
 
 fun getTestData (): transaction (list (int * string)) =
     let fun f (i: int): int * string = (i, str1 (chr (i + 48)))
-    in li <- HR.getRandomIntList 20 0 50 ;
+    in li <- HR.getSysRandomIntList 20 0 50 ;
        return (List.mp f (HL.nub li))
     end
 
