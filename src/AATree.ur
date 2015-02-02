@@ -447,34 +447,35 @@ fun propBST [k][v] (_: ord k) (t: tree k v): bool =
   AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
   AATree prop5: all nodes with level > 1 have two children
 *)
-fun prop2 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
-        case l of
-        | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild
-        | _ => True
-
-fun prop3 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
-        case r of
-        | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1
-        | _ => True
-
-fun prop4 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
-        case r of
-        | Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent
-        | _ => True
-
-fun prop5 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
-        if lvParent > 1
-        then not (null l) && not (null r)
-        else True
 
 fun aaTreeProps [k][v] (t: tree k v): bool =
     case t of
-      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* is a leaf *) lvl = 1
-      | Node {Left = l, Right = r, Level = lvParent, ...} => prop2 lvParent l r &&
-                                                             prop3 lvParent l r &&
-                                                             prop4 lvParent l r &&
-                                                             prop5 lvParent l r &&
-                                                             aaTreeProps l && aaTreeProps r 
       | Empty => True
+      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* is a leaf *) lvl = 1
+      | Node {Left = l, Right = r, Level = lvParent, ...} =>
+           let
+                val prop2 =
+                        case l: tree k v of
+                        | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild
+                        | _ => True
+
+                val prop3 =
+                        case r: tree k v of
+                        | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1
+                        | _ => True
+
+                val prop4 =
+                        case r: tree k v of
+                        | Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent
+                        | _ => True
+
+                val prop5 =
+                        if lvParent > 1
+                        then not (null l) && not (null r)
+                        else True
+           in
+              prop2 && prop3 && prop4 && prop5 &&
+              aaTreeProps l && aaTreeProps r
+           end  
 
 fun valid [k][v] (_: ord k) (t: tree k v): bool = aaTreeProps t && propBST t
