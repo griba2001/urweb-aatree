@@ -10,9 +10,6 @@ has been tested with QuickCheck and passes tests for all AATree properties
 #### to build it 
 
 ```bash
-export C_INCLUDE_PATH=/path-to-your-urweb-installation/include
-export LIBRARY_PATH=/path-to-your-urweb-installation/lib
-
 urweb aatree_test_v2
 
 # execution
@@ -28,9 +25,12 @@ Repeating page retrieval makes the test use different input random data.
 
 --------------------
 
-# previous design got random ints from /dev/urandom
+#### previous design got random ints reading from /dev/urandom in Random.c
 
 ```bash
+export C_INCLUDE_PATH=/path-to-your-urweb-installation/include
+export LIBRARY_PATH=/path-to-your-urweb-installation/lib
+
 cd test/util/c
 gcc -c Random.c
 cd ../../..
