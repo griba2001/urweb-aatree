@@ -68,4 +68,6 @@ val anyWithKey : k ::: Type -> v ::: Type -> (k -> v -> bool) -> dict k v -> boo
 
 val sum : k ::: Type -> v ::: Type -> b ::: Type -> num b -> (v -> b) -> dict k v -> b
 
-val prod : k ::: Type -> v ::: Type -> (v -> int) -> dict k v -> int
+val prodInt : k ::: Type -> v ::: Type -> (v -> int) -> dict k v -> int
+
+val prodFloat : k ::: Type -> v ::: Type -> (v -> float) -> dict k v -> float
