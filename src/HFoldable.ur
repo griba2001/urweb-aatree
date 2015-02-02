@@ -1,5 +1,6 @@
 (* HFoldable *)
 open HClasses.Foldable
+open HClasses.Monoid
 
 fun all [t][a] (_:foldable t) (prop: a -> bool) (t1: t a): bool =
     let
@@ -34,3 +35,8 @@ fun prod [t][a] (_:foldable t) (_:num b) (proj: a -> b) (t1: t a): b =
       foldr myop one t1
     end
 *)
+
+fun concat [t][a] (_:foldable t) (_:monoid a) (t1: t a): a =
+
+        foldr mappend mempty t1
+

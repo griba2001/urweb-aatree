@@ -2,6 +2,7 @@ structure L = HList
 structure S = String
 structure HS = HString
 structure HM = HMonad
+(* structure HFLD = HFoldable *)
 
 fun assertFailure (msg: string) = return <xml><p>{[msg]}</p></xml>
 
