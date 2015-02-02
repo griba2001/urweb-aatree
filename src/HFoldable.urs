@@ -5,8 +5,12 @@ val any : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> 
 
 val sum : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> HClasses.Foldable.foldable t -> num b -> (a -> b) -> t a -> b
 
-val prodInt : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> (a -> int) -> t a -> int
+val intProd : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> (a -> int) -> t a -> int
 
-val prodFloat : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> (a -> float) -> t a -> float
+val floatProd : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> (a -> float) -> t a -> float
 
 val concat : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> HClasses.Monoid.monoid a -> t a -> a
+
+val minFold : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> HClasses.Foldable.foldable t -> ord b -> (a -> b) -> b -> t a -> b
+
+val maxFold : t ::: (Type -> Type) -> a ::: Type -> b ::: Type -> HClasses.Foldable.foldable t -> ord b -> (a -> b) -> b -> t a -> b

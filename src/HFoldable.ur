@@ -27,14 +27,14 @@ fun sum [t][a][b] (_:foldable t) (_:num b) (proj: a -> b) (t1: t a): b =
    because num lacks the product neutral elem. definition
    (zero is defined in class num but not one)
 *)
-fun prodInt [t][a] (_:foldable t) (proj: a -> int) (t1: t a): int =
+fun intProd [t][a] (_:foldable t) (proj: a -> int) (t1: t a): int =
     let
         fun myop (x: a) (acc: int): int = acc * proj x
     in
       foldr myop 1 t1
     end
 
-fun prodFloat [t][a] (_:foldable t) (proj: a -> float) (t1: t a): float =
+fun floatProd [t][a] (_:foldable t) (proj: a -> float) (t1: t a): float =
     let
         fun myop (x: a) (acc: float): float = acc * proj x
     in
@@ -45,3 +45,16 @@ fun concat [t][a] (_:foldable t) (_:monoid a) (t1: t a): a =
 
         foldr mappend mempty t1
 
+fun minFold [t][a][b] (_:foldable t) (_:ord b) (proj: a -> b) (z: b) (t1: t a): b =
+    let
+        fun myop (x: a) (acc: b): b = min acc (proj x)
+    in
+        foldr myop z t1
+    end
+
+fun maxFold [t][a][b] (_:foldable t) (_:ord b) (proj: a -> b) (z: b) (t1: t a): b =
+    let
+        fun myop (x: a) (acc: b): b = max acc (proj x)
+    in
+        foldr myop z t1
+    end
