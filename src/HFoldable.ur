@@ -26,15 +26,13 @@ fun sum [t][a][b] (_:foldable t) (_:num b) (proj: a -> b) (t1: t a): b =
 (* prod cannot be specified in terms of num,
    because num lacks the product neutral elem. definition
    (zero is defined in class num but not one)
------
-
-fun prod [t][a] (_:foldable t) (_:num b) (proj: a -> b) (t1: t a): b =
-    let
-        fun myop (x: a) (acc: b): b = acc * proj x
-    in
-      foldr myop one t1
-    end
 *)
+fun prod [t][a] (_:foldable t) (proj: a -> int) (t1: t a): int =
+    let
+        fun myop (x: a) (acc: int): int = acc * proj x
+    in
+      foldr myop 1 t1
+    end
 
 fun concat [t][a] (_:foldable t) (_:monoid a) (t1: t a): a =
 

@@ -139,3 +139,17 @@ fun anyWithKey [k][v] (prop: k -> v -> bool) (t: dict k v): bool =
     in
       foldr myop False t
     end
+
+fun sum [k][v][b] (_:num b) (proj: v -> b) (d1: dict k v): b =
+    let
+        fun myop (pair: k * v) (acc: b): b = acc + proj pair.2
+    in
+      foldr myop zero d1
+    end
+
+fun prod [k][v] (proj: v -> int) (d1: dict k v): int =
+    let
+        fun myop (pair: k * v) (acc: int): int = acc * proj pair.2
+    in
+      foldr myop 1 d1
+    end
