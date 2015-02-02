@@ -1,5 +1,3 @@
-structure M = Monad
-structure R = Random
 structure HN = HNum
 structure HM = HMonad
 
