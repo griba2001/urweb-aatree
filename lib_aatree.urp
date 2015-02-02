@@ -13,3 +13,4 @@ src/SortedSet
 src/SortedMap
 src/HClasses
 src/SortedSetInstances
+src/HFoldable
