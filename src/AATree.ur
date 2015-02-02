@@ -440,83 +440,41 @@ fun propBST [k][v] (_: ord k) (t: tree k v): bool =
                       in propHolds
                       end  
 
+
 (* AATree prop1: Leaf nodes have level 1
-* Haskell code: 
-prop1 (Node _ lv Nil Nil) = lv == 1
-prop1 (Node _ _ l r) = prop1 l && prop1 r
-prop1 Nil = True
+  AATree prop2: if there is a left child, the level of the parent is one greater than the left child's one
+  AATree prop3: if there is a right child, the level of the parent is 0 or 1 more than the level of the right child
+  AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
+  AATree prop5: all nodes with level > 1 have two children
 *)
+fun prop2 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
+        case l of
+        | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild
+        | _ => True
 
-fun prop1 [k][v] (t: tree k v): bool =
+fun prop3 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
+        case r of
+        | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1
+        | _ => True
+
+fun prop4 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
+        case r of
+        | Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent
+        | _ => True
+
+fun prop5 [k][v] (lvParent: int) (l: tree k v) (r: tree k v) =
+        if lvParent > 1
+        then not (null l) && not (null r)
+        else True
+
+fun aaTreeProps [k][v] (t: tree k v): bool =
     case t of
-      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => lvl = 1
-      | Node {Left = l, Right = r, ...} => prop1 l && prop1 r
+      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* is a leaf *) lvl = 1
+      | Node {Left = l, Right = r, Level = lvParent, ...} => prop2 lvParent l r &&
+                                                             prop3 lvParent l r &&
+                                                             prop4 lvParent l r &&
+                                                             prop5 lvParent l r &&
+                                                             aaTreeProps l && aaTreeProps r 
       | Empty => True
 
-(* AATree prop2: if there is a left child, the level of the parent is one greater than the left child's one
-* Haskell code:
-prop2 (Node _ lvParent l @ (Node _ lvLChild _ _) r) = lvParent == 1 + lvLChild
-                                                      && prop2 l && prop2 r
-prop2 (Node _ _ l r) = prop2 l && prop2 r
-prop2 Nil = True
-*)
-
-fun prop2 [k][v] (t: tree k v): bool =
-    case t of
-      | Node {Left = l, Right = r, Level = lvParent, ...} =>
-          (case (l: tree k v) of
-             Empty => prop2 r  (* l is Empty *)
-             | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild &&
-                                               prop2 l && prop2 r
-             )
-      | Empty => True
-
-(* AATree prop3: if there is a right child, the level of the parent is 0 or 1 more than the level of the right child
-* Haskell code:
-prop3 (Node _ lvParent l r @ (Node _ lvRChild _ _)) = lvParent - lvRChild <= 1 && prop3 l && prop3 r
-prop3 (Node _ _ l r) = prop3 l && prop3 r
-prop3 Nil = True
- *)
-
-fun prop3 [k][v] (t: tree k v): bool =
-    case t of
-      | Node {Left = l, Right = r, Level = lvParent, ...} =>
-          (case (r: tree k v) of
-             Empty => prop3 l (* r is Empty *)
-             | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1 &&
-                                               prop3 l && prop3 r
-             )
-      | Empty => True
-
-(* AATree prop4: if there is a right right grandchild, its level is strictly less than that of the actual node
-* Haskell:
-prop4 (Node _ lvParent l r @ (Node _ lvRChild _ (Node _ lvRGChild _ _))) = lvRGChild < lvParent && prop4 l && prop4 r
-prop4 (Node _ _ l r) = prop4 l && prop4 r
-prop4 Nil = True
-*)
-
-fun prop4 [k][v] (t: tree k v): bool =
-    case t of
-      | Node {Left = l, Right = r, Level = lvParent, ...} =>
-          (case (r: tree k v) of
-             Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent &&
-                                                                  prop4 l && prop4 r
-             | _ => prop4 l && prop4 r
-             )
-      | Empty => True
-
-(* AATree prop5: all nodes with level > 1 have two children
-* Haskell:
-prop5 (Node _ lv l r)
-    | lv > 1 = (not . null $ l) && (not . null $ r) && prop5 l && prop5 r
-    | otherwise = prop5 l && prop5 r
-prop5 Nil = True
-*)
-
-fun prop5 [k][v] (t: tree k v): bool =
-    case t of
-      | Node {Level = lvl, Left = l, Right = r, ...} =>
-             if lvl > 1
-                then not (null l) && not (null r) && prop5 l && prop5 r
-                else prop5 l && prop5 r
-      | Empty => True
+fun valid [k][v] (_: ord k) (t: tree k v): bool = aaTreeProps t && propBST t

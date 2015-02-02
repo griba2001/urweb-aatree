@@ -44,8 +44,5 @@ val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 (* invariants *)
 
 val propBST : k ::: Type -> v ::: Type -> ord k -> tree k v -> bool
-val prop1 : k ::: Type -> v ::: Type -> tree k v -> bool
-val prop2 : k ::: Type -> v ::: Type -> tree k v -> bool
-val prop3 : k ::: Type -> v ::: Type -> tree k v -> bool
-val prop4 : k ::: Type -> v ::: Type -> tree k v -> bool
-val prop5 : k ::: Type -> v ::: Type -> tree k v -> bool
+val aaTreeProps : k ::: Type -> v ::: Type -> tree k v -> bool
+val valid : k ::: Type -> v ::: Type -> ord k -> tree k v -> bool
