@@ -1,4 +1,4 @@
-rewrite url Aatree_test/main
+rewrite url Aatree_test_v1/main
 ffi test/util/c/Random
 include test/util/c/Random.h
 link test/util/c/Random.o
@@ -13,6 +13,5 @@ test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HURandom
-test/util/HSRandom
 test/AATree_UnitTest
-test/aatree_test
+test/aatree_test_v1

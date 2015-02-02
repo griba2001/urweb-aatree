@@ -1,0 +1,13 @@
+rewrite url Aatree_test_v2/main
+library lib_aatree
+
+$/list
+$/string
+$/option
+$/monad
+test/util/HNum
+test/util/HMonad
+test/util/HUrUnit
+test/util/HSRandom
+test/AATree_UnitTest
+test/aatree_test_v2
