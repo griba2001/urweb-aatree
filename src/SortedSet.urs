@@ -43,6 +43,3 @@ val intersect: a ::: Type -> ord a -> set a -> set a -> set a
 val mp : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> set a -> set b
 
 val mapMonotonic : a ::: Type -> b ::: Type -> (a -> b) -> set a -> set b
-
-val all : a ::: Type -> (a -> bool) -> set a -> bool
-val any : a ::: Type -> (a -> bool) -> set a -> bool
