@@ -30,9 +30,13 @@ val mapValues :  k ::: Type -> v ::: Type -> w ::: Type -> (v -> w) -> dict k v 
 
 val mapKeysMonotonic : k ::: Type -> v ::: Type -> k' ::: Type -> (k -> k') -> dict k v -> dict k' v
 
-val findMin : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
+val findMinByKey : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
 
-val findMax : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
+val findMaxByKey : k ::: Type -> v ::: Type -> dict k v -> option (k * v)
+
+val findMinByVal : k ::: Type -> v ::: Type -> ord v -> dict k v -> option (k * v)
+
+val findMaxByVal : k ::: Type -> v ::: Type -> ord v -> dict k v -> option (k * v)
 
 val foldr: k ::: Type -> v ::: Type -> b ::: Type -> (k * v -> b -> b) -> b -> dict k v -> b
 
@@ -68,6 +72,6 @@ val anyWithKey : k ::: Type -> v ::: Type -> (k -> v -> bool) -> dict k v -> boo
 
 val sum : k ::: Type -> v ::: Type -> b ::: Type -> num b -> (v -> b) -> dict k v -> b
 
-val prodInt : k ::: Type -> v ::: Type -> (v -> int) -> dict k v -> int
+val intProd : k ::: Type -> v ::: Type -> (v -> int) -> dict k v -> int
 
-val prodFloat : k ::: Type -> v ::: Type -> (v -> float) -> dict k v -> float
+val floatProd : k ::: Type -> v ::: Type -> (v -> float) -> dict k v -> float

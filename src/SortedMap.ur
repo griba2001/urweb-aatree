@@ -2,6 +2,7 @@ structure HS = HString
 structure HL = HList
 open HTuple
 open HFunction
+open HOrd
 
 con dict k v = AATree.tree k v
 
@@ -27,10 +28,10 @@ val toList [k][v]: (dict k v -> list (k * v)) = AATree.toList
 
 val fromList [k][v] (_ : ord k): (list (k * v) -> dict k v) = AATree.fromList
 
-val findMin [k][v] : (dict k v -> option (k * v)) = AATree.findMin
+val findMinByKey [k][v] : (dict k v -> option (k * v)) = AATree.findMin
 
-val findMax [k][v] : (dict k v -> option (k * v)) = AATree.findMax
-
+val findMaxByKey [k][v] : (dict k v -> option (k * v)) = AATree.findMax
+    
 
 (* eq instance *)
 val eq_dict = fn [k][v] (_ : eq k) (_ : eq v) =>
@@ -68,6 +69,28 @@ fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (d1: dict k v): b =
 fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (d1: dict k v): b =
 
       AATree.filterFoldr prop op acc d1
+
+
+fun findMinByVal [k][v] (_: ord v) (d1: dict k v): option (k * v) =
+   let val optZ : option (k * v) = AATree.getAnyPair d1
+       fun myop (p: k * v) (acc: k * v): k * v =
+            if compare (min acc.2 p.2) acc.2 = EQ then acc else p
+   in
+       case optZ of
+         None => None
+         | Some z => Some (foldr myop z d1)
+   end
+
+fun findMaxByVal [k][v] (_: ord v) (d1: dict k v): option (k * v) =
+   let val optZ : option (k * v) = AATree.getAnyPair d1
+       fun myop (p: k * v) (acc: k * v): k * v =
+            if compare (max acc.2 p.2) acc.2 = EQ then acc else p
+   in
+       case optZ of
+         None => None
+         | Some z => Some (foldr myop z d1)
+   end
+
 
 fun filter [k][v] (_: ord k) (prop: v -> bool) (d1: dict k v): dict k v =
       let fun prop' (p: k * v): bool = prop p.2
@@ -147,14 +170,14 @@ fun sum [k][v][b] (_:num b) (proj: v -> b) (d1: dict k v): b =
       foldr myop zero d1
     end
 
-fun prodInt [k][v] (proj: v -> int) (d1: dict k v): int =
+fun intProd [k][v] (proj: v -> int) (d1: dict k v): int =
     let
         fun myop (pair: k * v) (acc: int): int = acc * proj pair.2
     in
       foldr myop 1 d1
     end
 
-fun prodFloat [k][v] (proj: v -> float) (d1: dict k v): float =
+fun floatProd [k][v] (proj: v -> float) (d1: dict k v): float =
     let
         fun myop (pair: k * v) (acc: float): float = acc * proj pair.2
     in

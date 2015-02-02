@@ -41,6 +41,9 @@ val findMin : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 
 val findMax : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
 
+(* getAnyPair to start min/max value foldings *)
+val getAnyPair : k ::: Type -> v ::: Type -> tree k v -> option (k * v)
+
 (* invariants *)
 
 val propBST : k ::: Type -> v ::: Type -> ord k -> tree k v -> bool

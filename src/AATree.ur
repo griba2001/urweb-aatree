@@ -390,6 +390,11 @@ fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
        then adjust' f k1 t
        else t
 
+(* get root value to start minimum / maximum value folds *)
+fun getAnyPair [k][v] (t: tree k v): option (k * v) =
+    case t of
+      Empty => None
+      | Node {Key = k, Value = v, ...} => Some (k, v)
 
 (*
 fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
