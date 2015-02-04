@@ -417,7 +417,11 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
        all nodes on the left branch have lesser key values,
        all nodes on the right branch have greater key values,
 *)
-fun propBST' [k][v] (_: ord k) (t: tree k v): (bool * k * k) = (* returns (propHolds, minKey, maxKey) *)
+(* propBST':
+   @returns (propHolds, keyMin, keyMax)
+*)
+
+fun propBST' [k][v] (_: ord k) (t: tree k v): (bool * k * k) = 
     case t of
       | Empty => error <xml>propBST': empty tree</xml>
       | Node {Key = k0, Left = l, Right = r, ...} =>
