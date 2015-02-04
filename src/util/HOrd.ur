@@ -1,3 +1,5 @@
+(* HOrd *)
+
 datatype ordering = LT | EQ | GT
 
 val eq_ordering = let fun eq' (x: ordering) y =

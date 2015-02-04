@@ -1,3 +1,5 @@
+(* HFunction *)
+
 val id : a:::Type -> a -> a
 
 val const : a:::Type -> b:::Type -> a -> b -> a

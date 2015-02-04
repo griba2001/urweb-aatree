@@ -1,3 +1,4 @@
+(* HFoldable *)
 
 val all : t ::: (Type -> Type) -> a ::: Type -> HClasses.Foldable.foldable t -> (a -> bool) -> t a -> bool
 

@@ -1,3 +1,5 @@
+(* HClasses *)
+
 structure Semigroup : sig
         class semigroup :: Type -> Type
         val mkSemigroup : a ::: Type -> (a -> a -> a) -> semigroup a

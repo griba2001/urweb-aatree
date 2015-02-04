@@ -1,3 +1,4 @@
+(* HTuple *)
 
 val eq_pair: a:::Type -> b:::Type -> eq a -> eq b -> eq (a * b)
 

@@ -1,3 +1,5 @@
+(* HURandom *)
+
 structure M = Monad
 structure R = Random
 structure HN = HNum

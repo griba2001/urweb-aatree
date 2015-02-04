@@ -1,6 +1,8 @@
-open SortedSet
+(* SortedSetInstances *)
+
 structure HC = HClasses
 structure HCS = HC.Semigroup
+open SortedSet
 
 val semigroup_set [a] (_: ord a): HCS.semigroup (set a) = HCS.mkSemigroup union
 

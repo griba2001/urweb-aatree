@@ -1,3 +1,5 @@
+(* HOption *)
+
 structure HS = HString
 
 val show_option [a] (_:show a): show (option a) =

@@ -1,3 +1,4 @@
+(* SortedSet *)
 
 structure O = Option
 structure M = Monad
@@ -7,6 +8,8 @@ open HFunction
 
 
 con set a = AATree.tree a unit
+
+(* * Instances *)
 
 val eq_unit: eq (unit) = let
                  fun eq' (x: unit) (y: unit) = True
@@ -26,38 +29,36 @@ val eq_set = fn [a] (_ : eq a) =>
             mkEq eq'
         end
 
+(* * Construction *)
 
 val empty [a]: set a = AATree.empty
 
-val null [a]: set a -> bool = AATree.null
-
 val singleton [a] (v: a): set a = AATree.singleton v ()
 
+(* * Query *)
+
+val null [a]: set a -> bool = AATree.null
+
 val size [a] : (set a -> int) = AATree.size
+
+val member [a] (_ : ord a) (x: a): (set a -> bool) = compose O.isSome (AATree.lookup x)
+
+val findMin [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMin
+
+val findMax [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMax
+
+(* * Insert / delete *)
 
 val insert [a] (_ : ord a) (v: a): (set a -> set a) = AATree.insert v ()
 
 val delete [a] (_ : ord a) (v: a): (set a -> set a) = AATree.delete v
-
-val member [a] (_ : ord a) (x: a): (set a -> bool) = compose O.isSome (AATree.lookup x)
-
-val toList [a] : (set a -> list a) = compose (List.mp fst) AATree.toList
 
 val fromList [a] (_ : ord a): (list a -> set a) =
         let val f = fn (v: a) => (v, ())
         in compose AATree.fromList (List.mp f)
         end
 
-val findMin [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMin
-
-val findMax [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMax
-
-val show_set = fn [a] (_ : show a) =>
-        let
-            fun show' (t1: set a)  = "set fromList: " ^ show (toList t1)
-        in
-            mkShow show'
-        end
+(* * Foldings *)
 
 fun foldr [a][b] (myop: a -> b -> b) (acc: b) (t: set a): b =
     let
@@ -72,6 +73,15 @@ fun filterFoldr [a][b] (prop: a -> bool) (myop: a -> b -> b) (acc: b) : (set a -
                 else acc'
     in foldr myop' acc
     end
+
+val toList [a] : (set a -> list a) = compose (List.mp fst) AATree.toList
+
+val show_set = fn [a] (_ : show a) =>
+        let
+            fun show' (t1: set a)  = "set fromList: " ^ show (toList t1)
+        in
+            mkShow show'
+        end
 
 fun filter [a] (_: ord a) (prop: a -> bool) : (set a -> set a) = 
 
@@ -96,6 +106,8 @@ fun intersect [a] (_: ord a) (s1: set a) (s2: set a): set a =
    in
       filterFoldr (memberOf s1) insert empty s2
    end
+
+(* * Mappings *)
 
 fun mp [a][b] (_: ord b) (f: a -> b): set a -> set b =
 

@@ -1,3 +1,4 @@
+(* Arne Anderson Tree *)
 
 open HFunction
 open HTuple
@@ -12,7 +13,8 @@ datatype tree k v = Empty | Node of {Key: k,
                                 Left: tree k v,
                                 Right: tree k v}
 
-(* eq instance *)
+(* * Instances *)
+
 val eq_tree = fn [k][v] (_ : eq k) (_ : eq v) =>
         let
                 fun eq' (t1: tree k v) (t2: tree k v) =
@@ -35,13 +37,7 @@ val show_tree = fn [k][v] (_ : show k) (_ : show v) =>
         in mkShow show'
         end        
                 
-(* Unused
- 
-fun setKey [k][v] (v1: k) (t: tree k v) : tree k v =
-    case t of
-        Node r => Node (r -- #Key ++ {Key = v1})
-        | _ => error <xml>setKey: not a Node</xml>
-*)
+(* * Setters / Getters *)
 
 fun setValue [k][v] (v1: v) (t: tree k v): tree k v =
     case t of
@@ -73,19 +69,84 @@ fun getLevel [k][v] (t: tree k v) : int =
      | Node {Level = lvl, ...} => lvl
      | Empty => 0
 
+(* * Construction *)
+
 val empty [k][v] : tree k v = Empty
+
+fun singleton [k][v] (k1: k) (v1: v): tree k v = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
+
+(* * Query *)
 
 fun null [k][v] (t: tree k v): bool =
     case t of
         Empty => True
         | _ => False
 
-fun singleton [k][v] (k1: k) (v1: v): tree k v = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
-
 fun size [k][v] (t: tree k v) : int =
     case t of
      | Node {Left = l, Right = r, ...} => 1 + size l + size r
      | Empty => 0
+
+
+fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
+    case t of
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+            (case compare k1 k0 of
+                EQ => Some v0
+                | LT => lookup k1 l
+                | GT => lookup k1 r
+                )
+        | Empty => None
+
+val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (lookup k1)
+
+(* get root pair to start minimum / maximum value folds *)
+fun getAnyPair [k][v] (t: tree k v): option (k * v) =
+    case t of
+      Empty => None
+      | Node {Key = k, Value = v, ...} => Some (k, v)
+
+(* minimum, maximum to be used in deletes
+
+* Haskell code
+minimum (Node x _ Empty _) = x
+minimum (Node x _ l _) = minimum l
+minimum Empty = error "minimum: empty tree"
+
+maximum (Node x _ _ Empty) = x
+maximum (Node x _ _ r) = maximum r
+maximum Empty = error "maximum: empty tree"
+*)
+
+fun findMin [k][v] (t: tree k v): option (k * v) =
+    case t of
+        Node {Key = k0, Value = v0, Left = l, ...} =>
+            (case l: tree k v of
+               Empty => Some (k0, v0)
+               | _ => findMin l
+               )
+        | Empty => None
+
+fun minimum [k][v] (t: tree k v): k * v =
+    case findMin t of
+        Some x => x
+        | None => error <xml>aatree minimum: empty tree</xml>
+
+fun findMax [k][v] (t: tree k v): option (k * v) =
+    case t of
+        Node {Key = k0, Value = v0, Right = r, ...} =>
+            (case r: tree k v of
+               Empty => Some (k0, v0)
+               | _ => findMax r
+               )
+        | Empty => None
+
+fun maximum [k][v] (t: tree k v): k * v =
+    case findMax t of
+        Some x => x
+        | None => error <xml>aatree maximum: empty tree</xml>
+
+(* * Node balancing *)
 
 (* skew: right rotation *)
 fun skew [k][v] (t: tree k v) : tree k v =
@@ -229,6 +290,8 @@ val rebalance [k][v] : (tree k v -> tree k v) = (* with left to right function c
     andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight))))
 
 
+(* * Insert / delete  *)
+
 (* Haskell:
 
 (.$) = flip ($)
@@ -253,43 +316,6 @@ fun insertWith [k][v] (_: ord k) (f: v -> v -> v) (k1: k) (v1: v) (t: tree k v):
 
 val insert [k][v] (_: ord k) (k1: k) (v1: v):  (tree k v -> tree k v) = insertWith const k1 v1   
 
-(* Haskell
-minimum (Node x _ Empty _) = x
-minimum (Node x _ l _) = minimum l
-minimum Empty = error "minimum: empty tree"
-
-maximum (Node x _ _ Empty) = x
-maximum (Node x _ _ r) = maximum r
-maximum Empty = error "maximum: empty tree"
-*)
-
-fun findMin [k][v] (t: tree k v): option (k * v) =
-    case t of
-        Node {Key = k0, Value = v0, Left = l, ...} =>
-            (case l: tree k v of
-               Empty => Some (k0, v0)
-               | _ => findMin l
-               )
-        | Empty => None
-
-fun minimum [k][v] (t: tree k v): k * v =
-    case findMin t of
-        Some x => x
-        | None => error <xml>aatree minimum: empty tree</xml>
-
-fun findMax [k][v] (t: tree k v): option (k * v) =
-    case t of
-        Node {Key = k0, Value = v0, Right = r, ...} =>
-            (case r: tree k v of
-               Empty => Some (k0, v0)
-               | _ => findMax r
-               )
-        | Empty => None
-
-fun maximum [k][v] (t: tree k v): k * v =
-    case findMax t of
-        Some x => x
-        | None => error <xml>aatree maximum: empty tree</xml>
 
 (* Haskell
 (.$) = flip ($)
@@ -324,15 +350,7 @@ fun delete [k][v] (_: ord k) (k1: k) (t: tree k v): tree k v =
               )
         | Empty => Empty
 
-fun lookup [k][v] (_: ord k) (k1: k) (t: tree k v): option v =
-    case t of
-        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-            (case compare k1 k0 of
-                EQ => Some v0
-                | LT => lookup k1 l
-                | GT => lookup k1 r
-                ) 
-        | Empty => None
+(* * Folding *)
 
 fun foldr' [k][v][b] (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
     case t of
@@ -343,6 +361,8 @@ fun foldr' [k][v][b] (op: k * v -> b -> b) (t: tree k v) (acc: b): b =
                 )
       | Empty => acc
 
+fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (t: tree k v): b = foldr' op t acc
+
 fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (t: tree k v): b =
     let fun op' (pair: k * v) (acc: b): b =
             if prop pair then op pair acc
@@ -351,11 +371,28 @@ fun filterFoldr [k][v][b] (prop: k * v -> bool) (op: k * v -> b -> b) (acc: b) (
         foldr' op' t acc
     end
 
-fun foldr [k][v][b] (op: k * v -> b -> b) (acc: b) (t: tree k v): b = foldr' op t acc
-
 fun toList [k][v] (t: tree k v): list (k * v) = foldr' (curry Cons) t []
 
 fun fromList [k][v] (_ : ord k) (li: list (k * v)): tree k v = List.foldl (uncurry insert) empty li
+
+
+(* * Adjust and mapping *)
+
+fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
+    case t of
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
+              LT => setLeft (adjust' f k1 l) t
+              | GT => setRight (adjust' f k1 r) t
+              | EQ => setValue (f v0) t
+              )
+        | Empty => t (* case unreached if key non-membership is filtered *)
+
+fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
+    if member k1 t
+       then adjust' f k1 t
+       else t
+
 
 fun mapValues [k][v][w] (f: v -> w) (t: tree k v): tree k w =
        case t of
@@ -373,37 +410,8 @@ fun mapKeysMonotonic [k][v][k'] (f: k -> k') (t: tree k v): tree k' v =
                                Right = mapKeysMonotonic f rc.Right})
          | Empty => Empty
 
-val member [k][v] (_ : ord k) (k1: k): (tree k v -> bool) = compose isSome (lookup k1)
 
-fun adjust' [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
-    case t of
-        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-           (case compare k1 k0 of
-              LT => setLeft (adjust' f k1 l) t
-              | GT => setRight (adjust' f k1 r) t
-              | EQ => setValue (f v0) t
-              )
-        | Empty => t (* case unreached if key non-membership is filtered *)
-
-fun adjust [k][v] (_: ord k) (f: v -> v) (k1: k) (t: tree k v): tree k v =
-    if member k1 t
-       then adjust' f k1 t
-       else t
-
-(* get root value to start minimum / maximum value folds *)
-fun getAnyPair [k][v] (t: tree k v): option (k * v) =
-    case t of
-      Empty => None
-      | Node {Key = k, Value = v, ...} => Some (k, v)
-
-(*
-fun allKeys [k][v] (prop: k -> bool) (t: tree k v) =
-    let
-        fun myop (pair: k * v) (b: bool): bool = b && prop pair.1
-    in
-      foldr myop True t
-    end
-*)
+(* * Invariants *)
 
 (* BST property worth checking after MapKeysMonotonic:
        all nodes on the left branch have lesser key values,

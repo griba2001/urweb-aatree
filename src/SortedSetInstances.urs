@@ -1,3 +1,4 @@
+(* SortedSetInstances *)
 
 val semigroup_set: a ::: Type -> ord a -> HClasses.Semigroup.semigroup (SortedSet.set a)
 

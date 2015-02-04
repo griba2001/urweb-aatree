@@ -29,6 +29,7 @@ end = struct
         fun mempty [a] (m: monoid a) = m.Empty
         fun mappend [a] (m: monoid a) = m.Append
 end
+(* HClasses *)
 
 open Monoid
 

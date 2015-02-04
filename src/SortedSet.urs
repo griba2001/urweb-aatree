@@ -1,3 +1,5 @@
+(* SortedSet *)
+
 con set :: Type -> Type
 
 val eq_set : a ::: Type -> eq a -> eq (set a)

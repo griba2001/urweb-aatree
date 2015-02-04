@@ -1,3 +1,4 @@
+(* HUrUnit *)
 
 val assertFailure : string -> transaction xbody
 

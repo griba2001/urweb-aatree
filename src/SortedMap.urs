@@ -1,3 +1,5 @@
+(* SortedMap *)
+
 con dict :: Type -> Type -> Type
 
 val eq_dict : k ::: Type -> v ::: Type -> eq k -> eq v -> eq (dict k v)

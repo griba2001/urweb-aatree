@@ -1,4 +1,5 @@
 (* HFoldable *)
+
 open HClasses
 open HClasses.Semigroup
 open HClasses.Monoid

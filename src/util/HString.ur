@@ -1,3 +1,5 @@
+(* HString *)
+
 open String
 
 fun null (s: string) = not (String.lengthGe s 1)

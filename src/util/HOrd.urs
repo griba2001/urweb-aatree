@@ -1,3 +1,4 @@
+(* HOrd *)
 
 datatype ordering = LT | EQ | GT
 

@@ -1,3 +1,5 @@
+(* HTuple *)
+
 structure HS = HString
 structure HO = HOrd
 
