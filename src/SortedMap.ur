@@ -185,3 +185,5 @@ fun floatProd [k][v] (proj: v -> float) (d1: dict k v): float =
     in
       foldr myop 1.0 d1
     end
+
+val valid [k][v] (_: ord k): (dict k v -> bool) = AATree.valid

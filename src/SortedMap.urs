@@ -77,3 +77,5 @@ val sum : k ::: Type -> v ::: Type -> b ::: Type -> num b -> (v -> b) -> dict k 
 val intProd : k ::: Type -> v ::: Type -> (v -> int) -> dict k v -> int
 
 val floatProd : k ::: Type -> v ::: Type -> (v -> float) -> dict k v -> float
+
+val valid : k ::: Type -> v ::: Type -> ord k -> dict k v -> bool

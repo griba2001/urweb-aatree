@@ -115,3 +115,4 @@ fun mp [a][b] (_: ord b) (f: a -> b): set a -> set b =
 
 val mapMonotonic [a][b]: (a -> b) -> set a -> set b = AATree.mapKeysMonotonic
 
+val valid [a] (_: ord a): (set a -> bool) = AATree.valid
