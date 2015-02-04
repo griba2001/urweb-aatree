@@ -11,7 +11,12 @@ val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.
 
 fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * string)) =
 
-        let val keys: list int = List.mp HT.fst testdata
+   (* Assert: testdata must not have repeated keys *)
+   let val keys: list int = List.mp HT.fst testdata
+   in if List.length keys <> List.length (HL.nub keys) 
+      then error <xml>Error: Invalid test data (repeated keys)</xml>
+      else
+        let 
             val sortedInput : list (int * string) = List.sort (HO.gtBy HT.fst) testdata
             val inputFromTree : list (int * string) = toFromList testdata
             val treeData: T.tree int string = T.fromList testdata
@@ -33,3 +38,4 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
                 in return (xmlJoinedResults, inputFromTree)
                 end
         end
+    end
