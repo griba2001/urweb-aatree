@@ -464,7 +464,7 @@ fun propBST [k][v] (_: ord k) (t: tree k v): bool =
 fun aaTreeProps [k][v] (t: tree k v): bool =
     case t of
       | Empty => True
-      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* is a leaf *) lvl = 1
+      | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* prop1 *) lvl = 1
       | Node {Left = l, Right = r, Level = lvParent, ...} =>
            let
                 val prop2 =
