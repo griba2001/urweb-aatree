@@ -4,7 +4,6 @@ open HClasses
 open HClasses.Semigroup
 open HClasses.Monoid
 open HClasses.Foldable
-open HFunction
 
 fun all [t][a] (_:foldable t) (prop: a -> bool) (t1: t a): bool =
     let

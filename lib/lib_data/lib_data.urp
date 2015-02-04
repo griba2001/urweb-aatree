@@ -1,0 +1,8 @@
+$/list
+$/string
+src/HFunction
+src/HList
+src/HString
+src/HOrd
+src/HTuple
+src/HOption

@@ -1,16 +1,4 @@
-$/list
-$/string
-$/option
-$/monad
-src/util/HFunction
-src/util/HList
-src/util/HString
-src/util/HOrd
-src/util/HTuple
-src/util/HOption
-src/AATree
-src/SortedSet
-src/SortedMap
-src/HClasses
-src/SortedSetInstances
-src/HFoldable
+library lib/lib_data/lib_data
+library lib/lib_sortedcoll/lib_sortedcoll
+library lib/lib_foldable/lib_foldable
+library lib/lib_sortedset_foldable/lib_sortedset_foldable
