@@ -1,4 +1,4 @@
-library ../lib_data/lib_data
+library ../lib_data/
 
 $/list
 $/string

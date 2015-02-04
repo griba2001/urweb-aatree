@@ -1,4 +1,4 @@
-library lib/lib_data/lib_data
-library lib/lib_sortedcoll/lib_sortedcoll
-library lib/lib_foldable/lib_foldable
-library lib/lib_sortedset_foldable/lib_sortedset_foldable
+library lib/lib_data/
+library lib/lib_sortedcoll/
+library lib/lib_foldable/
+library lib/lib_sortedset_foldable/
