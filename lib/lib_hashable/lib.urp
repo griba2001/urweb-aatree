@@ -1,0 +1,4 @@
+library ../lib_bits/
+library ../lib_data/
+
+src/Hashable
