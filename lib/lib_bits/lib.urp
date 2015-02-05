@@ -1,0 +1,4 @@
+ffi src/c/Bits
+include src/c/Bits.h
+link src/c/Bits.o
+
