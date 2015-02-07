@@ -1,6 +1,6 @@
 (* HList *)
 
-val null : a ::: Type -> eq a -> list a -> bool
+val null : a ::: Type -> list a -> bool
 
 val singleton : a ::: Type -> a -> list a
 
@@ -12,3 +12,4 @@ val elem : a ::: Type -> eq a -> a -> list a -> bool
 
 val nub : a ::: Type -> eq a -> list a -> list a
 
+val delete : a ::: Type -> eq a -> a -> list a -> list a

@@ -1,6 +1,9 @@
 (* HList *)
 
-fun null [a] (_:eq a) (li: list a) = li = Nil
+fun null [a] (li: list a) = (* li = Nil *)
+   case li of
+     [] => True
+     | _ => False
 
 fun singleton [a] (x: a) = x :: []
 
@@ -31,4 +34,14 @@ fun nub [a] (_: eq a) (li: list a): list a =
                       else x :: nub' xs (x :: ls)
          | [] => []
    in nub' li []
+   end
+
+fun delete [a] (_: eq a) (x: a) (li: list a): list a =
+   let fun del' (li': list a) (acc: list a) =
+       case li' of
+         | [] => li (* not found, returns original list *)
+         | y :: ys => if y = x
+                        then List.append (List.rev acc) ys
+                        else del' ys (y :: acc)
+   in del' li []
    end

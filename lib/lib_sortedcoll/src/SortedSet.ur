@@ -1,5 +1,6 @@
 (* SortedSet *)
 
+structure T = AATree
 structure O = Option
 structure M = Monad
 structure HL = HList
@@ -7,7 +8,7 @@ open HTuple
 open HFunction
 
 
-con set a = AATree.tree a unit
+type set a = T.tree a unit
 
 (* * Instances *)
 
@@ -21,8 +22,8 @@ val eq_unit: eq (unit) = let
 val eq_set = fn [a] (_ : eq a) =>
         let
             fun eq' (t1: set a) (t2: set a) =
-                   let val t1' : AATree.tree a unit = t1
-                       val t2' : AATree.tree a unit = t2
+                   let val t1' : T.tree a unit = t1
+                       val t2' : T.tree a unit = t2
                    in t1' = t2'
                    end 
         in
@@ -31,31 +32,31 @@ val eq_set = fn [a] (_ : eq a) =>
 
 (* * Construction *)
 
-val empty [a]: set a = AATree.empty
+val empty [a]: set a = T.empty
 
-val singleton [a] (v: a): set a = AATree.singleton v ()
+val singleton [a] (v: a): set a = T.singleton v ()
 
 (* * Query *)
 
-val null [a]: set a -> bool = AATree.null
+val null [a]: set a -> bool = T.null
 
-val size [a] : (set a -> int) = AATree.size
+val size [a] : (set a -> int) = T.size
 
-val member [a] (_ : ord a) (x: a): (set a -> bool) = compose O.isSome (AATree.lookup x)
+val member [a] (_ : ord a) (x: a): (set a -> bool) = compose O.isSome (T.lookup x)
 
-val findMin [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMin
+val findMin [a] : (set a -> option a) = compose (M.liftM fst) T.findMin
 
-val findMax [a] : (set a -> option a) = compose (M.liftM fst) AATree.findMax
+val findMax [a] : (set a -> option a) = compose (M.liftM fst) T.findMax
 
 (* * Insert / delete *)
 
-val insert [a] (_ : ord a) (v: a): (set a -> set a) = AATree.insert v ()
+val insert [a] (_ : ord a) (v: a): (set a -> set a) = T.insert v ()
 
-val delete [a] (_ : ord a) (v: a): (set a -> set a) = AATree.delete v
+val delete [a] (_ : ord a) (v: a): (set a -> set a) = T.delete v
 
 val fromList [a] (_ : ord a): (list a -> set a) =
         let val f = fn (v: a) => (v, ())
-        in compose AATree.fromList (List.mp f)
+        in compose T.fromList (List.mp f)
         end
 
 (* * Foldings *)
@@ -63,7 +64,7 @@ val fromList [a] (_ : ord a): (list a -> set a) =
 fun foldr [a][b] (myop: a -> b -> b) (acc: b) (t: set a): b =
     let
         fun myop' (p: a * unit): b -> b = myop p.1
-    in AATree.foldr myop' acc t
+    in T.foldr myop' acc t
     end
 
 fun filterFoldr [a][b] (prop: a -> bool) (myop: a -> b -> b) (acc: b) : (set a -> b) =
@@ -74,7 +75,7 @@ fun filterFoldr [a][b] (prop: a -> bool) (myop: a -> b -> b) (acc: b) : (set a -
     in foldr myop' acc
     end
 
-val toList [a] : (set a -> list a) = compose (List.mp fst) AATree.toList
+val toList [a] : (set a -> list a) = compose (List.mp fst) T.toList
 
 val show_set = fn [a] (_ : show a) =>
         let
@@ -113,6 +114,6 @@ fun mp [a][b] (_: ord b) (f: a -> b): set a -> set b =
 
     andThen toList (andThen (List.mp f) fromList)   (* left to right function composition *)
 
-val mapMonotonic [a][b]: (a -> b) -> set a -> set b = AATree.mapKeysMonotonic
+val mapMonotonic [a][b]: (a -> b) -> set a -> set b = T.mapKeysMonotonic
 
-val valid [a] (_: ord a): (set a -> bool) = AATree.valid
+val valid [a] (_: ord a): (set a -> bool) = T.valid

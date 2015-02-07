@@ -1,10 +1,10 @@
 library ../lib_data/
+library ../lib_aatree/
 
 $/list
 $/string
 $/option
 $/monad
-src/AATree
 src/SortedSet
 src/SortedMap
 
