@@ -1,4 +1,4 @@
 library ../lib_sortedcoll/
-library ../lib_foldable/
+library ../lib_classes/
 
 src/SortedSetInstances

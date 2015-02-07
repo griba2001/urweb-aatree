@@ -1,7 +1,7 @@
 library lib/lib_data/
 library lib/lib_aatree/
 library lib/lib_sortedcoll/
-library lib/lib_foldable/
+library lib/lib_classes/
 library lib/lib_sortedset_foldable/
 library lib/lib_bits/
 library lib/lib_hashable/
