@@ -1,7 +1,6 @@
 library ../lib_data/
 library ../lib_hashable/
 library ../lib_unordhashtree/
-library ../lib_classes/
 
 $/option
 $/monad
