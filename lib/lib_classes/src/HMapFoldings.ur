@@ -1,4 +1,4 @@
-(* HFoldable *)
+(* HMapFoldings *)
 
 (* open HClasses *)
 (* open HClasses.Monoid *)
