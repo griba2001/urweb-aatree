@@ -1,0 +1,13 @@
+rewrite url UnordHashTree_test/main
+library lib/lib_unordhashtree
+
+$/list
+$/string
+$/option
+$/monad
+test/util/HNum
+test/util/HMonad
+test/util/HUrUnit
+test/util/HSRandom
+test/UnordHashTree_UnitTest
+test/unordHashTree_test
