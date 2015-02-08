@@ -24,9 +24,9 @@ val show_entry [k][v] (_: show k) (_: show v): show (entry k v) =
    in mkShow show'
    end
 
-val empty [k][v]: t k v = []   (* (_:eq k) *)
+val empty [k][v]: t k v = [] 
 
-fun null [k][v] (t1: t k v): bool = HL.null t1  (* (_:eq k) *)
+fun null [k][v] (t1: t k v): bool = HL.null t1 
 
 fun singleton [k][v] (k1: k) (v1: v): t k v = Entry (k1, v1) :: []
 

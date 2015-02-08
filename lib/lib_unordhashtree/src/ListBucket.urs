@@ -2,7 +2,7 @@
 
 con t :: Type -> Type -> Type
 
-val empty : k ::: Type -> v ::: Type -> t k v  (* eq k -> *)
+val empty : k ::: Type -> v ::: Type -> t k v 
 
 val null : k ::: Type -> v ::: Type -> t k v -> bool
 
