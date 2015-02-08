@@ -27,6 +27,34 @@ structure Foldable : sig
                                                ((a -> b -> b) -> b -> t a -> b)) -> foldable t
      val foldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type ->
                  foldable t -> (a -> b -> b) -> b -> t a -> b
+     val filterFoldr : t ::: (Type -> Type) -> a ::: Type -> b ::: Type ->
+                 foldable t -> (a -> bool) -> (a -> b -> b) -> b -> t a -> b
 end
 
 val foldable_list: Foldable.foldable list
+
+(* folding of a structure of mappings *)
+structure MapFoldable : sig
+     class mapFoldable :: (Type -> Type -> Type) -> Type
+     val mkMapFoldable : t ::: (Type -> Type -> Type) -> (k ::: Type -> v ::: Type -> b ::: Type ->
+                                               ((k * v -> b -> b) -> b -> t k v -> b)) -> mapFoldable t
+     val foldr : t ::: (Type -> Type -> Type) -> k ::: Type -> v ::: Type -> b ::: Type ->
+                 mapFoldable t -> (k * v -> b -> b) -> b -> t k v -> b
+end
+
+(*
+structure Set : sig
+     class set :: (Type -> Type) -> Type
+     val mkSet : t ::: (Type -> Type) ->
+                       (a ::: Type -> (t a)) ->             (*  empty*)
+                       (a ::: Type -> (ord a -> a -> t a -> t a)) -> (* insert *)
+                       (a ::: Type -> (ord a -> a -> t a -> t a)) -> (* delete *)
+                       (a ::: Type -> (ord a -> a -> t a -> bool)) -> (* member *)
+                       set t
+
+     val empty : t ::: (Type -> Type) -> a ::: Type -> set t -> t a
+     val insert : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> t a
+     val delete : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> t a
+     val member : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> bool
+end
+*)

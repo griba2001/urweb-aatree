@@ -1,49 +1,49 @@
 (* SortedSet *)
 
-con set :: Type -> Type
+con sset :: Type -> Type
 
-val eq_set : a ::: Type -> eq a -> eq (set a)
+val eq_set : a ::: Type -> eq a -> eq (sset a)
 
-val show_set : a ::: Type -> show a -> show (set a)
+val show_set : a ::: Type -> show a -> show (sset a)
 
-val empty : a ::: Type -> set a
+val empty : a ::: Type -> sset a
 
-val null : a ::: Type -> set a -> bool
+val null : a ::: Type -> sset a -> bool
 
-val singleton : a ::: Type -> a -> set a
+val singleton : a ::: Type -> a -> sset a
 
-val size : a ::: Type -> set a -> int
+val size : a ::: Type -> sset a -> int
 
-val insert: a ::: Type -> ord a -> a -> set a -> set a
+val insert: a ::: Type -> ord a -> a -> sset a -> sset a
 
-val delete: a ::: Type -> ord a -> a -> set a -> set a
+val delete: a ::: Type -> ord a -> a -> sset a -> sset a
 
-val member: a ::: Type -> ord a -> a -> set a -> bool
+val member: a ::: Type -> ord a -> a -> sset a -> bool
 
-val toList : a ::: Type -> set a -> list a
+val toList : a ::: Type -> sset a -> list a
 
-val fromList : a ::: Type -> ord a -> list a -> set a
+val fromList : a ::: Type -> ord a -> list a -> sset a
 
-val findMin : a ::: Type -> set a -> option a
+val findMin : a ::: Type -> sset a -> option a
 
-val findMax : a ::: Type -> set a -> option a
+val findMax : a ::: Type -> sset a -> option a
 
-val foldr : a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> set a -> b
+val foldr : a ::: Type -> b ::: Type -> (a -> b -> b) -> b -> sset a -> b
 
-val filterFoldr : a ::: Type -> b ::: Type -> (a -> bool) -> (a -> b -> b) -> b -> set a -> b
+val filterFoldr : a ::: Type -> b ::: Type -> (a -> bool) -> (a -> b -> b) -> b -> sset a -> b
 
-val filter : a ::: Type -> ord a -> (a -> bool) -> set a -> set a
+val filter : a ::: Type -> ord a -> (a -> bool) -> sset a -> sset a
 
-val partition : a ::: Type -> ord a -> (a -> bool) -> set a -> set a * set a
+val partition : a ::: Type -> ord a -> (a -> bool) -> sset a -> sset a * sset a
 
-val union: a ::: Type -> ord a -> set a -> set a -> set a
+val union: a ::: Type -> ord a -> sset a -> sset a -> sset a
 
-val diff: a ::: Type -> ord a -> set a -> set a -> set a
+val diff: a ::: Type -> ord a -> sset a -> sset a -> sset a
 
-val intersect: a ::: Type -> ord a -> set a -> set a -> set a
+val intersect: a ::: Type -> ord a -> sset a -> sset a -> sset a
 
-val mp : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> set a -> set b
+val mp : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> sset a -> sset b
 
-val mapMonotonic : a ::: Type -> b ::: Type -> (a -> b) -> set a -> set b
+val mapMonotonic : a ::: Type -> b ::: Type -> (a -> b) -> sset a -> sset b
 
-val valid:  a ::: Type -> ord a -> set a -> bool
+val valid:  a ::: Type -> ord a -> sset a -> bool

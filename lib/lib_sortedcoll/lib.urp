@@ -1,5 +1,6 @@
 library ../lib_data/
 library ../lib_aatree/
+library ../lib_classes/
 
 $/list
 $/string
@@ -7,4 +8,5 @@ $/option
 $/monad
 src/SortedSet
 src/SortedMap
+# src/SortedSetInstances
 
