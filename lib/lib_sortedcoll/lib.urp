@@ -8,5 +8,5 @@ $/option
 $/monad
 src/SortedSet
 src/SortedMap
-# src/SortedSetInstances
+src/SortedSetInstances
 

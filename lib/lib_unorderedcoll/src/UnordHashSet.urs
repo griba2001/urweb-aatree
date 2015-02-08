@@ -45,3 +45,18 @@ val intersect: a ::: Type -> Hashable.Hashable.hashable a -> eq a -> hashSet a -
 
 val mp : a ::: Type -> b ::: Type -> Hashable.Hashable.hashable a -> Hashable.Hashable.hashable b -> eq b -> (a -> b) -> hashSet a -> hashSet b
 
+(* * *)
+
+val all : a ::: Type -> Hashable.Hashable.hashable a -> eq a -> (a -> bool) -> hashSet a -> bool
+
+val any : a ::: Type -> Hashable.Hashable.hashable a -> eq a -> (a -> bool) -> hashSet a -> bool
+
+val sumBy : a ::: Type -> b ::: Type -> Hashable.Hashable.hashable a -> eq a -> num b -> (a -> b) -> hashSet a -> b
+
+val intProdBy : a ::: Type -> Hashable.Hashable.hashable a -> eq a -> (a -> int) -> hashSet a -> int
+
+val floatProdBy : a ::: Type -> Hashable.Hashable.hashable a -> eq a -> (a -> float) -> hashSet a -> float
+
+val minBy : a ::: Type -> b ::: Type -> Hashable.Hashable.hashable a -> eq a -> ord b -> (a -> b) -> b -> hashSet a -> b
+
+val maxBy : a ::: Type -> b ::: Type -> Hashable.Hashable.hashable a -> eq a -> ord b -> (a -> b) -> b -> hashSet a -> b

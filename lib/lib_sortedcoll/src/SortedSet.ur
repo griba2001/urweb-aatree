@@ -117,3 +117,56 @@ fun mp [a][b] (_: ord b) (f: a -> b): sset a -> sset b =
 val mapMonotonic [a][b]: (a -> b) -> sset a -> sset b = T.mapKeysMonotonic
 
 val valid [a] (_: ord a): (sset a -> bool) = T.valid
+
+fun all [a]  (prop: a -> bool) (t1: sset a): bool =
+    let
+        fun myop (x: a) (b: bool): bool = b && prop x
+    in
+      foldr myop True t1
+    end
+
+fun any [a]  (prop: a -> bool) (t1: sset a): bool =
+    let
+        fun myop (x: a) (b: bool): bool = b || prop x
+    in
+      foldr myop False t1
+    end
+
+fun sumBy [a][b]  (_:num b) (proj: a -> b) (t1: sset a): b =
+    let
+        fun myop (x: a) (acc: b): b = acc + proj x
+    in
+      foldr myop zero t1
+    end
+
+(* prod cannot be specified in terms of num,
+   because num lacks the product neutral elem. definition
+   (zero is defined in class num but not one)
+*)
+fun intProdBy [a]  (proj: a -> int) (t1: sset a): int =
+    let
+        fun myop (x: a) (acc: int): int = acc * proj x
+    in
+      foldr myop 1 t1
+    end
+
+fun floatProdBy [a]  (proj: a -> float) (t1: sset a): float =
+    let
+        fun myop (x: a) (acc: float): float = acc * proj x
+    in
+      foldr myop 1.0 t1
+    end
+
+fun minBy [a][b]  (_:ord b) (proj: a -> b) (z: b) (t1: sset a): b =
+    let
+        fun myop (x: a) (acc: b): b = min acc (proj x)
+    in
+        foldr myop z t1
+    end
+
+fun maxBy [a][b]  (_:ord b) (proj: a -> b) (z: b) (t1: sset a): b =
+    let
+        fun myop (x: a) (acc: b): b = max acc (proj x)
+    in
+        foldr myop z t1
+    end

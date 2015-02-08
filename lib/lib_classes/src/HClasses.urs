@@ -41,20 +41,3 @@ structure MapFoldable : sig
      val foldr : t ::: (Type -> Type -> Type) -> k ::: Type -> v ::: Type -> b ::: Type ->
                  mapFoldable t -> (k * v -> b -> b) -> b -> t k v -> b
 end
-
-(*
-structure Set : sig
-     class set :: (Type -> Type) -> Type
-     val mkSet : t ::: (Type -> Type) ->
-                       (a ::: Type -> (t a)) ->             (*  empty*)
-                       (a ::: Type -> (ord a -> a -> t a -> t a)) -> (* insert *)
-                       (a ::: Type -> (ord a -> a -> t a -> t a)) -> (* delete *)
-                       (a ::: Type -> (ord a -> a -> t a -> bool)) -> (* member *)
-                       set t
-
-     val empty : t ::: (Type -> Type) -> a ::: Type -> set t -> t a
-     val insert : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> t a
-     val delete : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> t a
-     val member : t ::: (Type -> Type) -> a ::: Type -> set t -> ord a -> a -> t a -> bool
-end
-*)

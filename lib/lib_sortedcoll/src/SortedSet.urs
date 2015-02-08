@@ -47,3 +47,17 @@ val mp : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> sset a -> sset b
 val mapMonotonic : a ::: Type -> b ::: Type -> (a -> b) -> sset a -> sset b
 
 val valid:  a ::: Type -> ord a -> sset a -> bool
+
+val all : a ::: Type -> (a -> bool) -> sset a -> bool
+
+val any : a ::: Type -> (a -> bool) -> sset a -> bool
+
+val sumBy : a ::: Type -> b ::: Type -> num b -> (a -> b) -> sset a -> b
+
+val intProdBy : a ::: Type -> (a -> int) -> sset a -> int
+
+val floatProdBy : a ::: Type -> (a -> float) -> sset a -> float
+
+val minBy : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> b -> sset a -> b
+
+val maxBy : a ::: Type -> b ::: Type -> ord b -> (a -> b) -> b -> sset a -> b
