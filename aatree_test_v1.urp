@@ -3,7 +3,7 @@ ffi test/util/c/Random
 include test/util/c/Random.h
 link test/util/c/Random.o
 benignEffectful Random.urandom
-library lib_aatree
+library lib/lib_aatree
 
 $/list
 $/string
