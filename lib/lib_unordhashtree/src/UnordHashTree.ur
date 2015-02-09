@@ -113,7 +113,7 @@ val findMinByVal [k][v] (_:hashable k) (_: ord v): (hashTree k v -> option (k * 
 
 val findMaxByVal [k][v] (_:hashable k) (_: ord v): (hashTree k v -> option (k * v)) = findByOrd snd max
 
-(* Invariants *)
+(* * Invariants *)
 
 val propBucketsAllValidAndNonEmpty[k][v] (_:hashable k) (_:eq k) (t1: hashTree k v): bool =
     let fun myop (p: int * bucket k v) (acc: bool): bool =
@@ -122,3 +122,12 @@ val propBucketsAllValidAndNonEmpty[k][v] (_:hashable k) (_:eq k) (t1: hashTree k
     end
 
 val valid[k][v] (_:hashable k) (_:eq k): (hashTree k v -> bool) = propBucketsAllValidAndNonEmpty
+
+(* * statistics *)
+
+fun maxBucketSize[k][v] (_:hashable k) (_:eq k) (t1:hashTree k v): int =
+        let fun myop (p: int * (bucket k v)) (acc: int): int = max acc (LB.size p.2)
+        in T.foldr myop 0 t1
+        end
+   
+

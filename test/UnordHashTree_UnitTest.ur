@@ -13,7 +13,7 @@ val hashable_string: Hashable.Hashable.hashable string = Hashable.hashable_strin
 
 
 
-fun unitTest (testdata: list (string * int)): transaction (xbody * list (string * int)) =
+fun unitTest (testdata: list (string * int)): transaction (xbody * list (string * int) * int) =
 
    (* Assert: testdata must not have repeated keys *)
    let val keys: list string = List.mp HT.fst testdata
@@ -39,7 +39,7 @@ fun unitTest (testdata: list (string * int)): transaction (xbody * list (string 
                 tst3 <- U.assertBool "propNonDeletedAreMember fails" propNonDeletedAreMember ;
                 let val testsResults = tst0 :: tst1 :: tst2 :: tst3 :: Nil
                     val xmlJoinedResults = List.foldr join <xml/> testsResults
-                in return (xmlJoinedResults, sortedOutput)
+                in return (xmlJoinedResults, sortedOutput, T.maxBucketSize treeData)
                 end
         end
     end

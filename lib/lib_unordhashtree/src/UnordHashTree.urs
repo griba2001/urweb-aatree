@@ -37,3 +37,5 @@ val findMinByKey : k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> o
 val findMaxByKey : k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> ord k -> hashTree k v -> option (k * v)
 
 val valid: k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> eq k -> hashTree k v -> bool
+
+val maxBucketSize: k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> eq k -> hashTree k v -> int
