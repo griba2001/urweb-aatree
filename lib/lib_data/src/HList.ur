@@ -45,3 +45,12 @@ fun delete [a] (_: eq a) (x: a) (li: list a): list a =
                         else del' ys (y :: acc)
    in del' li []
    end
+
+fun zip [a][b] (xs: list a) (ys: list b): list (a * b) =
+      let fun zip' (xs': list a) (ys': list b) (acc: list (a * b)): list (a * b) =
+          case (xs', ys') of
+             (x :: xs'', y :: ys'') => zip' xs'' ys'' ((x, y) :: acc)
+             | _ => List.rev acc
+      in
+         zip' xs ys []
+      end   

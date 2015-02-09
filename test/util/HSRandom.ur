@@ -14,6 +14,8 @@ fun sysNextp (from:int) (to:int) (cnt: int): transaction (option (int * int)) =
 
 fun getSysRandomIntList (topSize:int) (from:int) (to:int): transaction (list int) =
      rnd <- rand ;
-     let val len = rndToRange 0 topSize rnd
-     in HM.unfoldrM (sysNextp from to) len
-     end
+     if topSize = 0 then return []
+     else
+        let val len = rndToRange 0 topSize rnd
+        in HM.unfoldrM (sysNextp from to) len
+        end

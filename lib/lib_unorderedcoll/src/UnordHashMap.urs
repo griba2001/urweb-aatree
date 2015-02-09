@@ -36,6 +36,8 @@ val keys : k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> hashMap k
 
 val values : k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> hashMap k v -> list v
 
+val valid: k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> eq k -> hashMap k v -> bool
+
 (*****)
 
 val findMinByKey : k ::: Type -> v ::: Type -> Hashable.Hashable.hashable k -> ord k -> hashMap k v -> option (k * v)

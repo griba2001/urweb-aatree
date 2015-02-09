@@ -13,3 +13,5 @@ val elem : a ::: Type -> eq a -> a -> list a -> bool
 val nub : a ::: Type -> eq a -> list a -> list a
 
 val delete : a ::: Type -> eq a -> a -> list a -> list a
+
+val zip : a ::: Type -> b ::: Type -> list a -> list b -> list (a * b)

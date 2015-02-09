@@ -105,6 +105,8 @@ fun keys [k][v] (_:hashable k) (d1: hashMap k v): list k = List.mp fst (toList d
 
 val values [k][v] (_:hashable k) (d1: hashMap k v): list v = List.mp snd (toList d1)
 
+val valid[k][v] (_:hashable k) (_:eq k): (hashMap k v -> bool) = T.valid
+
 (* * *)
 
 fun all [k][v] (_:hashable k) (prop: v -> bool) (t: hashMap k v): bool =
