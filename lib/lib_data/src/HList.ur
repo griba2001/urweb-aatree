@@ -21,10 +21,12 @@ fun partition [a] (p: a -> bool) (ls: list a) : list a * list a =
         part [] [] ls
     end
 
-fun elem [a] (_: eq a) (x: a) (li: list a): bool =
+fun elem [a] (_: eq a) (x: a) (li: list a): bool =  List.exists (eq x) li
+    (*
     case li of
       [] => False
       | y :: ys => x = y || elem x ys
+     *) 
 
 fun nub [a] (_: eq a) (li: list a): list a =
    let fun nub' li' ls =
