@@ -101,7 +101,7 @@ structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 
 open Map
 open MapOps
-open Hashable.Hashable
+open Hashable
 
 structure StringXIntPair = struct
                       type key = string
