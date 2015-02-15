@@ -1,8 +1,5 @@
 library lib/lib_data/
-library lib/lib_aatree/
-library lib/lib_classes/
-library lib/lib_sortedcoll/
 library lib/lib_bits/
 library lib/lib_hashable/
-library lib/lib_unordhashtree/
-library lib/lib_unorderedcoll/
+library lib/lib_datastruct_functors
+library lib/lib_adt_functors

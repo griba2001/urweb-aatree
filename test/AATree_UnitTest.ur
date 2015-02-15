@@ -1,13 +1,17 @@
 (* AATree UnitTest *)
 
-structure T = AATree
+(* structure T = AATree *)
 structure F = HFunction
 structure U = HUrUnit
 structure HL = HList
 structure HT = HTuple
 structure HO = HOrd
 
-val toFromList [k][v] (_ : ord k): (list (k * v) -> list (k * v)) = F.compose T.toList T.fromList
+structure T = AATreeMap.AATreeMap(struct
+  type key = int
+  type item = string
+  val ord_key = ord_int
+end) 
 
 fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * string)) =
 
@@ -18,8 +22,8 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
       else
         let 
             val sortedInput : list (int * string) = List.sort (HO.gtBy HT.fst) testdata
-            val inputFromTree : list (int * string) = toFromList testdata
             val treeData: T.tree int string = T.fromList testdata
+            val inputFromTree : list (int * string) = T.toList treeData
             val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
             val treeWithdeletions: T.tree int string = List.foldl T.delete treeData keysToDel
             val memberOf = F.flip T.member

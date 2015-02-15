@@ -1,5 +1,5 @@
 rewrite url UnordHashTree_test/main
-library lib/lib_unordhashtree
+library lib/lib_datastruct_functors
 
 $/list
 $/string

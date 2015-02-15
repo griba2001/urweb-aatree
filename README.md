@@ -53,9 +53,9 @@ structure IntItem = struct
                       val ord_item = ord_int
                     end
 
-structure IntSortedSet = SortedSet( IntItem)
+structure IntSortedSet = Set.SortedSet( IntItem)
 
-structure IntSortedSetOps = MkSetOps (IntSortedSet)
+structure IntSortedSetOps = SetOps.MkSetOps (IntSortedSet)
 ```
 
 #####Instanciating an StringHashedSet
@@ -72,10 +72,45 @@ structure StringItem = struct
                     end
 
 
-structure StringHashedSet = HashedEqSet( StringItem)
+structure StringHashedSet = Set.HashedEqSet( StringItem)
 
-structure StringHashedSetOps = MkSetOps (StringHashedSet)
+structure StringHashedSetOps = SetOps.MkSetOps (StringHashedSet)
 ```
 
+#####Instanciating an Int * String SortedMap
 
+```ocaml
 
+open Map
+open MapOps
+
+structure IntXStringPair = struct
+                      type key = int
+                      type item = string
+                      val ord_key = ord_int
+                    end
+
+structure IntXStringSortedMap = Map.SortedMap( IntXStringPair)
+
+structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
+```
+
+#####Instanciating an String * Int SortedMap
+
+```ocaml
+
+open Map
+open MapOps
+open Hashable.Hashable
+
+structure StringXIntPair = struct
+                      type key = string
+                      type item = int
+                      val eq_key = eq_string
+                      val hashable_key = hashable_string
+                    end
+
+structure StringXIntHashMap = Map.HashedEqMap( StringXIntPair)
+
+structure StringXIntHashMapOps = MapOps.MkMapOps (StringXIntHashMap)
+```
