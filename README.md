@@ -61,7 +61,7 @@ val mySortedSet = IntSortedSet.fromList (3 :: 1 :: 2 :: [])
 
 ```
 
-#####Instanciating an StringHashedSet
+#####Instanciating a StringHashedSet
 
 
 ```ocaml
@@ -98,7 +98,7 @@ structure IntXStringSortedMap = Map.MkSortedMap( IntXStringPair)
 structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 ```
 
-#####Instanciating an String * Int HashedMap
+#####Instanciating a String * Int HashedMap
 
 ```ocaml
 
