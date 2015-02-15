@@ -1,8 +1,0 @@
-library ../lib_data/
-
-$/string
-$/list
-src/HClasses
-src/HFoldings
-src/HMapFoldings
-

@@ -1,0 +1,10 @@
+library ../lib_data/
+library ../lib_hashable/
+library ../lib_datastruct_functors/
+
+$/option
+$/monad
+src/Map
+src/Set
+src/SetOps
+src/MapOps

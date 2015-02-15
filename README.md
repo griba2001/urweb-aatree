@@ -1,6 +1,4 @@
-## Experimental (API will change)
-
-## SortedSet, SortedMap, HashSet, HashMap for Ur/Web
+## SortedMap, SortedSet, HashedEqMap, HashedEqSet functors for Ur/Web
 
 based on Arne Anderson Tree as listed in [wikipedia](https://en.wikipedia.org/wiki/AA_tree).
 
@@ -20,15 +18,15 @@ cd lib/lib_bits/src/c
 gcc -c Bits.c
 cd ../../../..
 
-urweb aatree_test_v2
+urweb aatree_test_v3
 
 # execution
-./aatree_test_v2.exe -p 8081 &   # -p <server port>
+./aatree_test_v3.exe -p 8081 &   # -p <server port>
 
 browser http://localhost:8081/
 
 # when done, if the server has been started in background
-killall -TERM aatree_test_v2.exe
+killall -TERM aatree_test_v3.exe
 ```
 
 Repeating page retrieval makes the test use different input random data.
@@ -39,19 +37,45 @@ urweb unordHashTree_test
 
 test as above.
 
---------------------
+---------------------
 
-#### previous test design got random ints reading from /dev/urandom in Random.c
+####Use
 
-```bash
+#####Instanciating an IntSortedSet
 
-cd test/util/c
-gcc -c Random.c
-cd ../../..
+```ocaml
 
-urweb aatree_test_v1
+open Set
+open SetOps
+
+structure IntItem = struct
+                      type item = int
+                      val ord_item = ord_int
+                    end
+
+structure IntSortedSet = SortedSet( IntItem)
+
+structure IntSortedSetOps = MkSetOps (IntSortedSet)
 ```
 
+#####Instanciating an StringHashedSet
+
+
+```ocaml
+open Set
+open SetOps
+
+structure StringItem = struct
+                      type item = string
+                      val eq_item = eq_string
+                      val hashable_item = Hashable.hashable_string
+                    end
+
+
+structure StringHashedSet = HashedEqSet( StringItem)
+
+structure StringHashedSetOps = MkSetOps (StringHashedSet)
+```
 
 
 
