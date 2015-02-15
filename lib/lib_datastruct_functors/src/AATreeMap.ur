@@ -210,7 +210,8 @@ fun maximum (t1: tree key item): key * item =
 
 (* * Node balancing *)
 
-(* skew: right rotation *)
+(* skew: remove left horizontal links with right rotation
+*)
 fun skew (t1: tree key item) : tree key item =
     case t1 of
         Node {Level = lvT, Left = l, ...} =>
@@ -223,16 +224,7 @@ fun skew (t1: tree key item) : tree key item =
                )
         | _ => t1
 
-(* Haskell :
-
-split t @ (Node _ lvT a r @ (Node _ lvR b x @ (Node _ lvX _ _)))
-   | lvT == lvX = let t' = t {right = left r}
-                      r' = r {left = t', level = lvR + 1}
-                  in r'
-   | otherwise = t
-
-split t = t
-
+(* split: remove consecutive horizontal links
 *)
 
 fun split (t1: tree key item) : tree key item =
@@ -249,9 +241,7 @@ fun split (t1: tree key item) : tree key item =
           | _ => t1)
      | _ => t1
 
-(* Haskell
-splitRight Empty = Empty
-splitRight (Node x lv l r) = Node x lv l (split r)
+(*
 *)
 
 fun splitRight (t1: tree key item): tree key item =
@@ -263,9 +253,7 @@ fun splitRight (t1: tree key item): tree key item =
              )
         | Empty => t1
 
-(* Haskell
-skewRight Empty = Empty
-skewRight (Node x lv l r) = Node x lv l (skew r)
+(*
 *)
 
 fun skewRight (t1: tree key item): tree key item =
@@ -277,9 +265,7 @@ fun skewRight (t1: tree key item): tree key item =
               )
         | Empty => t1
 
-(* Haskell
-skewRightRight (Node x lv l (Node x' lv' l' r')) = Node x lv l (Node x' lv' l' (skew r'))
-skewRightRight t = t
+(*
 *)
 
 fun skewRightRight (t1: tree key item): tree key item =
@@ -297,25 +283,7 @@ fun skewRightRight (t1: tree key item): tree key item =
              )
        | _ => t1
 
-(* Haskell
-
-(.$) = flip ($)
-
-decreaseLevel :: Tree a -> Tree a
-decreaseLevel Empty = Empty
-decreaseLevel t @ (Node _ lvP l Empty)
-        | lvP > should_be = t {level = should_be}
-        | otherwise = t
-        where should_be = 1 + getLevel l
-
-decreaseLevel t @ (Node _ lvP l r @ (Node _ lvR _ _))
-        | lvP > should_be =
-             let r' = if (r .$ level) > should_be
-                then r {level = should_be}
-                else r
-             in t {level = should_be, right = r'}
-        | otherwise = t
-    where should_be = 1 + min (getLevel l) (getLevel r)
+(*
 *)
 
 fun decreaseLevel (t1: tree key item): tree key item =
@@ -340,24 +308,16 @@ fun decreaseLevel (t1: tree key item): tree key item =
             )  
       | Empty => Empty
 
-(* Haskell
-rebalance = decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
+(*
 *)
 val rebalance : (tree key item -> tree key item) = (* with left to right function composition *)
     andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight))))
 
+val skewThenSplit : (tree key item -> tree key item) = andThen skew split
 
 (* * Insert / delete  *)
 
-(* Haskell:
-
-(.$) = flip ($)
-
-insert x Empty = singleton x
-insert x (Node y lv l r) = case compare x y of
-        LT -> Node y lv (insert x l) r .$ skew .$ split
-        GT -> Node y lv l (insert x r) .$ skew .$ split
-        EQ -> Node x lv l r
+(*
 *)
 
 
@@ -365,8 +325,8 @@ fun insertWith (f: item -> item -> item) (k1: key) (v1: item) (t1: tree key item
     case t1 of
         Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
-              LT => split (skew (setLeft (insertWith f k1 v1 l) t1))
-              | GT => split (skew (setRight (insertWith f k1 v1 r) t1))
+              LT => skewThenSplit (setLeft (insertWith f k1 v1 l) t1)
+              | GT => skewThenSplit (setRight (insertWith f k1 v1 r) t1)
               | EQ => setKeyAndValue k1 (f v1 v0) t1
               )
         | Empty => singleton k1 v1
@@ -374,19 +334,7 @@ fun insertWith (f: item -> item -> item) (k1: key) (v1: item) (t1: tree key item
 val insert (k1: key) (v1: item):  (tree key item -> tree key item) = insertWith const k1 v1
 
 
-(* Haskell
-(.$) = flip ($)
-
-delete x Empty = Empty
-delete x t @ (Node y lv l r) = case compare x y of
-        LT -> Node y lv (delete x l) r .$ rebalance
-        GT -> Node y lv l (delete x r) .$ rebalance
-        EQ -> case (l, r) of
-                (Empty, Empty) -> Empty -- deleted
-                (Empty, _) -> Node successor lv l (delete successor r) .$ rebalance -- copy successor value and delete successor
-                where successor = minimum r
-                (_, _) -> Node predecessor lv (delete predecessor l) r .$ rebalance -- copy predecessor value and delete predecessor
-                where predecessor = maximum l
+(*
 *)
 
 fun delete (k1: key) (t1: tree key item): tree key item =
