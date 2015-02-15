@@ -478,7 +478,7 @@ fun find (prop: key * item -> bool) (t1: tree key item): option (key * item) =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
           if prop (k0, v0) then Some (k0, v0)
-          else HO.optAlternative (find prop l) (find prop r)
+          else HO.optAlternative (find prop l) (fn () => find prop r)
       | Empty => None
 
 (* * Invariants *)
