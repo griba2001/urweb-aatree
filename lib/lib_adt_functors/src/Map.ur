@@ -30,13 +30,13 @@ signature SMAP = sig
   val findMaxByKey: t item -> option (key * item)
 end
 
-functor SortedMap(Q: sig
+functor MkSortedMap(Q: sig
                          con key :: Type
                          con item :: Type
                          val ord_key: ord key
                      end):SMAP  = struct
 
-  structure T = AATreeMap.AATreeMap( Q)
+  structure T = AATreeMap.MkAATreeMap( Q)
   open Q
   
   type t v = T.tree key v
@@ -67,14 +67,14 @@ end
 
 structure HStruc = Hashable.Hashable
 
-functor UnordHashMap(Q: sig
+functor MkUnordHashMap(Q: sig
                      con key :: Type
                      con item :: Type
                      val eq_key: eq key
                      val hashable_key: HStruc.hashable key
                  end): FMAP = struct
 
-  structure T = HashEqTreeMap.HashEqTreeMap( Q)
+  structure T = HashEqTreeMap.MkHashEqTreeMap( Q)
 
   open Q
 

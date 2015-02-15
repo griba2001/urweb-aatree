@@ -1,4 +1,4 @@
-## SortedMap, SortedSet, HashedEqMap, HashedEqSet functors for Ur/Web
+### MkSortedMap, MkSortedSet, MkUnordHashMap, MkUnordHashSet functors for Ur/Web
 
 based on Arne Anderson Tree as listed in [wikipedia](https://en.wikipedia.org/wiki/AA_tree).
 
@@ -53,9 +53,12 @@ structure IntItem = struct
                       val ord_item = ord_int
                     end
 
-structure IntSortedSet = Set.SortedSet( IntItem)
+structure IntSortedSet = Set.MkSortedSet( IntItem)
 
 structure IntSortedSetOps = SetOps.MkSetOps (IntSortedSet)
+
+val mySortedSet = IntSortedSet.fromList (1 :: 2 :: 3 :: [])
+
 ```
 
 #####Instanciating an StringHashedSet
@@ -72,7 +75,7 @@ structure StringItem = struct
                     end
 
 
-structure StringHashedSet = Set.HashedEqSet( StringItem)
+structure StringHashedSet = Set.MkUnordHashSet( StringItem)
 
 structure StringHashedSetOps = SetOps.MkSetOps (StringHashedSet)
 ```
@@ -90,7 +93,7 @@ structure IntXStringPair = struct
                       val ord_key = ord_int
                     end
 
-structure IntXStringSortedMap = Map.SortedMap( IntXStringPair)
+structure IntXStringSortedMap = Map.MkSortedMap( IntXStringPair)
 
 structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 ```
@@ -110,7 +113,7 @@ structure StringXIntPair = struct
                       val hashable_key = hashable_string
                     end
 
-structure StringXIntHashMap = Map.HashedEqMap( StringXIntPair)
+structure StringXIntHashMap = Map.MkUnordHashMap( StringXIntPair)
 
 structure StringXIntHashMapOps = MapOps.MkMapOps (StringXIntHashMap)
 ```

@@ -4,7 +4,7 @@ open Hashable.Hashable
 open Hashable
 
 
-functor HashEqTreeMap(Q: sig
+functor MkHashEqTreeMap(Q: sig
                          con key :: Type
                          con item :: Type
                          val eq_key: eq key
@@ -67,11 +67,11 @@ open Option
 
 open Q
 
-structure LB = ListMap.ListMap( Q)
+structure LB = ListMap.MkListMap( Q)
 
 type bucket k v = LB.t k v
 
-structure T = AATreeMap.AATreeMap(struct
+structure T = AATreeMap.MkAATreeMap(struct
                            type item = bucket Q.key Q.item
                            type key = int
                            val ord_key = ord_int 

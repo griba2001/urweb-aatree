@@ -23,11 +23,11 @@ signature SSET = sig
   val findMax: t -> option item
 end
 
-functor SortedSet(Q: sig con item :: Type
+functor MkSortedSet(Q: sig con item :: Type
                          val ord_item: ord item
                      end): SSET = struct
 
-  structure T = AATreeMap.AATreeMap(struct type key = Q.item
+  structure T = AATreeMap.MkAATreeMap(struct type key = Q.item
                                            type item = unit
                                            val ord_key = Q.ord_item
                                     end)
@@ -54,12 +54,12 @@ end
 
 structure HStruc = Hashable.Hashable
 
-functor HashedEqSet(Q: sig con item :: Type
+functor MkUnordHashSet(Q: sig con item :: Type
                      val eq_item: eq item
                      val hashable_item: HStruc.hashable item
                  end): FSET = struct
 
-  structure T = HashEqTreeMap.HashEqTreeMap(struct
+  structure T = HashEqTreeMap.MkHashEqTreeMap(struct
                      type key = Q.item
                      type item = unit
                      val eq_key = Q.eq_item
@@ -83,26 +83,3 @@ functor HashedEqSet(Q: sig con item :: Type
     in T.foldr myop' z t1
     end
 end
-
-
-(* functor instances example: 
-
-structure IntItem = struct
-                      type item = int
-                      val ord_item = ord_int
-                    end
-
-structure StringItem = struct
-                      type item = string
-                      val eq_item = eq_string
-                      val hashable_item = Hashable.hashable_string
-                    end
-
-structure IntSortedSet = SortedSet( IntItem)
-
-structure IntSortedSetOps = MkSetOps (IntSortedSet)
-
-structure StringHashedSet = HashedEqSet( StringItem)
-
-structure StringHashedSetOps = MkSetOps (StringHashedSet)
-*)

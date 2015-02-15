@@ -4,7 +4,7 @@ structure L = List
 structure HL = HList
 open HFunction
 
-functor ListMap(Q: sig
+functor MkListMap(Q: sig
                          con key :: Type
                          con item :: Type
                          val eq_key: eq key

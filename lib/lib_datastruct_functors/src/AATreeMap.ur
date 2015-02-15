@@ -4,7 +4,7 @@
 (*
 *)
 
-functor AATreeMap(Q: sig
+functor MkAATreeMap(Q: sig
                          con key :: Type
                          con item :: Type
                          val ord_key: ord key
