@@ -1,4 +1,4 @@
-### MkSortedMap, MkSortedSet, MkUnordHashMap, MkUnordHashSet functors for Ur/Web
+### Sorted Map, Sorted Set, Unordered HashMap, Unordered HashSet functors for Ur/Web
 
 based on Arne Anderson Tree as listed in [wikipedia](https://en.wikipedia.org/wiki/AA_tree).
 
@@ -57,7 +57,7 @@ structure IntSortedSet = Set.MkSortedSet( IntItem)
 
 structure IntSortedSetOps = SetOps.MkSetOps (IntSortedSet)
 
-val mySortedSet = IntSortedSet.fromList (1 :: 2 :: 3 :: [])
+val mySortedSet = IntSortedSet.fromList (3 :: 1 :: 2 :: [])
 
 ```
 
