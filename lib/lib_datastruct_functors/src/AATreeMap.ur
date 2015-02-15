@@ -471,7 +471,7 @@ fun exists (prop: key * item -> bool) (t1: tree key item): bool =
 fun all (prop: key * item -> bool) (t1: tree key item): bool =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-                  prop (k0, v0) || all prop l || all prop r
+                  prop (k0, v0) && all prop l && all prop r
       | Empty => True
 
 fun find (prop: key * item -> bool) (t1: tree key item): option (key * item) =
