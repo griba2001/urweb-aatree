@@ -215,9 +215,9 @@ fun skew (t1: tree key item) : tree key item =
     case t1 of
         Node {Level = lvT, Left = l, ...} =>
             (case l of
-               Node {Level = lvL, Right = r, ...} =>
+               Node {Level = lvL, Right = lRight, ...} =>
                         if lvT = lvL
-                        then setRight (setLeft r t1) l
+                        then setRight (setLeft lRight t1) l
                         else t1
                | _ => t1
                )
