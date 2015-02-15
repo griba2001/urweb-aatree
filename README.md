@@ -95,7 +95,7 @@ structure IntXStringSortedMap = Map.SortedMap( IntXStringPair)
 structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 ```
 
-#####Instanciating an String * Int SortedMap
+#####Instanciating an String * Int HashedMap
 
 ```ocaml
 
