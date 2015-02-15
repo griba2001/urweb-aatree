@@ -496,7 +496,9 @@ fun aaTreeProps (t1: tree key item): bool =
 
                 val prop3 =
                         case r: tree key item of
-                        | Node {Level = lvRChild, ...} => lvParent - lvRChild <= 1
+                        | Node {Level = lvRChild, ...} => let val prcDiff = lvParent - lvRChild
+                                                          in 0 <= prcDiff && prcDiff <= 1
+                                                          end   
                         | _ => True
 
                 val prop4 =
