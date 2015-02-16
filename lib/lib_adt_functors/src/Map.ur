@@ -37,31 +37,31 @@ functor MkSortedMap(Q: sig
                      end):SMAP  = struct
 
   structure T = AATreeMap.MkAATreeMap( Q)
-  open Q
-  
-  type t v = T.tree key v
-  type key = key
-  type item = item
-  val empty: t item = T.empty
-  val singleton: key -> item -> t item = T.singleton
-  val null: t item -> bool = T.null
-  val size: t item -> int = T.size
-  val member: key -> t item -> bool = T.member
-  val lookup: key -> t item -> option item = T.lookup
-  val insert: key -> item -> t item -> t item = T.insert
-  val delete: key -> t item -> t item = T.delete
-  val exists: (key * item -> bool) -> t item -> bool = T.exists
-  val all: (key * item -> bool) -> t item -> bool = T.all
-  val find: (key * item -> bool) -> t item -> option (key * item) = T.find
-  val getAnyPair: t item -> option (key * item) = T.getAnyPair
-  val foldrWithIndex [b] : (key * item -> b -> b) -> b -> t item -> b = T.foldr
-  fun foldr [b] (myop: item -> b -> b): b -> t item -> b =
-      let fun myop' (p: key * item): b -> b = myop p.2
+
+  type t v = T.tree Q.key v
+  val empty: t Q.item = T.empty
+  val singleton: Q.key -> Q.item -> t Q.item = T.singleton
+  val null: t Q.item -> bool = T.null
+  val size: t Q.item -> int = T.size
+  val member: Q.key -> t Q.item -> bool = T.member
+  val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
+  val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
+  val delete: Q.key -> t Q.item -> t Q.item = T.delete
+  val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
+  val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
+  val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
+  val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
+  val foldrWithIndex [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
+  fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
+      let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
       in T.foldr myop'
       end 
-  val mp [b]: (item -> b) -> t item -> t b = T.mapValues
-  val findMinByKey: t item -> option (key * item) = T.findMin
-  val findMaxByKey: t item -> option (key * item) = T.findMax
+  val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
+  val findMinByKey: t Q.item -> option (Q.key * Q.item) = T.findMin
+  val findMaxByKey: t Q.item -> option (Q.key * Q.item) = T.findMax
+  (* for mapOps referral *)
+  type key = Q.key
+  type item = Q.item
 end
 
 
@@ -76,28 +76,27 @@ functor MkUnordHashMap(Q: sig
 
   structure T = HashEqTreeMap.MkHashEqTreeMap( Q)
 
-  open Q
-
-  type t v = T.htree key v
-  type key = key
-  type item = item
-  val empty: t item = T.empty
-  val singleton: key -> item -> t item = T.singleton
-  val null: t item -> bool = T.null
-  val size: t item -> int = T.size
-  val member: key -> t item -> bool = T.member
-  val lookup: key -> t item -> option item = T.lookup
-  val insert: key -> item -> t item -> t item = T.insert
-  val delete: key -> t item -> t item = T.delete
-  val exists: (key * item -> bool) -> t item -> bool = T.exists
-  val all: (key * item -> bool) -> t item -> bool = T.all
-  val find: (key * item -> bool) -> t item -> option (key * item) = T.find
-  val getAnyPair: t item -> option (key * item) = T.getAnyPair
-  val mp [b]: (item -> b) -> t item -> t b = T.mapValues
-  val foldrWithIndex [b] : (key * item -> b -> b) -> b -> t item -> b = T.foldr
-  fun foldr [b] (myop: item -> b -> b): b -> t item -> b =
-      let fun myop' (p: key * item): b -> b = myop p.2
+  type t v = T.htree Q.key v
+  val empty: t Q.item = T.empty
+  val singleton: Q.key -> Q.item -> t Q.item = T.singleton
+  val null: t Q.item -> bool = T.null
+  val size: t Q.item -> int = T.size
+  val member: Q.key -> t Q.item -> bool = T.member
+  val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
+  val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
+  val delete: Q.key -> t Q.item -> t Q.item = T.delete
+  val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
+  val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
+  val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
+  val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
+  val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
+  val foldrWithIndex [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
+  fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
+      let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
       in T.foldr myop'
       end
+  (* for mapOps referral *)
+  type key = Q.key
+  type item = Q.item
 end
 
