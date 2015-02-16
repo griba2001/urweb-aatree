@@ -15,6 +15,7 @@ signature FMAP = sig
   val delete: key -> t item -> t item
   val lookup: key -> t item -> option item
   val member: key -> t item -> bool
+  val adjust:  (item -> item) -> key -> t item -> t item
   val exists: (key * item -> bool) -> t item -> bool
   val all: (key * item -> bool) -> t item -> bool
   val find: (key * item -> bool) -> t item -> option (key * item)
@@ -48,6 +49,7 @@ functor MkSortedMap(Q: sig
   val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
   val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
   val delete: Q.key -> t Q.item -> t Q.item = T.delete
+  val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
   val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
   val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
   val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
@@ -86,6 +88,7 @@ functor MkUnordHashMap(Q: sig
   val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
   val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
   val delete: Q.key -> t Q.item -> t Q.item = T.delete
+  val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
   val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
   val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
   val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
