@@ -34,7 +34,8 @@ functor MkSortedMap(Q: sig
                          con key :: Type
                          con item :: Type
                          val ord_key: ord key
-                     end):SMAP  = struct
+                     end):(SMAP where con item = Q.item
+                                where con key = Q.key)  = struct
 
   structure T = AATreeMap.MkAATreeMap( Q)
 
@@ -59,7 +60,6 @@ functor MkSortedMap(Q: sig
   val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
   val findMinByKey: t Q.item -> option (Q.key * Q.item) = T.findMin
   val findMaxByKey: t Q.item -> option (Q.key * Q.item) = T.findMax
-  (* for mapOps referral *)
   type key = Q.key
   type item = Q.item
 end
@@ -72,7 +72,8 @@ functor MkUnordHashMap(Q: sig
                      con item :: Type
                      val eq_key: eq key
                      val hashable_key: HStruc.hashable key
-                 end): FMAP = struct
+                 end): (FMAP where con item = Q.item
+                             where con key = Q.key) = struct
 
   structure T = HashEqTreeMap.MkHashEqTreeMap( Q)
 
@@ -95,7 +96,6 @@ functor MkUnordHashMap(Q: sig
       let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
       in T.foldr myop'
       end
-  (* for mapOps referral *)
   type key = Q.key
   type item = Q.item
 end

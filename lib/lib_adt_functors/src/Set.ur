@@ -28,7 +28,7 @@ end
 
 functor MkSortedSet(Q: sig con item :: Type
                          val ord_item: ord item
-                     end): SSET = struct
+                     end): (SSET where con item = Q.item) = struct
 
   structure T = AATreeMap.MkAATreeMap(struct type key = Q.item
                                            type item = unit
@@ -64,7 +64,6 @@ functor MkSortedSet(Q: sig con item :: Type
         fun myop' (p: Q.item * unit): b -> b = myop p.1
     in T.foldr myop' z t1
     end
-  (* for SetOps referral *)
   type item = Q.item
 end
 
@@ -73,7 +72,7 @@ structure HStruc = Hashable.Hashable
 functor MkUnordHashSet(Q: sig con item :: Type
                      val eq_item: eq item
                      val hashable_item: HStruc.hashable item
-                 end): FSET = struct
+                 end): (FSET where con item = Q.item) = struct
 
   structure T = HashEqTreeMap.MkHashEqTreeMap(struct
                      type key = Q.item
@@ -108,6 +107,5 @@ functor MkUnordHashSet(Q: sig con item :: Type
         fun myop' (p: Q.item * unit): b -> b = myop p.1
     in T.foldr myop' z t1
     end
-  (* for SetOps referral *)
   type item = Q.item
 end
