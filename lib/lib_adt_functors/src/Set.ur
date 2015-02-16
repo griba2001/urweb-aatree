@@ -14,6 +14,9 @@ signature FSET = sig
   val delete: item -> t -> t
   val member: item -> t -> bool
   val getAny: t -> option item
+  val all: (item -> bool) -> t -> bool
+  val exists: (item -> bool) -> t -> bool
+  val find: (item -> bool) -> t -> option item
   val foldr: b ::: Type -> (item -> b -> b) -> b -> t -> b
 end
 
@@ -40,6 +43,19 @@ functor MkSortedSet(Q: sig con item :: Type
   val member: Q.item -> t -> bool = T.member
   fun insert (x: Q.item) : t -> t = T.insert x ()
   val delete: Q.item -> t -> t = T.delete
+  fun all (prop: Q.item -> bool): t -> bool =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in T.all prop'
+      end
+  fun exists (prop: Q.item -> bool): t -> bool =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in T.exists prop'
+      end
+  fun find (prop: Q.item -> bool): t -> option Q.item =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in compose (Monad.liftM fst) (T.find prop')
+      end
+
   val getAny: t -> option Q.item = compose (Monad.liftM fst) T.getAnyPair
   val findMin: t -> option Q.item = compose (Monad.liftM fst) T.findMin
   val findMax: t -> option Q.item = compose (Monad.liftM fst) T.findMax
@@ -74,6 +90,18 @@ functor MkUnordHashSet(Q: sig con item :: Type
   val member: Q.item -> t -> bool = T.member
   fun insert (x: Q.item) : t -> t = T.insert x ()
   val delete: Q.item -> t -> t = T.delete
+  fun all (prop: Q.item -> bool): t -> bool =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in T.all prop'
+      end
+  fun exists (prop: Q.item -> bool): t -> bool =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in T.exists prop'
+      end
+  fun find (prop: Q.item -> bool): t -> option Q.item =
+      let fun prop' (p:Q.item * unit): bool = prop p.1
+      in compose (Monad.liftM fst) (T.find prop')
+      end
   val getAny: t -> option Q.item = compose (Monad.liftM fst) T.getAnyPair
   val foldr [b] (myop: Q.item -> b -> b) (z: b) (t1: t) =
     let
