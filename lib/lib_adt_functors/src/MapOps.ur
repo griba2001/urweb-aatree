@@ -7,13 +7,13 @@ open HOrd
 functor MkMapOps (M:Map.FMAP): sig
 
   val filter: (M.item -> bool) -> M.t M.item -> M.t M.item
-  val filterWithIndex: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item
+  val filterWithKey: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item
 
   val partition: (M.item -> bool) -> M.t M.item -> M.t M.item * M.t M.item
-  val partitionWithIndex: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item * M.t M.item
+  val partitionWithKey: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item * M.t M.item
 
   val filterFoldr: b ::: Type -> (M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
-  val filterFoldrWithIndex: b ::: Type -> (M.key -> M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
+  val filterFoldrWithKey: b ::: Type -> (M.key -> M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
 
   val union: M.t M.item -> M.t M.item -> M.t M.item
   val diff: M.t M.item -> M.t M.item -> M.t M.item
@@ -31,7 +31,7 @@ end = struct
                 in foldrWithPair myop' z st
                 end
 
-        fun filterFoldrWithIndex [b] (prop: key -> item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
+        fun filterFoldrWithKey [b] (prop: key -> item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
                 let fun myop' (p: key * item) (acc: b): b =
                         if uncurry prop p
                                 then myop p acc
@@ -44,9 +44,9 @@ end = struct
 
                 filterFoldr prop (uncurry insert) empty
 
-        fun filterWithIndex (prop: key -> item -> bool) : (t item -> t item) =
+        fun filterWithKey (prop: key -> item -> bool) : (t item -> t item) =
 
-                filterFoldrWithIndex prop (uncurry insert) empty
+                filterFoldrWithKey prop (uncurry insert) empty
 
 
         fun partition (prop: item -> bool) : (t item -> t item * t item) =
@@ -59,7 +59,7 @@ end = struct
                         foldrWithPair myop (empty, empty)
                 end
 
-        fun partitionWithIndex (prop: key -> item -> bool) : (t item -> t item * t item) =
+        fun partitionWithKey (prop: key -> item -> bool) : (t item -> t item * t item) =
                 let
                         fun myop (p: key * item) (acc: t item * t item): t item * t item =
                                 if uncurry prop p
