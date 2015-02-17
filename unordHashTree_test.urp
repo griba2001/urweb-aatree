@@ -9,5 +9,5 @@ test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HSRandom
-test/UnordHashTree_UnitTest
+lib/lib_datastruct_functors/test/HashEqTreeMap_UnitTest
 test/unordHashTree_test

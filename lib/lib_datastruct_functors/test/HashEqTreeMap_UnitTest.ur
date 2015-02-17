@@ -1,4 +1,4 @@
-(* HashEqTree UnitTest *)
+(* HashEqTreeMap_UnitTest *)
 
 structure F = HFunction
 structure U = HUrUnit

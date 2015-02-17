@@ -1,4 +1,4 @@
-(* AATree UnitTest *)
+(* AATreeMap_UnitTest *)
 
 (* structure T = AATree *)
 structure F = HFunction

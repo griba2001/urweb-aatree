@@ -3,7 +3,7 @@
 structure HL = HList
 structure HSR = HSRandom
 
-structure ATUT = AATree_UnitTest
+structure ATUT = AATreeMap_UnitTest
 
 fun getTestData (): transaction (list (int * string)) =
     let fun f (i: int): int * string = (i, str1 (chr (i + 48)))

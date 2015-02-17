@@ -9,5 +9,5 @@ test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HSRandom
-test/AATree_UnitTest
+lib/lib_datastruct_functors/test/AATreeMap_UnitTest
 test/aatree_test_v2

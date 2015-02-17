@@ -4,7 +4,7 @@ structure HL = HList
 structure HSR = HSRandom
 structure HS = HString
 
-structure T = UnordHashTree_UnitTest
+structure T = HashEqTreeMap_UnitTest
 
 
 fun getRandString (topLen: int): transaction string =
