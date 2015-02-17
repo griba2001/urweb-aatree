@@ -16,6 +16,8 @@ functor MkMapOps (M:Map.FMAP): sig
   val filterFoldrWithKey: b ::: Type -> (M.key -> M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
 
   val union: M.t M.item -> M.t M.item -> M.t M.item
+  val unionWith: (M.item -> M.item -> M.item) -> M.t M.item -> M.t M.item -> M.t M.item
+
   val diff: M.t M.item -> M.t M.item -> M.t M.item
 
   val findByOrd: b ::: Type -> ord b -> (M.key * M.item -> b) -> (b -> b -> b) ->  M.t M.item -> option (M.key * M.item)
@@ -70,6 +72,8 @@ end = struct
                 end
 
         fun union (m1: t item) (m2: t item): t item = foldrWithPair (uncurry insert) m2 m1
+
+        fun unionWith (f: item -> item -> item) (m1: t item) (m2: t item): t item = foldrWithPair (uncurry (insertWith f)) m2 m1
 
         fun diff (m1: t item) (m2: t item): t item = foldrWithPair (compose delete fst) m1 m2
 

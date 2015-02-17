@@ -12,6 +12,7 @@ signature FMAP = sig
   val null: t item -> bool
   val size: t item -> int
   val insert: key -> item -> t item -> t item
+  val insertWith: (item -> item -> item) -> key -> item -> t item -> t item
   val delete: key -> t item -> t item
   val lookup: key -> t item -> option item
   val member: key -> t item -> bool
@@ -49,6 +50,7 @@ functor MkSortedMap(Q: sig
   val member: Q.key -> t Q.item -> bool = T.member
   val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
   val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
+  val insertWith: (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.item -> t Q.item = T.insertWith
   val delete: Q.key -> t Q.item -> t Q.item = T.delete
   val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
   val update:  (Q.item -> option Q.item) -> Q.key -> t Q.item -> t Q.item = T.update
@@ -89,6 +91,7 @@ functor MkUnordHashMap(Q: sig
   val member: Q.key -> t Q.item -> bool = T.member
   val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
   val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
+  val insertWith: (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.item -> t Q.item = T.insertWith
   val delete: Q.key -> t Q.item -> t Q.item = T.delete
   val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
   val update:  (Q.item -> option Q.item) -> Q.key -> t Q.item -> t Q.item = T.update
