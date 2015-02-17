@@ -7,7 +7,7 @@ structure HL = HList
 structure HT = HTuple
 structure HO = HOrd
 
-structure T = AATreeMap.AATreeMap(struct
+structure T = AATreeMap.MkAATreeMap(struct
   type key = int
   type item = string
   val ord_key = ord_int

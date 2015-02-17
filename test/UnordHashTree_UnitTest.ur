@@ -10,7 +10,7 @@ val hashable_int: Hashable.Hashable.hashable int = Hashable.hashable_int
 
 val hashable_string: Hashable.Hashable.hashable string = Hashable.hashable_string
 
-structure T = HashEqTreeMap.HashEqTreeMap(struct
+structure T = HashEqTreeMap.MkHashEqTreeMap(struct
   type key = string
   type item = int
   val eq_key = eq_string
