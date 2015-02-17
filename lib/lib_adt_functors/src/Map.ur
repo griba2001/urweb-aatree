@@ -22,7 +22,7 @@ signature FMAP = sig
   val find: (key * item -> bool) -> t item -> option (key * item)
   val getAnyPair: t item -> option (key * item)
   val mp: b ::: Type -> (item -> b) -> t item -> t b
-  val foldrWithIndex: b ::: Type -> (key * item -> b -> b) -> b -> t item -> b
+  val foldrWithPair: b ::: Type -> (key * item -> b -> b) -> b -> t item -> b
   val foldr: b ::: Type -> (item -> b -> b) -> b -> t item -> b
 end
 
@@ -56,7 +56,7 @@ functor MkSortedMap(Q: sig
   val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
   val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
   val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
-  val foldrWithIndex [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
+  val foldrWithPair [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
   fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
       let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
       in T.foldr myop'
@@ -97,7 +97,7 @@ functor MkUnordHashMap(Q: sig
   val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
   val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
   val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
-  val foldrWithIndex [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
+  val foldrWithPair [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
   fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
       let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
       in T.foldr myop'
