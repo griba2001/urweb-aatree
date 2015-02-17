@@ -31,6 +31,8 @@ val delete : Q.key -> t Q.key Q.item -> t Q.key Q.item
 
 val lookup : Q.key -> t Q.key Q.item -> option Q.item
 
+val member : Q.key -> t Q.key Q.item -> bool
+
 val fromList : list (Q.key * Q.item) -> t Q.key Q.item
 
 val toList : t Q.key Q.item -> list (Q.key * Q.item)
@@ -118,6 +120,8 @@ fun lookup  (k1: key) (li: t key item) : option item =
                       then Some v0
                       else lookup k1 ys
                    end)
+
+fun member (k1: key): t key item -> bool = compose Option.isSome (lookup k1)
 
 fun fromList  (li: list (key * item)): t key item =
     L.mp Entry li

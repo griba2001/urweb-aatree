@@ -1,4 +1,4 @@
-rewrite url Aatree_test_v3/main
+rewrite url ListMap_test/main
 library lib/lib_datastruct_functors
 
 $/list
@@ -9,5 +9,5 @@ test/util/HNum
 test/util/HMonad
 test/util/HUrUnit
 test/util/HSRandom
-lib/lib_datastruct_functors/test/AATreeMap_UnitTest
-test/aatree_test_v3
+lib/lib_datastruct_functors/test/ListMap_UnitTest
+test/listMap_test
