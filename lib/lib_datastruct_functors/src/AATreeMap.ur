@@ -40,6 +40,8 @@ val delete:  Q.key -> tree Q.key Q.item -> tree Q.key Q.item
 
 val adjust:  (Q.item -> Q.item) -> Q.key -> tree Q.key Q.item -> tree Q.key Q.item
 
+val update:  (Q.item -> option Q.item) -> Q.key -> tree Q.key Q.item -> tree Q.key Q.item
+
 val mapValues:  b ::: Type -> (Q.item -> b) -> tree Q.key Q.item -> tree Q.key b
 
 val mapKeysMonotonic :  key' ::: Type -> (Q.key -> key') -> tree Q.key Q.item -> tree key' Q.item
@@ -383,13 +385,30 @@ fun adjust' (f: item -> item) (k1: key) (t1: tree key item): tree key item =
               | GT => setRight (adjust' f k1 r) t1
               | EQ => setValue (f v0) t1
               )
-        | Empty => t1 (* case unreached if key non-membership is filtered *)
+        | Empty => t1 (* case unreached if key non-membership is filtered out *)
 
 fun adjust (f: item -> item) (k1: key) (t1: tree key item): tree key item =
     if member k1 t1
        then adjust' f k1 t1
        else t1
 
+fun update' (f: item -> option item) (k1: key) (t1: tree key item): tree key item =
+    case t1 of
+        Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+           (case compare k1 k0 of
+              LT => rebalance (setLeft (update' f k1 l) t1)
+              | GT => rebalance (setRight (update' f k1 r) t1)
+              | EQ => (case f v0 of
+                        | Some v1 => setValue v1 t1
+                        | None => delete k1 t1
+                        )  
+              )
+        | Empty => t1 (* case unreached if key non-membership is filtered out *)
+
+fun update (f: item -> option item) (k1: key) (t1: tree key item): tree key item =
+    if member k1 t1
+       then update' f k1 t1
+       else t1
 
 fun mapValues [w] (f: item -> w) (t1: tree key item): tree key w =
        case t1 of

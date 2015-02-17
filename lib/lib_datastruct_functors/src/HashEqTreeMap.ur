@@ -37,6 +37,8 @@ val delete:  Q.key -> htree Q.key Q.item -> htree Q.key Q.item
 
 val adjust:  (Q.item -> Q.item) -> Q.key -> htree Q.key Q.item -> htree Q.key Q.item
 
+val update:  (Q.item -> option Q.item) -> Q.key -> htree Q.key Q.item -> htree Q.key Q.item
+
 val mapValues : b ::: Type -> (Q.item -> b) -> htree Q.key Q.item -> htree Q.key b
 
 val foldr:  b ::: Type -> (Q.key * Q.item -> b -> b) -> b -> htree Q.key Q.item -> b
@@ -101,23 +103,32 @@ val insert: (key -> item -> htree key item -> htree key item) = insertWith const
 
 fun delete (k1: key) (d1: htree key item): htree key item =
      let val hk: int = hash k1
-     in case T.lookup hk d1 of
-          None => d1
-          | Some mybucket => (let val newBucket: bucket key item = LB.delete k1 mybucket
-                            in if LB.null newBucket
-                               then T.delete hk d1
-                               else T.adjust (const newBucket) hk d1
-                            end)
+         fun f' (bktActual: bucket key item): option (bucket key item) =
+                let val bktNew = LB.delete k1 bktActual
+                in if LB.null bktNew
+                         then None
+                         else Some bktNew
+                end
+     in T.update f' hk d1
      end
 
 fun adjust (f: item -> item) (k1: key) (d1: htree key item): htree key item =
      let val hk: int = hash k1
-     in case T.lookup hk d1 of
-          None => d1
-          | Some mybucket => (let val newBucket: bucket key item = LB.adjust f k1 mybucket
-                            in T.adjust (const newBucket) hk d1
-                            end)
+         fun f' (bktActual: bucket key item): bucket key item = LB.adjust f k1 bktActual
+     in T.adjust f' hk d1
      end
+
+fun update (f: item -> option item) (k1: key) (d1: htree key item): htree key item =
+     let val hk: int = hash k1
+         fun f' (bktActual: bucket key item): option (bucket key item) =
+                let val bktNew = LB.update f k1 bktActual
+                in if LB.null bktNew
+                         then None
+                         else Some bktNew
+                end
+     in T.update f' hk d1   
+     end
+
 
 fun mapValues [b] (f: Q.item -> b) (t1: htree Q.key Q.item): htree Q.key b =
      let val f' = LB.mapValues f

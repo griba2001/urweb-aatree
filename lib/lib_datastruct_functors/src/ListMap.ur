@@ -25,6 +25,8 @@ val insertWith : (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.key Q.it
 
 val adjust: (Q.item -> Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
 
+val update: (Q.item -> option Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+
 val delete : Q.key -> t Q.key Q.item -> t Q.key Q.item
 
 val lookup : Q.key -> t Q.key Q.item -> option Q.item
@@ -79,18 +81,6 @@ fun singleton  (k1: key) (v1: item): t key item = Entry (k1, v1) :: []
 
 fun size  (t1: t key item): int = L.length t1
 
-fun adjust  (f: item -> item) (k1: key) (li: t key item) : t key item =
-    let fun adjust' (li': t key item) (acc: t key item): t key item =
-            case li' of
-              | [] => li (* not found, return original *)
-              | (y: entry key item) :: ys => (let val Entry (k0, v0) = y
-                            in if k0 = k1
-                                  then L.append (L.rev acc) (Entry (k0, (f v0)) :: ys)
-                                  else adjust' ys (y :: acc)
-                            end)
-    in adjust' li empty
-    end
-
 fun insertWith  (f: item -> item -> item) (k1: key) (v1: item) (li: t key item) : t key item =
     let fun insert' (li': t key item) (acc: t key item): t key item =
             case li' of
@@ -138,6 +128,37 @@ fun toList  (li: t key item): list (key * item) =
              in (k0, v0)
              end)  
     in L.mp fromEntry li
+    end
+
+
+fun adjust  (f: item -> item) (k1: key) (li: t key item) : t key item =
+    let fun adjust' (li': t key item) (acc: t key item): t key item =
+            case li' of
+              | [] => li (* not found, return original *)
+              | (y: entry key item) :: ys =>
+                           (let val Entry (k0, v0) = y
+                            in if k0 = k1
+                                  then L.append (L.rev acc) (Entry (k0, (f v0)) :: ys)
+                                  else adjust' ys (y :: acc)
+                            end)
+    in adjust' li empty
+    end
+
+fun update  (f: item -> option item) (k1: key) (li: t key item) : t key item =
+    let fun update' (li': t key item) (acc: t key item): t key item =
+            case li' of
+              | [] => li (* not found, return original *)
+              | (y: entry key item) :: ys =>
+                       (let val Entry (k0, v0) = y
+                        in if k0 <> k1
+                                then update' ys (y :: acc)
+                                else case f v0 of
+                                       | Some v => (* update it *)
+                                                 L.append (L.rev acc) (Entry (k0, v) :: ys)
+                                       | None => (* delete it *)
+                                                 L.append (L.rev acc) ys
+                        end)
+    in update' li empty
     end
 
 
