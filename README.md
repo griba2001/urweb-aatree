@@ -44,10 +44,6 @@ test as above.
 #####Instanciating an IntSortedSet
 
 ```ocaml
-
-open Set
-open SetOps
-
 structure IntItem = struct
                       type item = int
                       val ord_item = ord_int
@@ -65,9 +61,6 @@ val mySortedSet = IntSortedSet.fromList (3 :: 1 :: 2 :: [])
 
 
 ```ocaml
-open Set
-open SetOps
-
 structure StringItem = struct
                       type item = string
                       val eq_item = eq_string
@@ -83,10 +76,6 @@ structure StringHashedSetOps = SetOps.MkSetOps (StringHashedSet)
 #####Instanciating an Int * String SortedMap
 
 ```ocaml
-
-open Map
-open MapOps
-
 structure IntXStringPair = struct
                       type key = int
                       type item = string
@@ -101,16 +90,11 @@ structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 #####Instanciating a String * Int HashedMap
 
 ```ocaml
-
-open Map
-open MapOps
-open Hashable
-
 structure StringXIntPair = struct
                       type key = string
                       type item = int
                       val eq_key = eq_string
-                      val hashable_key = hashable_string
+                      val hashable_key = Hashable.hashable_string
                     end
 
 structure StringXIntHashMap = Map.MkUnordHashMap( StringXIntPair)
