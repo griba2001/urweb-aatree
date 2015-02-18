@@ -33,15 +33,17 @@ Repeating page retrieval makes the test use different input random data.
 
 --------------------
 
+```bash
 urweb unordHashTree_test
 
-test as above.
+# test as above.
 
-# an intermediate data structure for hashMap buckets
+# ** an intermediate data structure for hashMap buckets
 
 urweb listMap_test
 
-...
+# test as above.
+```
 
 ---------------------
 
