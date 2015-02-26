@@ -15,6 +15,8 @@ functor MkMapOps (M:Map.FMAP): sig
   val filterFoldr: b ::: Type -> (M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
   val filterFoldrWithKey: b ::: Type -> (M.key -> M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
 
+  val foldrWithPairPartial: b ::: Type -> (M.key * M.item -> b -> option b) -> b -> M.t M.item -> b
+
   val union: M.t M.item -> M.t M.item -> M.t M.item
   val unionWith: (M.item -> M.item -> M.item) -> M.t M.item -> M.t M.item -> M.t M.item
 
@@ -41,6 +43,13 @@ end = struct
                 in foldrWithPair myop' z st
                 end
 
+        fun foldrWithPairPartial [b] (myop: key * item -> b -> option b) (z: b) (st: t item): b =
+                let fun myop' (p: key * item) (acc: b): b =
+                        case myop p acc of
+                            Some res => res
+                            | None => acc
+                in foldrWithPair myop' z st
+                end
 
         fun filter (prop: item -> bool) : (t item -> t item) =
 

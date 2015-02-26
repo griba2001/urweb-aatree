@@ -2,8 +2,12 @@
 
 open HFunction
 open HOrd
+structure HO = HOption
 
 functor MkSetOps (S:Set.FSET): sig
+
+  val foldrPartial: b ::: Type -> (S.item -> b -> option b) -> b -> S.t -> b
+  val filterFoldr: b ::: Type -> (S.item -> bool) -> (S.item -> b -> b) -> b -> S.t -> b
 
   val filter: (S.item -> bool) -> S.t -> S.t
   val partition: (S.item -> bool) -> S.t -> S.t * S.t
@@ -16,6 +20,14 @@ functor MkSetOps (S:Set.FSET): sig
 end = struct
       open S
 
+        fun foldrPartial [b] (myop: item -> b -> option b) (z: b) (st: t): b =
+                let fun myop' (x: item) (acc: b): b =
+                           case myop x acc of
+                             Some res => res
+                             | None => acc
+                in foldr myop' z st
+                end
+
         fun filterFoldr [b] (prop: item -> bool) (myop: item -> b -> b) (z: b) (st: t): b =
                 let fun myop' (x: item) (acc: b): b =
                         if prop x
@@ -23,7 +35,6 @@ end = struct
                                 else acc
                 in foldr myop' z st
                 end
-
 
         fun filter (prop: item -> bool) : (t -> t) =
 
