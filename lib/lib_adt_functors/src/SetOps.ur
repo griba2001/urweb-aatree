@@ -16,6 +16,7 @@ functor MkSetOps (S:Set.FSET): sig
   val diff: S.t -> S.t -> S.t
   val intersect: S.t -> S.t -> S.t
 
+  val findMapBy: b ::: Type -> eq b -> (S.item -> b) -> (b -> b -> b) ->  S.t -> option S.item
   val findByOrd: b ::: Type -> ord b -> (S.item -> b) -> (b -> b -> b) ->  S.t -> option S.item
 end = struct
       open S
@@ -58,6 +59,22 @@ end = struct
                         val memberOf = flip member
                 in
                         filterFoldr (memberOf s1) insert empty s2
+                end
+
+        fun findMapBy [b] (_: eq b) (proj: item -> b) (f: b -> b -> b) (d1: t): option item =
+
+                let val optZ : option item = getAny d1
+
+                fun myop (x: item) (acc: item): item =
+                        let val acc_proj = proj acc
+                        in if f acc_proj (proj x) = acc_proj
+                              then acc
+                              else x
+                        end
+                in
+                case optZ of
+                        None => None
+                        | Some z => Some (foldr myop z d1)
                 end
 
         (* findByOrd example: findMin for HashedEqSets with ord item

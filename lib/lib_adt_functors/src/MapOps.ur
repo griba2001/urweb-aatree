@@ -22,6 +22,7 @@ functor MkMapOps (M:Map.FMAP): sig
 
   val diff: M.t M.item -> M.t M.item -> M.t M.item
 
+  val findMapBy: b ::: Type -> eq b -> (M.key * M.item -> b) -> (b -> b -> b) ->  M.t M.item -> option (M.key * M.item)
   val findByOrd: b ::: Type -> ord b -> (M.key * M.item -> b) -> (b -> b -> b) ->  M.t M.item -> option (M.key * M.item)
 
 end = struct
@@ -86,6 +87,20 @@ end = struct
 
         fun diff (m1: t item) (m2: t item): t item = foldrWithPair (compose delete fst) m1 m2
 
+        fun findMapBy [b] (_: eq b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
+
+                let val optZ : option (key * item) = getAnyPair d1
+
+                fun myop (x: key * item) (acc: key * item): key * item =
+                        let val acc_p = proj acc
+                        in if f acc_p (proj x) = acc_p then acc else x
+                        end
+                in
+                case optZ of
+                        None => None
+                        | Some z => Some (foldrWithPair myop z d1)
+                end
+
         (* findByOrd example: (findMinByValue = findByOrd snd min)
          *)
 
@@ -93,10 +108,9 @@ end = struct
 
                 let val optZ : option (key * item) = getAnyPair d1
 
-                fun myop (pair: key * item) (acc: key * item): key * item =
+                fun myop (x: key * item) (acc: key * item): key * item =
                         let val acc_p = proj acc
-                                val pair_p = proj pair
-                        in if compare (f acc_p pair_p) acc_p = EQ then acc else pair
+                        in if compare (f acc_p (proj x)) acc_p = EQ then acc else x
                         end
                 in
                 case optZ of
