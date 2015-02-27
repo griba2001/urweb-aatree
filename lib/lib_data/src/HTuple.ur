@@ -17,6 +17,8 @@ fun curry [a][b][c] (f: a * b -> c) (x: a) (y: b) = f (x, y)
 
 fun uncurry [a][b][c] (f: a -> b -> c) (p: a * b) = f p.1 p.2
 
+(* fst, snd defined in Top are type functions
+*)
 fun fst [a][b] (p: a * b) = p.1
 
 fun snd [a][b] (p: a * b) = p.2
