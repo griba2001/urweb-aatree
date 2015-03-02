@@ -49,15 +49,13 @@ urweb listMap_test
 
 ####Use
 
-#####Instanciating an IntSortedSet
+#####Instanciating an IntSortedSet basic structure and common-ops one
 
 ```ocaml
-structure IntItem = struct
-                      type item = int
-                      val ord_item = ord_int
-                    end
-
-structure IntSortedSet = Set.MkSortedSet( IntItem)
+structure IntSortedSet = Set.MkSortedSet( struct
+                                type item = int
+                                val ord_item = ord_int
+                         end)
 
 structure IntSortedSetOps = SetOps.MkSetOps (IntSortedSet)
 
@@ -65,47 +63,40 @@ val mySortedSet = IntSortedSet.fromList (3 :: 1 :: 2 :: [])
 
 ```
 
-#####Instanciating a StringHashedSet
+#####Instanciating a StringHashedSet basic structure and common-ops one
 
 
 ```ocaml
-structure StringItem = struct
+structure StringHashedSet = Set.MkUnordHashSet( struct
                       type item = string
                       val eq_item = eq_string
                       val hashable_item = Hashable.hashable_string
-                    end
-
-
-structure StringHashedSet = Set.MkUnordHashSet( StringItem)
+                    end)
 
 structure StringHashedSetOps = SetOps.MkSetOps (StringHashedSet)
 ```
 
-#####Instanciating an Int * String SortedMap
+#####Instanciating an Int * String SortedMap basic structure and common-ops one
 
 ```ocaml
-structure IntXStringPair = struct
+structure IntXStringSortedMap = Map.MkSortedMap( struct
                       type key = int
                       type item = string
                       val ord_key = ord_int
-                    end
-
-structure IntXStringSortedMap = Map.MkSortedMap( IntXStringPair)
+                    end)
 
 structure IntXStringSortedMapOps = MapOps.MkMapOps (IntXStringSortedMap)
 ```
 
-#####Instanciating a String * Int HashedMap
+#####Instanciating a String * Int HashedMap basic structure and common-ops one
 
 ```ocaml
-structure StringXIntPair = struct
+structure StringXIntHashMap = Map.MkUnordHashMap( struct
                       type key = string
                       type item = int
                       val eq_key = eq_string
                       val hashable_key = Hashable.hashable_string
-                    end
-
-structure StringXIntHashMap = Map.MkUnordHashMap( StringXIntPair)
+                    end)
 
 structure StringXIntHashMapOps = MapOps.MkMapOps (StringXIntHashMap)
 ```
