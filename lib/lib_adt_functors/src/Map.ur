@@ -42,7 +42,7 @@ functor MkSortedMap(Q: sig
 
   structure T = AATreeMap.MkAATreeMap( Q)
 
-  type t v = T.tree Q.key v
+  type t v = T.t Q.key v
   val empty: t Q.item = T.empty
   val singleton: Q.key -> Q.item -> t Q.item = T.singleton
   val null: t Q.item -> bool = T.null
@@ -83,7 +83,7 @@ functor MkUnordHashMap(Q: sig
 
   structure T = HashEqTreeMap.MkHashEqTreeMap( Q)
 
-  type t v = T.htree Q.key v
+  type t v = T.t Q.key v
   val empty: t Q.item = T.empty
   val singleton: Q.key -> Q.item -> t Q.item = T.singleton
   val null: t Q.item -> bool = T.null

@@ -35,7 +35,7 @@ functor MkSortedSet(Q: sig con item :: Type
                                            val ord_key = Q.ord_item
                                     end)
 
-  type t = T.tree Q.item unit
+  type t = T.t Q.item unit
   val empty: t = T.empty
   fun singleton (x: Q.item) = T.singleton x ()
   val null: t -> bool = T.null
@@ -81,7 +81,7 @@ functor MkUnordHashSet(Q: sig con item :: Type
                      val hashable_key = Q.hashable_item
                  end)
 
-  type t = T.htree Q.item unit
+  type t = T.t Q.item unit
   val empty: t = T.empty
   fun singleton (x: Q.item) = T.singleton x ()
   val null: t -> bool = T.null

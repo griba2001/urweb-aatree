@@ -29,7 +29,7 @@ fun unitTest (testdata: list (string * int)): transaction (xbody * list (string 
             val treeWithdeletions: T.t string int = List.foldl T.delete structData keysToDel
             val memberOf = F.flip T.member
             val propDeletedAreNotMember: bool =
-                       List.all (F.compose not (memberOf treeWithdeletions)) keysToDel
+                       List.all (compose not (memberOf treeWithdeletions)) keysToDel
             val propNonDeletedAreMember: bool =
                        List.all (memberOf treeWithdeletions) keysNotToDel
         in

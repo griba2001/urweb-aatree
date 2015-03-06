@@ -22,13 +22,13 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
       else
         let 
             val sortedInput : list (int * string) = List.sort (HO.gtBy HT.fst) testdata
-            val treeData: T.tree int string = T.fromList testdata
+            val treeData: T.t int string = T.fromList testdata
             val inputFromTree : list (int * string) = T.toList treeData
             val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
-            val treeWithdeletions: T.tree int string = List.foldl T.delete treeData keysToDel
+            val treeWithdeletions: T.t int string = List.foldl T.delete treeData keysToDel
             val memberOf = F.flip T.member
             val propDeletedAreNotMember: bool =
-                       List.all (F.compose not (memberOf treeWithdeletions)) keysToDel
+                       List.all (compose not (memberOf treeWithdeletions)) keysToDel
             val propNonDeletedAreMember: bool =
                        List.all (memberOf treeWithdeletions) keysNotToDel
         in
