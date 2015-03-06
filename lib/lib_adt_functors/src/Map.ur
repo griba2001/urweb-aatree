@@ -81,7 +81,7 @@ functor MkUnordHashMap(Q: sig
                  end): (FMAP where con item = Q.item
                              where con key = Q.key) = struct
 
-  structure T = HashEqTreeMap.MkHashEqTreeMap( Q)
+  structure T = HashTreeMap.MkHashEqTreeMap( Q)
 
   type t v = T.t Q.key v
   val empty: t Q.item = T.empty

@@ -74,7 +74,7 @@ functor MkUnordHashSet(Q: sig con item :: Type
                      val hashable_item: HStruc.hashable item
                  end): (FSET where con item = Q.item) = struct
 
-  structure T = HashEqTreeMap.MkHashEqTreeMap(struct
+  structure T = HashTreeMap.MkHashEqTreeMap(struct
                      type key = Q.item
                      type item = unit
                      val eq_key = Q.eq_item
