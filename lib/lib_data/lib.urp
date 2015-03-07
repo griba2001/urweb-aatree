@@ -6,3 +6,4 @@ src/HString
 src/HOrd
 src/HTuple
 src/HOption
+src/HRecord

@@ -75,6 +75,7 @@ open Option
 structure HS = HString
 structure HL = HList
 structure HO = HOption
+structure HR = HRecord
 
 
 datatype t k v = Empty | Node of {Key: k,
@@ -112,27 +113,27 @@ val show_tree = fn (_ : show key) (_ : show item) =>
 
 fun setValue (v1: item) (t1: t key item): t key item =
     case t1 of
-        Node r => Node (r -- #Value ++ {Value = v1})
+        Node r => Node (HR.overwrite r {Value = v1})
         | _ => error <xml>setValue: not a Node</xml>
 
 fun setKeyAndValue (k1: key) (v1: item) (t1: t key item) : t key item =
     case t1 of
-        Node r => Node (r -- #Key -- #Value ++ {Key = k1, Value = v1})
+        Node r => Node (HR.overwrite r {Key = k1, Value = v1})
         | _ => error <xml>setKeyAndValue: not a Node</xml>
 
 fun setLevel (v1: int) (t1: t key item) : t key item =
     case t1 of
-        Node r => Node (r -- #Level ++ {Level = v1})
+        Node r => Node (HR.overwrite r {Level = v1})
         | _ => error <xml>setLevel: not a Node</xml>
 
 fun setLeft (v1: t key item) (t1: t key item) : t key item =
     case t1 of
-        Node r => Node (r -- #Left ++ {Left = v1})
+        Node r => Node (HR.overwrite r {Left = v1})
         | _ => error <xml>setLeft: not a Node</xml>
 
 fun setRight (v1: t key item) (t1: t key item) : t key item =
     case t1 of
-        Node r => Node (r -- #Right ++ {Right = v1})
+        Node r => Node (HR.overwrite r {Right = v1})
         | _ => error <xml>setRight: not a Node</xml>
 
 fun getLevel (t1: t key item) : int =
@@ -411,18 +412,16 @@ fun update (f: item -> option item) (k1: key) (t1: t key item): t key item =
 
 fun mapValues [w] (f: item -> w) (t1: t key item): t key w =
        case t1 of
-         Node rc => Node (rc -- #Value -- #Left -- #Right ++
-                               {Value = f rc.Value,
-                               Left = mapValues f rc.Left,
-                               Right = mapValues f rc.Right})
+         Node rc => Node (HR.overwrite rc {Value = f rc.Value,
+                                           Left = mapValues f rc.Left,
+                                           Right = mapValues f rc.Right})
          | Empty => Empty
 
 fun mapKeysMonotonic [key'] (f: key -> key') (t1: t key item): t key' item =
        case t1 of
-         Node rc => Node (rc -- #Key -- #Left -- #Right ++
-                               {Key = f rc.Key,
-                               Left = mapKeysMonotonic f rc.Left,
-                               Right = mapKeysMonotonic f rc.Right})
+         Node rc => Node (HR.overwrite rc {Key = f rc.Key,
+                                           Left = mapKeysMonotonic f rc.Left,
+                                           Right = mapKeysMonotonic f rc.Right})
          | Empty => Empty
 
 
