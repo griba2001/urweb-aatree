@@ -121,7 +121,7 @@ fun lookup  (k1: key) (li: t key item) : option item =
                       else lookup k1 ys
                    end)
 
-fun member (k1: key): t key item -> bool = compose Option.isSome (lookup k1)
+fun member (k1: key): t key item -> bool = lookup k1 >>> Option.isSome
 
 fun fromList  (li: list (key * item)): t key item =
     L.mp Entry li

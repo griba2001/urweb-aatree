@@ -170,7 +170,7 @@ fun lookup (k1: key) (t1: t key item): option item =
                 )
         | Empty => None
 
-val member (k1: key): (t key item -> bool) = compose isSome (lookup k1)
+val member (k1: key): (t key item -> bool) = lookup k1 >>> isSome
 
 (* get root pair to start minimum / maximum value folds *)
 fun getAnyPair (t1: t key item): option (key * item) =
@@ -313,9 +313,9 @@ fun decreaseLevel (t1: t key item): t key item =
 (*
 *)
 val rebalance : (t key item -> t key item) = (* with left to right function composition *)
-    andThen decreaseLevel (andThen skew (andThen skewRight (andThen skewRightRight (andThen split splitRight))))
+    decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
 
-val skewThenSplit : (t key item -> t key item) = andThen skew split
+val skewThenSplit : (t key item -> t key item) = skew >>> split
 
 (* * Insert / delete  *)
 

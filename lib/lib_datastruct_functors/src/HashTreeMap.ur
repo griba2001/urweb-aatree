@@ -178,7 +178,7 @@ fun lookup (k1: key) (d1: t key item): option item =
           | Some mybucket => B.lookup k1 mybucket
      end
 
-val member (k1: key): (t key item -> bool) = compose isSome (lookup k1)
+val member (k1: key): (t key item -> bool) = lookup k1 >>> isSome
 
 fun fromList (li: list (key * item)): t key item =
      List.foldl (uncurry insert) empty li

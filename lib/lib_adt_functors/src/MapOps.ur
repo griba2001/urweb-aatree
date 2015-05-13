@@ -85,7 +85,7 @@ end = struct
 
         fun unionWith (f: item -> item -> item) (m1: t item) (m2: t item): t item = foldrWithPair (uncurry (insertWith f)) m2 m1
 
-        fun diff (m1: t item) (m2: t item): t item = foldrWithPair (compose delete fst) m1 m2
+        fun diff (m1: t item) (m2: t item): t item = foldrWithPair (fst >>> delete) m1 m2
 
         fun findMapBy [b] (_: eq b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
 
