@@ -464,39 +464,38 @@ fun find [item] (prop: Q.key * item -> bool) (t1: t item): option (key * item) =
    @returns (propHolds, keyMin, keyMax)
 *)
 
-fun propMinMaxBST' [item] (t1: t item): (bool * Q.key * Q.key) =
-    case t1 of
-      | None => error <xml>propBST': empty tree</xml>
-      | Some (Node {Key = k0, Left = l, Right = r, ...}) =>
-          (case (l: t item, r: t item) of
+fun propMinMaxBST' [item] (node1: node item): (bool * Q.key * Q.key) =
+    case node1 of
+        Node {Key = k0, Left = l, Right = r, ...} =>
+          case (l: t item, r: t item) of
              | (None, None) => (True, k0, k0)
-             | (None, Some _) => let val (holdsR, minR, maxR) = propMinMaxBST' r
+             | (None, Some nodeR) => let val (holdsR, minR, maxR) = propMinMaxBST' nodeR
                                           val itHolds = holdsR && k0 < minR
                                           val keyMin = min k0 minR
                                           val keyMax = max k0 maxR
                                       in (itHolds, keyMin, keyMax)
                                       end 
-             | (Some _, None) =>
-                                      let val (holdsL, minL, maxL) = propMinMaxBST' l
+             | (Some nodeL, None) =>
+                                      let val (holdsL, minL, maxL) = propMinMaxBST' nodeL
                                           val itHolds = holdsL && k0 > maxL
                                           val keyMin = min k0 minL
                                           val keyMax = max k0 maxL
                                       in (itHolds, keyMin, keyMax)
                                       end 
-             | (Some _, Some _) =>
-                                      let val (holdsR, minR, maxR) = propMinMaxBST' r
-                                          val (holdsL, minL, maxL) = propMinMaxBST' l
+             | (Some nodeL, Some nodeR) =>
+                                      let val (holdsR, minR, maxR) = propMinMaxBST' nodeR
+                                          val (holdsL, minL, maxL) = propMinMaxBST' nodeL
                                           val itHolds = holdsL && holdsR && k0 > maxL && k0 < minR
                                           val keyMin = min k0 (min minL minR)
                                           val keyMax = max k0 (max maxL maxR)
                                       in (itHolds, keyMin, keyMax)
                                       end
-             )
+             
 
 fun propBST [item] (t1: t item): bool =
     case t1 of
       | None => True
-      | Some _ => let val (propHolds, _, _) = propMinMaxBST' t1
+      | Some node1 => let val (propHolds, _, _) = propMinMaxBST' node1
                       in propHolds
                       end  
 
