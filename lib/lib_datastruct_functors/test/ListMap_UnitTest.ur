@@ -8,7 +8,6 @@ structure HO = HOrd
 
 structure T = ListMap.MkListMap(struct
   type key = string
-  type item = int
   val eq_key = eq_string
 end)
 
@@ -22,11 +21,11 @@ fun unitTest (testdata: list (string * int)): transaction (xbody * list (string 
       else
         let 
             val sortedInput : list (string * int) = List.sort (HO.gtBy HT.fst) testdata
-            val structData: T.t string int  = T.fromList testdata
+            val structData: T.t int  = T.fromList testdata
             val listOutput: list (string * int) = T.toList structData
             val sortedOutput : list (string * int) = List.sort (HO.gtBy HT.fst) listOutput
             val (keysToDel, keysNotToDel): ((list string) * (list string)) = List.splitAt (List.length keys / 2) keys
-            val treeWithdeletions: T.t string int = List.foldl T.delete structData keysToDel
+            val treeWithdeletions: T.t int = List.foldl T.delete structData keysToDel
             val memberOf = F.flip T.member
             val propDeletedAreNotMember: bool =
                        List.all (compose not (memberOf treeWithdeletions)) keysToDel

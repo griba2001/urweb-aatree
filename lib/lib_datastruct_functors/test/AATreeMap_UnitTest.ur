@@ -9,7 +9,6 @@ structure HO = HOrd
 
 structure T = AATreeMap.MkAATreeMap(struct
   type key = int
-  type item = string
   val ord_key = ord_int
 end) 
 
@@ -22,10 +21,10 @@ fun unitTest (testdata: list (int * string)): transaction (xbody * list (int * s
       else
         let 
             val sortedInput : list (int * string) = List.sort (HO.gtBy HT.fst) testdata
-            val treeData: T.t int string = T.fromList testdata
+            val treeData: T.t string = T.fromList testdata
             val inputFromTree : list (int * string) = T.toList treeData
             val (keysToDel, keysNotToDel): list int * list int = List.splitAt (List.length keys / 2) keys
-            val treeWithdeletions: T.t int string = List.foldl T.delete treeData keysToDel
+            val treeWithdeletions: T.t string = List.foldl T.delete treeData keysToDel
             val memberOf = F.flip T.member
             val propDeletedAreNotMember: bool =
                        List.all (compose not (memberOf treeWithdeletions)) keysToDel

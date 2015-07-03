@@ -2,6 +2,7 @@
 
 open HFunction
 open HOrd
+open HTuple
 structure HO = HOption
 
 functor MkSetOps (S:Set.FSET): sig

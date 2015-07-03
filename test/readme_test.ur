@@ -1,56 +1,3 @@
-### Sorted Map, Sorted Set, Unordered HashMap, Unordered HashSet functors for Ur/Web
-
-based on Arne Anderson Tree as listed in [wikipedia](https://en.wikipedia.org/wiki/AA_tree).
-
-with tests on inserts, membership after deletes, and AATree properties.
-
-The Haskell version I made first
-has been tested with QuickCheck and passes tests for all AATree properties
-
-#### to build it 
-
-```bash
-export C_INCLUDE_PATH=/path-to-your-urweb-installation/include
-export LIBRARY_PATH=/path-to-your-urweb-installation/lib
-
-# C file used in lib/lib_hashable/src/Hashable for hashTree, hashSet, hashMap
-cd lib/lib_bits/src/c
-gcc -c Bits.c
-cd ../../../..
-
-urweb aatree_test_v3
-
-# execution
-./aatree_test_v3.exe -p 8081 &   # -p <server port>
-
-browser http://localhost:8081/
-
-# when done, if the server has been started in background
-killall -TERM aatree_test_v3.exe
-```
-
-Repeating page retrieval makes the test use different input random data.
-
---------------------
-
-```bash
-urweb unordHashTree_test
-
-# test as above.
-
-# ** an intermediate data structure for hashMap buckets
-
-urweb listMap_test
-
-# test as above.
-```
-
----------------------
-
-####Use
-
-
-```ocaml
 structure IntSortedSet = Set.MkSortedSet( struct
                                 type item = int
                                 val ord_item = ord_int
@@ -95,14 +42,8 @@ fun main () : transaction page = return <xml>
 <body>
         <p>{[IntSortedSet.toList mySortedSet]}</p>
         <p>{[StringHashedSet.toList myHashedSet]}</p>
-        <p/>
+        <p/>  
         <p>{[IntKeyedSortedMap.toList mySortedMap]}</p>
         <p>{[StringKeyedHashMap.toList myHashedMap]}</p>
 </body>
 </xml>
-
-```
-Last changes:
-
-Removed from functors input the unconstrained types (the item from Maps)
-Added fromList / toList to ...SetOps, ...MapOps

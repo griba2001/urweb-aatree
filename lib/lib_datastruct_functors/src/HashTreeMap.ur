@@ -7,96 +7,96 @@ open Hashable
 functor MkHashTreeMap(P:sig
                       structure Q: sig
                          con key :: Type
-                         con item :: Type
                          val hashable_key: hashable key
                       end
                       structure BktMap: sig
-                        con t :: Type -> Type -> Type
+                        con t :: Type -> Type
 
-                        val empty : t Q.key Q.item
+                        val empty : item ::: Type -> t item
 
-                        val null : t Q.key Q.item -> bool
+                        val null : item ::: Type -> t item -> bool
 
-                        val singleton : Q.key -> Q.item -> t Q.key Q.item
+                        val singleton : item ::: Type -> Q.key -> item -> t item
 
-                        val size : t Q.key Q.item -> int
+                        val size : item ::: Type -> t item -> int
 
-                        val insert : Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+                        val insert : item ::: Type -> Q.key -> item -> t item -> t item
 
-                        val insertWith : (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+                        val insertWith : item ::: Type -> (item -> item -> item) -> Q.key -> item -> t item -> t item
 
-                        val adjust: (Q.item -> Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+                        val adjust: item ::: Type -> (item -> item) -> Q.key -> t item -> t item
 
-                        val update: (Q.item -> option Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+                        val update: item ::: Type -> (item -> option item) -> Q.key -> t item -> t item
 
-                        val delete : Q.key -> t Q.key Q.item -> t Q.key Q.item
+                        val delete: item ::: Type -> Q.key -> t item -> t item
 
-                        val lookup : Q.key -> t Q.key Q.item -> option Q.item
+                        val lookup: item ::: Type -> Q.key -> t item -> option item
 
-                        val member : Q.key -> t Q.key Q.item -> bool
+                        val member : item ::: Type -> Q.key -> t item -> bool
 
-                        val foldr : b ::: Type -> (Q.key * Q.item -> b -> b) -> b -> t Q.key Q.item -> b
+                        val foldr : item ::: Type -> b ::: Type -> (Q.key * item -> b -> b) -> b -> t item -> b
 
-                        val getAnyPair : t Q.key Q.item -> option (Q.key * Q.item)
+                        val getAnyPair : item ::: Type -> t item -> option (Q.key * item)
 
-                        val mapValues : item' ::: Type -> (Q.item -> item') -> t Q.key Q.item -> t Q.key item'
+                        val mapValues : item ::: Type -> item' ::: Type -> (item -> item') -> t item -> t item'
 
-                        val exists : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
+                        val exists : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-                        val all : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
+                        val all : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-                        val find : (Q.key * Q.item -> bool) -> t Q.key Q.item -> option (Q.key * Q.item)
+                        val find : item ::: Type -> (Q.key * item -> bool) -> t item -> option (Q.key * item)
 
-                        val valid : t Q.key Q.item -> bool
+                        val valid : item ::: Type -> t item -> bool
                       end
 end): sig
 
-        con t :: Type -> Type -> Type
+        con t :: Type -> Type
 
-        val empty :  t P.Q.key P.Q.item
+        val empty : item ::: Type -> t item
 
-        val singleton :  P.Q.key -> P.Q.item -> t P.Q.key P.Q.item
+        val singleton : item ::: Type -> P.Q.key -> item -> t item
 
-        val null :  t P.Q.key P.Q.item -> bool
+        val null : item ::: Type -> t item -> bool
 
-        val size :  t P.Q.key P.Q.item -> int
+        val size : item ::: Type -> t item -> int
 
-        val lookup:  P.Q.key -> t P.Q.key P.Q.item -> option P.Q.item
+        val lookup: item ::: Type -> P.Q.key -> t item -> option item
 
-        val member:  P.Q.key -> t P.Q.key P.Q.item -> bool
+        val member: item ::: Type -> P.Q.key -> t item -> bool
 
-        val getAnyPair :  t P.Q.key P.Q.item -> option (P.Q.key * P.Q.item)
+        val getAnyPair: item ::: Type -> t item -> option (P.Q.key * item)
 
-        val insert:  P.Q.key -> P.Q.item -> t P.Q.key P.Q.item -> t P.Q.key P.Q.item
+        val insert: item ::: Type -> P.Q.key -> item -> t item -> t item
 
-        val insertWith:  (P.Q.item -> P.Q.item -> P.Q.item) -> P.Q.key -> P.Q.item -> t P.Q.key P.Q.item -> t P.Q.key P.Q.item
+        val insertWith: item ::: Type -> (item -> item -> item) -> P.Q.key -> item -> t item -> t item
 
-        val fromList :  list (P.Q.key * P.Q.item) -> t P.Q.key P.Q.item
+        val fromList: item ::: Type -> list (P.Q.key * item) -> t item
 
-        val delete:  P.Q.key -> t P.Q.key P.Q.item -> t P.Q.key P.Q.item
+        val delete: item ::: Type -> P.Q.key -> t item -> t item
 
-        val adjust:  (P.Q.item -> P.Q.item) -> P.Q.key -> t P.Q.key P.Q.item -> t P.Q.key P.Q.item
+        val adjust: item ::: Type -> (item -> item) -> P.Q.key -> t item -> t item
 
-        val update:  (P.Q.item -> option P.Q.item) -> P.Q.key -> t P.Q.key P.Q.item -> t P.Q.key P.Q.item
+        val update: item ::: Type -> (item -> option item) -> P.Q.key -> t item -> t item
 
-        val mapValues : b ::: Type -> (P.Q.item -> b) -> t P.Q.key P.Q.item -> t P.Q.key b
+        val mapValues : item ::: Type -> b ::: Type -> (item -> b) -> t item -> t b
 
-        val foldr:  b ::: Type -> (P.Q.key * P.Q.item -> b -> b) -> b -> t P.Q.key P.Q.item -> b
+        val foldr: item ::: Type -> b ::: Type -> (P.Q.key * item -> b -> b) -> b -> t item -> b
 
-        val toList :  t P.Q.key P.Q.item -> list (P.Q.key * P.Q.item)
+        val toList : item ::: Type -> t item -> list (P.Q.key * item)
 
-        val exists : (P.Q.key * P.Q.item -> bool) -> t P.Q.key P.Q.item -> bool
+        val exists : item ::: Type -> (P.Q.key * item -> bool) -> t item -> bool
 
-        val all : (P.Q.key * P.Q.item -> bool) -> t P.Q.key P.Q.item -> bool
+        val all : item ::: Type -> (P.Q.key * item -> bool) -> t item -> bool
 
-        val find : (P.Q.key * P.Q.item -> bool) -> t P.Q.key P.Q.item -> option (P.Q.key * P.Q.item)
+        val find : item ::: Type -> (P.Q.key * item -> bool) -> t item -> option (P.Q.key * item)
 
-        val valid :  t P.Q.key P.Q.item -> bool
+        val valid : item ::: Type ->  t item -> bool
 
-        val maxBucketSize: t P.Q.key P.Q.item -> int
+        val maxBucketSize: item ::: Type -> t item -> int
 
 end = struct
 
+structure B = P.BktMap
 
 open HTuple
 open HFunction
@@ -104,42 +104,41 @@ open HOrd
 open Option
 
 open P.Q
-structure B = P.BktMap
 
-type bucket k v = B.t k v
+type bucket v = B.t v
 
 structure T = AATreeMap.MkAATreeMap(struct
-                           type item = bucket key item
                            type key = int
-                           val ord_key = ord_int 
+                           val ord_key = ord_int
+                           val eq_key = eq_int
                         end) 
 
-type t k v = T.t int (bucket k v)
+type t v = T.t (bucket v)
 
-val empty: t key item = T.empty
+val empty [item]: t item = T.empty
 
-fun singleton (k1: key) (v1: item) :t key item = T.singleton (hash k1) (B.singleton k1 v1)
+fun singleton [item] (k1: key) (v1: item) :t item = T.singleton (hash k1) (B.singleton k1 v1)
 
-val null : (t key item -> bool) = T.null
+val null [item] : (t item -> bool) = T.null
 
-val size (d1:t key item) : int =
+val size [item] (d1:t item) : int =
     let T.foldr myop 0 d1
     where
-      fun myop (pair: int * bucket key item) (acc: int):int = acc + B.size pair.2
+      fun myop (pair: int * bucket item) (acc: int):int = acc + B.size pair.2
     end
 
-fun insertWith (f: item -> item -> item) (k1: key) (v1: item) (d1: t key item): t key item =
+fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item): t item =
      let val hk = hash k1
      in case T.lookup hk d1 of
           None => T.insert hk (B.singleton k1 v1) d1
           | Some _ => T.adjust (B.insertWith f k1 v1) hk d1
      end
 
-val insert: (key -> item -> t key item -> t key item) = insertWith const
+val insert [item]: (key -> item -> t item -> t item) = insertWith const
 
-fun delete (k1: key) (d1: t key item): t key item =
+fun delete [item] (k1: key) (d1: t item): t item =
      let val hk: int = hash k1
-         fun f' (bktActual: bucket key item): option (bucket key item) =
+         fun f' (bktActual: bucket item): option (bucket item) =
                 let val bktNew = B.delete k1 bktActual
                 in if B.null bktNew
                          then None
@@ -148,15 +147,15 @@ fun delete (k1: key) (d1: t key item): t key item =
      in T.update f' hk d1
      end
 
-fun adjust (f: item -> item) (k1: key) (d1: t key item): t key item =
+fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
      let val hk: int = hash k1
-         fun f' (bktActual: bucket key item): bucket key item = B.adjust f k1 bktActual
+         fun f' (bktActual: bucket item): bucket item = B.adjust f k1 bktActual
      in T.adjust f' hk d1
      end
 
-fun update (f: item -> option item) (k1: key) (d1: t key item): t key item =
+fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
      let val hk: int = hash k1
-         fun f' (bktActual: bucket key item): option (bucket key item) =
+         fun f' (bktActual: bucket item): option (bucket item) =
                 let val bktNew = B.update f k1 bktActual
                 in if B.null bktNew
                          then None
@@ -166,35 +165,35 @@ fun update (f: item -> option item) (k1: key) (d1: t key item): t key item =
      end
 
 
-fun mapValues [b] (f: item -> b) (t1: t key item): t key b =
+fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
      let val f' = B.mapValues f
      in T.mapValues f' t1
      end 
 
-fun lookup (k1: key) (d1: t key item): option item =
+fun lookup [item] (k1: key) (d1: t item): option item =
      let val hk: int = hash k1
      in case T.lookup hk d1 of
           None => None
           | Some mybucket => B.lookup k1 mybucket
      end
 
-val member (k1: key): (t key item -> bool) = lookup k1 >>> isSome
+val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
-fun fromList (li: list (key * item)): t key item =
+fun fromList [item] (li: list (key * item)): t item =
      List.foldl (uncurry insert) empty li
 
-fun foldr [b] (myop: key * item -> b -> b) (z: b) (d1: t key item): b =
-     let fun myop' (p: int * (bucket key item)) (acc: b): b = B.foldr myop acc p.2
+fun foldr [item] [b] (myop: key * item -> b -> b) (z: b) (d1: t item): b =
+     let fun myop' (p: int * (bucket item)) (acc: b): b = B.foldr myop acc p.2
      in T.foldr myop' z d1
      end
 
-fun toList (d1: t key item): list (key * item) =
-     let fun myop' (p: int * (bucket key item)) (acc: list (key * item)): list (key * item) = B.foldr (curry Cons) acc p.2
+fun toList [item] (d1: t item): list (key * item) =
+     let fun myop' (p: int * (bucket item)) (acc: list (key * item)): list (key * item) = B.foldr (curry Cons) acc p.2
      in T.foldr myop' [] d1
      end
 
-fun getAnyPair (d1: t key item): option (key * item) =
-    let val optHPair: option (int * bucket key item) = T.getAnyPair d1
+fun getAnyPair [item] (d1: t item): option (key * item) =
+    let val optHPair: option (int * bucket item) = T.getAnyPair d1
     in
        case optHPair of
          None => None
@@ -202,44 +201,44 @@ fun getAnyPair (d1: t key item): option (key * item) =
     end
 
 (* short-circuiting exists *)
-fun exists (prop: key * item -> bool) (t1: t key item): bool =
+fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
     let T.exists prop' t1
     where 
-      fun prop' (p: int * bucket key item):bool = B.exists prop p.2
+      fun prop' (p: int * bucket item):bool = B.exists prop p.2
     end
 
 (* short-circuiting all *)
-fun all (prop: key * item -> bool) (t1: t key item): bool =
+fun all [item] (prop: key * item -> bool) (t1: t item): bool =
     let T.all prop' t1
     where
-      fun prop' (p: int * bucket key item):bool = B.all prop p.2
+      fun prop' (p: int * bucket item):bool = B.all prop p.2
     end
 
-fun find (prop: key * item -> bool) (t1: t key item): option (key * item) =
+fun find [item] (prop: key * item -> bool) (t1: t item): option (key * item) =
     let case T.find prop' t1 of
          None => None
          | Some (_, bkt) => B.find prop bkt
     where
-      fun prop' (p: int * bucket key item):bool = isSome (B.find prop p.2)
+      fun prop' (p: int * bucket item):bool = isSome (B.find prop p.2)
     end
   
 (* * Invariants *)
 
-val propBucketsAllValidAndNonEmpty (t1: t key item): bool =
+val propBucketsAllValidAndNonEmpty [item] (t1: t item): bool =
     let T.foldr myop True t1
     where
-      fun myop (p: int * bucket key item) (acc: bool): bool =
+      fun myop (p: int * bucket item) (acc: bool): bool =
                   acc && not (B.null p.2) && B.valid p.2
     end
 
-val valid: (t key item -> bool) = propBucketsAllValidAndNonEmpty
+val valid [item]: (t item -> bool) = propBucketsAllValidAndNonEmpty
 
 (* * statistics *)
 
-fun maxBucketSize (t1:t key item): int =
+fun maxBucketSize [item] (t1:t item): int =
         let T.foldr myop 0 t1
         where
-          fun myop (p: int * (bucket key item)) (acc: int): int = max acc (B.size p.2)
+          fun myop (p: int * (bucket item)) (acc: int): int = max acc (B.size p.2)
         end
    
 end
@@ -247,7 +246,6 @@ end
 
 functor MkHashEqTreeMap(S: sig
                          con key :: Type
-                         con item :: Type
                          val hashable_key: hashable key
                          val eq_key: eq key
                       end) = MkHashTreeMap(struct
@@ -257,7 +255,6 @@ functor MkHashEqTreeMap(S: sig
 
 functor MkHashOrdTreeMap(S: sig
                          con key :: Type
-                         con item :: Type
                          val hashable_key: hashable key
                          val ord_key: ord key
                       end) = MkHashTreeMap(struct

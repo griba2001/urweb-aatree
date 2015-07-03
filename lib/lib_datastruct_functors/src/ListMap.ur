@@ -6,61 +6,60 @@ open HFunction
 
 functor MkListMap(Q: sig
                          con key :: Type
-                         con item :: Type
                          val eq_key: eq key
 end): sig
-con t :: Type -> Type -> Type
+con t :: Type -> Type
 
-val empty : t Q.key Q.item
+val empty : item ::: Type -> t item
 
-val null : t Q.key Q.item -> bool
+val null : item ::: Type -> t item -> bool
 
-val singleton : Q.key -> Q.item -> t Q.key Q.item
+val singleton : item ::: Type -> Q.key -> item -> t item
 
-val size : t Q.key Q.item -> int
+val size : item ::: Type -> t item -> int
 
-val insert : Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+val insert : item ::: Type -> Q.key -> item -> t item -> t item
 
-val insertWith : (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+val insertWith : item ::: Type -> (item -> item -> item) -> Q.key -> item -> t item -> t item
 
-val adjust: (Q.item -> Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+val adjust: item ::: Type -> (item -> item) -> Q.key -> t item -> t item
 
-val update: (Q.item -> option Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+val update: item ::: Type -> (item -> option item) -> Q.key -> t item -> t item
 
-val delete : Q.key -> t Q.key Q.item -> t Q.key Q.item
+val delete : item ::: Type -> Q.key -> t item -> t item
 
-val lookup : Q.key -> t Q.key Q.item -> option Q.item
+val lookup : item ::: Type -> Q.key -> t item -> option item
 
-val member : Q.key -> t Q.key Q.item -> bool
+val member : item ::: Type -> Q.key -> t item -> bool
 
-val fromList : list (Q.key * Q.item) -> t Q.key Q.item
+val fromList : item ::: Type -> list (Q.key * item) -> t item
 
-val toList : t Q.key Q.item -> list (Q.key * Q.item)
+val toList : item ::: Type -> t item -> list (Q.key * item)
 
-val foldr : b ::: Type -> (Q.key * Q.item -> b -> b) -> b -> t Q.key Q.item -> b
+val foldr : item ::: Type -> b ::: Type -> (Q.key * item -> b -> b) -> b -> t item -> b
 
-val getAnyPair : t Q.key Q.item -> option (Q.key * Q.item)
+val getAnyPair : item ::: Type -> t item -> option (Q.key * item)
 
-val mapValues : item' ::: Type -> (Q.item -> item') -> t Q.key Q.item -> t Q.key item'
+val mapValues : item ::: Type -> item' ::: Type -> (item -> item') -> t item -> t item'
 
-val exists : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
+val exists : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-val all : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
+val all : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-val find : (Q.key * Q.item -> bool) -> t Q.key Q.item -> option (Q.key * Q.item)
+val find : item ::: Type -> (Q.key * item -> bool) -> t item -> option (Q.key * item)
 
-val valid : t Q.key Q.item -> bool
+val valid : item ::: Type -> t item -> bool
 
 end = struct
 
 open Q
 
-datatype entry k v = Entry of k * v
+datatype entry v = Entry of Q.key * v
 
-type t k v = list (entry k v)
+type t v = list (entry v)
 
-val eq_entry: eq (entry key item) =
-   let fun eq' (e1: entry key item) (e2: entry key item) =
+val eq_entry [item]: eq (entry item) =
+   let fun eq' (e1: entry item) (e2: entry item) =
            let val Entry (k1, _) = e1
                val Entry (k2, _) = e2
            in k1 = k2
@@ -68,26 +67,26 @@ val eq_entry: eq (entry key item) =
    in mkEq eq'
    end
 
-val show_entry  (_: show key) (_: show item): show (entry key item) =
-   let fun show' (e1: entry key item) =
+val show_entry [item]  (_: show Q.key) (_: show item): show (entry item) =
+   let fun show' (e1: entry item) =
            case e1 of
              Entry (key, item) => "(" ^ show key ^ "," ^ show item ^ ")"
    in mkShow show'
    end
 
-val empty : t key item = []
+val empty [item] : t item = []
 
-fun null  (t1: t key item): bool = HL.null t1
+fun null [item] (t1: t item): bool = HL.null t1
 
-fun singleton  (k1: key) (v1: item): t key item = Entry (k1, v1) :: []
+fun singleton [item] (k1: Q.key) (v1: item): t item = Entry (k1, v1) :: []
 
-fun size  (t1: t key item): int = L.length t1
+fun size [item] (t1: t item): int = L.length t1
 
-fun insertWith  (f: item -> item -> item) (k1: key) (v1: item) (li: t key item) : t key item =
-    let fun insert' (li': t key item) (acc: t key item): t key item =
+fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (li: t item) : t item =
+    let fun insert' (li': t item) (acc: t item): t item =
             case li' of
               | [] => Entry (k1, v1) :: li (* not found, push new entry *)
-              | (y: entry key item) :: ys => (let val Entry (k0, v0) = y
+              | (y: entry item) :: ys => (let val Entry (k0, v0) = y
                             in if k0 = k1
                                   then L.append (L.rev acc) (Entry (k0, (f v1 v0)) :: ys)
                                   else insert' ys (y :: acc)
@@ -96,14 +95,14 @@ fun insertWith  (f: item -> item -> item) (k1: key) (v1: item) (li: t key item) 
     end
 
 
-val insert: key -> item -> t key item -> t key item = insertWith const
+val insert [item] : Q.key -> item -> t item -> t item = insertWith const
 
-fun delete  (k1: key) (li: t key item): t key item =
+fun delete [item] (k1: Q.key) (li: t item): t item =
 
-   let fun del' (li': t key item) (acc: t key item): t key item =
+   let fun del' (li': t item) (acc: t item): t item =
        case li' of
          | [] => li (* not found, returns original list *)
-         | (y: entry key item) :: ys =>
+         | (y: entry item) :: ys =>
              (let val Entry (k0, v0) = y
               in if k0 = k1
                     then List.append (List.rev acc) ys
@@ -112,22 +111,22 @@ fun delete  (k1: key) (li: t key item): t key item =
    in del' li empty
    end
 
-fun lookup  (k1: key) (li: t key item) : option item =
+fun lookup [item] (k1: Q.key) (li: t item) : option item =
     case li of
       [] => None
-      | (y: entry key item) :: ys => (let val Entry (k0, v0) = y
+      | (y: entry item) :: ys => (let val Entry (k0, v0) = y
                    in if k0 = k1
                       then Some v0
                       else lookup k1 ys
                    end)
 
-fun member (k1: key): t key item -> bool = lookup k1 >>> Option.isSome
+fun member [item] (k1: Q.key): t item -> bool = lookup k1 >>> Option.isSome
 
-fun fromList  (li: list (key * item)): t key item =
+fun fromList [item]  (li: list (Q.key * item)): t item =
     L.mp Entry li
 
-fun toList  (li: t key item): list (key * item) =
-    let fun fromEntry (e: entry key item) =
+fun toList [item] (li: t item): list (Q.key * item) =
+    let fun fromEntry (e: entry item) =
              (let val Entry (k0, v0) = e
              in (k0, v0)
              end)  
@@ -135,11 +134,11 @@ fun toList  (li: t key item): list (key * item) =
     end
 
 
-fun adjust  (f: item -> item) (k1: key) (li: t key item) : t key item =
-    let fun adjust' (li': t key item) (acc: t key item): t key item =
+fun adjust [item] (f: item -> item) (k1: Q.key) (li: t item) : t item =
+    let fun adjust' (li': t item) (acc: t item): t item =
             case li' of
               | [] => li (* not found, return original *)
-              | (y: entry key item) :: ys =>
+              | (y: entry item) :: ys =>
                            (let val Entry (k0, v0) = y
                             in if k0 = k1
                                   then L.append (L.rev acc) (Entry (k0, (f v0)) :: ys)
@@ -148,11 +147,11 @@ fun adjust  (f: item -> item) (k1: key) (li: t key item) : t key item =
     in adjust' li empty
     end
 
-fun update  (f: item -> option item) (k1: key) (li: t key item) : t key item =
-    let fun update' (li': t key item) (acc: t key item): t key item =
+fun update [item] (f: item -> option item) (k1: Q.key) (li: t item) : t item =
+    let fun update' (li': t item) (acc: t item): t item =
             case li' of
               | [] => li (* not found, return original *)
-              | (y: entry key item) :: ys =>
+              | (y: entry item) :: ys =>
                        (let val Entry (k0, v0) = y
                         in if k0 <> k1
                                 then update' ys (y :: acc)
@@ -166,21 +165,21 @@ fun update  (f: item -> option item) (k1: key) (li: t key item) : t key item =
     end
 
 
-fun withEntry [b] (f: key * item -> b -> b) (e: entry key item) (z: b): b =
+fun withEntry [item] [b] (f: Q.key * item -> b -> b) (e: entry item) (z: b): b =
       let val Entry (k0, v0) = e
       in f (k0, v0) z
       end   
 
-fun foldr [b] (myop: key * item -> b -> b): (b -> t key item -> b) =
+fun foldr [item] [b] (myop: Q.key * item -> b -> b): (b -> t item -> b) =
       List.foldr (withEntry myop) 
 
-fun getAnyPair  (li: t key item): option (key * item) =
+fun getAnyPair [item] (li: t item): option (Q.key * item) =
       case li of
         [] => None
         | (Entry (k0, v0)) :: _ => Some (k0, v0)
 
-fun mapValues [w] (f: item -> w) (li: t key item): t key w =
-       let fun f' (e: entry key item): entry key w =
+fun mapValues [item] [w] (f: item -> w) (li: t item): t w =
+       let fun f' (e: entry item): entry w =
                let val Entry (key, item) = e
                in Entry (key, f item)
                end
@@ -188,8 +187,8 @@ fun mapValues [w] (f: item -> w) (li: t key item): t key w =
           List.mp f' li
        end
 
-fun exists (prop: key * item -> bool) (li: t key item): bool =
-    let fun prop' (e: entry key item): bool =
+fun exists [item] (prop: Q.key * item -> bool) (li: t item): bool =
+    let fun prop' (e: entry item): bool =
           let val Entry (k, v) = e
           in prop (k, v)
           end
@@ -197,8 +196,8 @@ fun exists (prop: key * item -> bool) (li: t key item): bool =
        List.exists prop' li
     end  
 
-fun all (prop: key * item -> bool) (li: t key item): bool =
-    let fun prop' (e: entry key item): bool =
+fun all [item] (prop: Q.key * item -> bool) (li: t item): bool =
+    let fun prop' (e: entry item): bool =
           let val Entry (k, v) = e
           in prop (k, v)
           end
@@ -206,7 +205,7 @@ fun all (prop: key * item -> bool) (li: t key item): bool =
        List.all prop' li
     end
 
-fun find (prop: key * item -> bool) (li: t key item): option (key * item) =
+fun find [item] (prop: Q.key * item -> bool) (li: t item): option (Q.key * item) =
      case li of
        | [] => None
        | (Entry (k0, v0)) :: es => if prop (k0, v0)
@@ -217,8 +216,8 @@ fun find (prop: key * item -> bool) (li: t key item): option (key * item) =
 
 (* invariants *)
 
-fun propBucketKeysAreUnique  (li: t key item): bool = li = HL.nub li
+fun propBucketKeysAreUnique [item] (li: t item): bool = li = HL.nub li
 
-val valid : (t key item -> bool) = propBucketKeysAreUnique
+val valid [item] : (t item -> bool) = propBucketKeysAreUnique
 
 end

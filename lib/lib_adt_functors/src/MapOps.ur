@@ -6,29 +6,29 @@ open HOrd
 
 functor MkMapOps (M:Map.FMAP): sig
 
-  val filter: (M.item -> bool) -> M.t M.item -> M.t M.item
-  val filterWithKey: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item
+  val filter: item ::: Type -> (item -> bool) -> M.t item -> M.t item
+  val filterWithKey: item ::: Type -> (M.key -> item -> bool) -> M.t item -> M.t item
 
-  val partition: (M.item -> bool) -> M.t M.item -> M.t M.item * M.t M.item
-  val partitionWithKey: (M.key -> M.item -> bool) -> M.t M.item -> M.t M.item * M.t M.item
+  val partition: item ::: Type -> (item -> bool) -> M.t item -> M.t item * M.t item
+  val partitionWithKey: item ::: Type -> (M.key -> item -> bool) -> M.t item -> M.t item * M.t item
 
-  val filterFoldr: b ::: Type -> (M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
-  val filterFoldrWithKey: b ::: Type -> (M.key -> M.item -> bool) -> (M.key * M.item -> b -> b) -> b -> M.t M.item -> b
+  val filterFoldr: item ::: Type -> b ::: Type -> (item -> bool) -> (M.key * item -> b -> b) -> b -> M.t item -> b
+  val filterFoldrWithKey: item ::: Type -> b ::: Type -> (M.key -> item -> bool) -> (M.key * item -> b -> b) -> b -> M.t item -> b
 
-  val foldrWithPairPartial: b ::: Type -> (M.key * M.item -> b -> option b) -> b -> M.t M.item -> b
+  val foldrWithPairPartial: item ::: Type -> b ::: Type -> (M.key * item -> b -> option b) -> b -> M.t item -> b
 
-  val union: M.t M.item -> M.t M.item -> M.t M.item
-  val unionWith: (M.item -> M.item -> M.item) -> M.t M.item -> M.t M.item -> M.t M.item
+  val union: item ::: Type -> M.t item -> M.t item -> M.t item
+  val unionWith: item ::: Type -> (item -> item -> item) -> M.t item -> M.t item -> M.t item
 
-  val diff: M.t M.item -> M.t M.item -> M.t M.item
+  val diff: item ::: Type -> M.t item -> M.t item -> M.t item
 
-  val findMapBy: b ::: Type -> eq b -> (M.key * M.item -> b) -> (b -> b -> b) ->  M.t M.item -> option (M.key * M.item)
-  val findByOrd: b ::: Type -> ord b -> (M.key * M.item -> b) -> (b -> b -> b) ->  M.t M.item -> option (M.key * M.item)
+  val findMapBy: item ::: Type -> b ::: Type -> eq b -> (M.key * item -> b) -> (b -> b -> b) ->  M.t item -> option (M.key * item)
+  val findByOrd: item ::: Type -> b ::: Type -> ord b -> (M.key * item -> b) -> (b -> b -> b) ->  M.t item -> option (M.key * item)
 
 end = struct
       open M
 
-        fun filterFoldr [b] (prop: item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
+        fun filterFoldr [item] [b] (prop: item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
                 let fun myop' (p: key * item) (acc: b): b =
                         if prop p.2
                                 then myop p acc
@@ -36,7 +36,7 @@ end = struct
                 in foldrWithPair myop' z st
                 end
 
-        fun filterFoldrWithKey [b] (prop: key -> item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
+        fun filterFoldrWithKey [item] [b] (prop: key -> item -> bool) (myop: key * item -> b -> b) (z: b) (st: t item): b =
                 let fun myop' (p: key * item) (acc: b): b =
                         if uncurry prop p
                                 then myop p acc
@@ -44,7 +44,7 @@ end = struct
                 in foldrWithPair myop' z st
                 end
 
-        fun foldrWithPairPartial [b] (myop: key * item -> b -> option b) (z: b) (st: t item): b =
+        fun foldrWithPairPartial [item] [b] (myop: key * item -> b -> option b) (z: b) (st: t item): b =
                 let fun myop' (p: key * item) (acc: b): b =
                         case myop p acc of
                             Some res => res
@@ -52,16 +52,16 @@ end = struct
                 in foldrWithPair myop' z st
                 end
 
-        fun filter (prop: item -> bool) : (t item -> t item) =
+        fun filter [item] (prop: item -> bool) : (t item -> t item) =
 
                 filterFoldr prop (uncurry insert) empty
 
-        fun filterWithKey (prop: key -> item -> bool) : (t item -> t item) =
+        fun filterWithKey [item] (prop: key -> item -> bool) : (t item -> t item) =
 
                 filterFoldrWithKey prop (uncurry insert) empty
 
 
-        fun partition (prop: item -> bool) : (t item -> t item * t item) =
+        fun partition [item] (prop: item -> bool) : (t item -> t item * t item) =
                 let
                         fun myop (p: key * item) (acc: t item * t item): t item * t item =
                                 if prop p.2
@@ -71,7 +71,7 @@ end = struct
                         foldrWithPair myop (empty, empty)
                 end
 
-        fun partitionWithKey (prop: key -> item -> bool) : (t item -> t item * t item) =
+        fun partitionWithKey [item] (prop: key -> item -> bool) : (t item -> t item * t item) =
                 let
                         fun myop (p: key * item) (acc: t item * t item): t item * t item =
                                 if uncurry prop p
@@ -81,13 +81,13 @@ end = struct
                         foldrWithPair myop (empty, empty)
                 end
 
-        fun union (m1: t item) (m2: t item): t item = foldrWithPair (uncurry insert) m2 m1
+        fun union [item] (m1: t item) (m2: t item): t item = foldrWithPair (uncurry insert) m2 m1
 
-        fun unionWith (f: item -> item -> item) (m1: t item) (m2: t item): t item = foldrWithPair (uncurry (insertWith f)) m2 m1
+        fun unionWith [item] (f: item -> item -> item) (m1: t item) (m2: t item): t item = foldrWithPair (uncurry (insertWith f)) m2 m1
 
-        fun diff (m1: t item) (m2: t item): t item = foldrWithPair (fst >>> delete) m1 m2
+        fun diff [item] (m1: t item) (m2: t item): t item = foldrWithPair (fst >>> delete) m1 m2
 
-        fun findMapBy [b] (_: eq b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
+        fun findMapBy [item] [b] (_: eq b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
 
                 let val optZ : option (key * item) = getAnyPair d1
 
@@ -104,7 +104,7 @@ end = struct
         (* findByOrd example: (findMinByValue = findByOrd snd min)
          *)
 
-        fun findByOrd [b] (_: ord b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
+        fun findByOrd [item] [b] (_: ord b) (proj: key * item -> b) (f: b -> b -> b) (d1: t item): option (key * item) =
 
                 let val optZ : option (key * item) = getAnyPair d1
 

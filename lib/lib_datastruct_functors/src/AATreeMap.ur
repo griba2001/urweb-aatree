@@ -6,63 +6,60 @@
 
 functor MkAATreeMap(Q: sig
                          con key :: Type
-                         con item :: Type
                          val ord_key: ord key
 end):sig
 
-con t :: Type -> Type -> Type
+con t :: Type -> Type
 
-val empty :  t Q.key Q.item
+val empty : item ::: Type -> t item
 
-val singleton :  Q.key -> Q.item -> t Q.key Q.item
+val singleton : item ::: Type -> Q.key -> item -> t item
 
-val null :  t Q.key Q.item -> bool
+val null : item ::: Type -> t item -> bool
 
-val size :  t Q.key Q.item -> int
+val size : item ::: Type -> t item -> int
 
-val lookup:  Q.key -> t Q.key Q.item -> option Q.item
+val lookup: item ::: Type -> Q.key -> t item -> option item
 
-val member:  Q.key -> t Q.key Q.item -> bool
+val member: item ::: Type -> Q.key -> t item -> bool
 
-val findMin :  t Q.key Q.item -> option (Q.key * Q.item)
+val findMin : item ::: Type -> t item -> option (Q.key * item)
 
-val findMax :  t Q.key Q.item -> option (Q.key * Q.item)
+val findMax : item ::: Type -> t item -> option (Q.key * item)
 
-val getAnyPair :  t Q.key Q.item -> option (Q.key * Q.item)
+val getAnyPair : item ::: Type -> t item -> option (Q.key * item)
 
-val insert:  Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+val insert: item ::: Type -> Q.key -> item -> t item -> t item
 
-val insertWith:  (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.key Q.item -> t Q.key Q.item
+val insertWith: item ::: Type -> (item -> item -> item) -> Q.key -> item -> t item -> t item
 
-val fromList :  list (Q.key * Q.item) -> t Q.key Q.item
+val fromList : item ::: Type -> list (Q.key * item) -> t item
 
-val delete:  Q.key -> t Q.key Q.item -> t Q.key Q.item
+val delete: item ::: Type -> Q.key -> t item -> t item
 
-val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+val adjust: item ::: Type -> (item -> item) -> Q.key -> t item -> t item
 
-val update:  (Q.item -> option Q.item) -> Q.key -> t Q.key Q.item -> t Q.key Q.item
+val update: item ::: Type -> (item -> option item) -> Q.key -> t item -> t item
 
-val mapValues:  b ::: Type -> (Q.item -> b) -> t Q.key Q.item -> t Q.key b
+val mapValues: item ::: Type -> b ::: Type -> (item -> b) -> t item -> t b
 
-val mapKeysMonotonic :  key' ::: Type -> (Q.key -> key') -> t Q.key Q.item -> t key' Q.item
+val foldr: item ::: Type -> b ::: Type -> (Q.key * item -> b -> b) -> b -> t item -> b
 
-val foldr:  b ::: Type -> (Q.key * Q.item -> b -> b) -> b -> t Q.key Q.item -> b
+val toList : item ::: Type -> t item -> list (Q.key * item)
 
-val toList :  t Q.key Q.item -> list (Q.key * Q.item)
+val exists : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-val exists : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
+val all : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
 
-val all : (Q.key * Q.item -> bool) -> t Q.key Q.item -> bool
-
-val find: (Q.key * Q.item -> bool) -> t Q.key Q.item -> option (Q.key * Q.item)
+val find: item ::: Type -> (Q.key * item -> bool) -> t item -> option (Q.key * item)
 
 (* * Invariants *)
 
-val propBST :  t Q.key Q.item -> bool
+val propBST : item ::: Type -> t item -> bool
 
-val aaTreeProps :  t Q.key Q.item -> bool
+val aaTreeProps : item ::: Type -> t item -> bool
 
-val valid :  t Q.key Q.item -> bool
+val valid : item ::: Type -> t item -> bool
 
 end = struct
 
@@ -78,17 +75,18 @@ structure HO = HOption
 structure HR = HRecord
 
 
-datatype t k v = Empty | Node of {Key: k,
+datatype t v = Empty | Node of {Key: Q.key,
                                 Value: v,
                                 Level: int,
-                                Left: t k v,
-                                Right: t k v}
+                                Left: t v,
+                                Right: t v}
 
 (* * Instances *)
 
-val eq_tree = fn (_ : eq key) (_ : eq item) =>
+
+val eq_tree [item] = fn (_ : eq Q.key) (_ : eq item) =>
         let
-                fun eq' (t1: t key item) (t2: t key item) =
+                fun eq' (t1: t item) (t2: t item) =
                    case (t1, t2) of
                         | (Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...},
                            Node {Key = k2, Value = v2, Left = lt2, Right = rt2, ...}) =>
@@ -98,69 +96,69 @@ val eq_tree = fn (_ : eq key) (_ : eq item) =>
         in mkEq eq'
         end
 
-val show_tree = fn (_ : show key) (_ : show item) =>
+
+val show_tree [item] = fn (_ : show Q.key) (_ : show item) =>
         let
-           fun show' (t1: t key item): string =
+           fun show' (t1: t item): string =
               case t1 of
                 | Node {Key = k1, Value = v1, Left = lt1, Right = rt1, ...} =>
                     HS.concat ("[" :: show' lt1 :: "," :: show (k1, v1) :: "," :: show' rt1 :: "]" :: [])
                 | Empty => "Empty"
         in mkShow show'
         end
-
                 
 (* * Setters / Getters *)
 
-fun setValue (v1: item) (t1: t key item): t key item =
+fun setValue [item] (v1: item) (t1: t item): t item =
     case t1 of
         Node r => Node (HR.overwrite r {Value = v1})
         | _ => error <xml>setValue: not a Node</xml>
 
-fun setKeyAndValue (k1: key) (v1: item) (t1: t key item) : t key item =
+fun setKeyAndValue [item] (k1: Q.key) (v1: item) (t1: t item) : t item =
     case t1 of
         Node r => Node (HR.overwrite r {Key = k1, Value = v1})
         | _ => error <xml>setKeyAndValue: not a Node</xml>
 
-fun setLevel (v1: int) (t1: t key item) : t key item =
+fun setLevel [item] (v1: int) (t1: t item) : t item =
     case t1 of
         Node r => Node (HR.overwrite r {Level = v1})
         | _ => error <xml>setLevel: not a Node</xml>
 
-fun setLeft (v1: t key item) (t1: t key item) : t key item =
+fun setLeft [item] (v1: t item) (t1: t item) : t item =
     case t1 of
         Node r => Node (HR.overwrite r {Left = v1})
         | _ => error <xml>setLeft: not a Node</xml>
 
-fun setRight (v1: t key item) (t1: t key item) : t key item =
+fun setRight [item] (v1: t item) (t1: t item) : t item =
     case t1 of
         Node r => Node (HR.overwrite r {Right = v1})
         | _ => error <xml>setRight: not a Node</xml>
 
-fun getLevel (t1: t key item) : int =
+fun getLevel [item] (t1: t item) : int =
    case t1 of
      | Node {Level = lvl, ...} => lvl
      | Empty => 0
 
 (* * Construction *)
 
-val empty : t key item = Empty
+val empty [item] : t item = Empty
 
-fun singleton (k1: key) (v1: item): t key item = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
+fun singleton [item] (k1: Q.key) (v1: item): t item = Node {Key = k1, Value = v1, Level = 1, Left = Empty, Right = Empty}
 
 (* * Query *)
 
-fun null (t1: t key item): bool =
+fun null [item] (t1: t item): bool =
     case t1 of
         Empty => True
         | _ => False
 
-fun size (t1: t key item) : int =
+fun size [item] (t1: t item) : int =
     case t1 of
      | Node {Left = l, Right = r, ...} => 1 + size l + size r
      | Empty => 0
 
 
-fun lookup (k1: key) (t1: t key item): option item =
+fun lookup [item] (k1: Q.key) (t1: t item): option item =
     case t1 of
         Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
             (case compare k1 k0 of
@@ -170,10 +168,10 @@ fun lookup (k1: key) (t1: t key item): option item =
                 )
         | Empty => None
 
-val member (k1: key): (t key item -> bool) = lookup k1 >>> isSome
+val member [item] (k1: Q.key): (t item -> bool) = lookup k1 >>> isSome
 
 (* get root pair to start minimum / maximum value folds *)
-fun getAnyPair (t1: t key item): option (key * item) =
+fun getAnyPair [item] (t1: t item): option (Q.key * item) =
     case t1 of
       Empty => None
       | Node {Key = key, Value = item, ...} => Some (key, item)
@@ -181,30 +179,30 @@ fun getAnyPair (t1: t key item): option (key * item) =
 (* minimum, maximum to be used in deletes
 *)
 
-fun findMin (t1: t key item): option (key * item) =
+fun findMin [item] (t1: t item): option (key * item) =
     case t1 of
         Node {Key = k0, Value = v0, Left = l, ...} =>
-            (case l: t key item of
+            (case l: t item of
                Empty => Some (k0, v0)
                | _ => findMin l
                )
         | Empty => None
 
-fun minimum (t1: t key item): key * item =
+fun minimum [item] (t1: t item): Q.key * item =
     case findMin t1 of
         Some x => x
         | None => error <xml>aatree minimum: empty tree</xml>
 
-fun findMax (t1: t key item): option (key * item) =
+fun findMax [item] (t1: t item): option (key * item) =
     case t1 of
         Node {Key = k0, Value = v0, Right = r, ...} =>
-            (case r: t key item of
+            (case r: t item of
                Empty => Some (k0, v0)
                | _ => findMax r
                )
         | Empty => None
 
-fun maximum (t1: t key item): key * item =
+fun maximum [item] (t1: t item): Q.key * item =
     case findMax t1 of
         Some x => x
         | None => error <xml>aatree maximum: empty tree</xml>
@@ -214,7 +212,7 @@ fun maximum (t1: t key item): key * item =
 
 (* skew: remove left horizontal links with right rotation
 *)
-fun skew (t1: t key item) : t key item =
+fun skew [item] (t1: t item) : t item =
     case t1 of
         Node {Level = lvT, Left = l, ...} =>
             (case l of
@@ -229,7 +227,7 @@ fun skew (t1: t key item) : t key item =
 (* split: remove consecutive horizontal links
 *)
 
-fun split (t1: t key item) : t key item =
+fun split [item] (t1: t item) : t item =
     case t1 of
       Node {Level = lvT, Right = r, ...} =>
         (case r of
@@ -246,7 +244,7 @@ fun split (t1: t key item) : t key item =
 (*
 *)
 
-fun splitRight (t1: t key item): t key item =
+fun splitRight [item] (t1: t item): t item =
     case t1 of
         | Node {Right = r, ...} =>
            (case r of
@@ -258,7 +256,7 @@ fun splitRight (t1: t key item): t key item =
 (*
 *)
 
-fun skewRight (t1: t key item): t key item =
+fun skewRight [item] (t1: t item): t item =
     case t1 of
         Node {Right = r, ...} =>
            (case r of
@@ -270,13 +268,13 @@ fun skewRight (t1: t key item): t key item =
 (*
 *)
 
-fun skewRightRight (t1: t key item): t key item =
+fun skewRightRight [item] (t1: t item): t item =
     case t1 of
         Node {Right = r, ...} =>
           (case r of
              Node {Right = s, ...} =>
                (case s of
-                  Node {...} => let val r' : t key item = setRight (skew s) r
+                  Node {...} => let val r' : t item = setRight (skew s) r
                                   in setRight r' t1
                                   end
                   | Empty => t1
@@ -288,14 +286,14 @@ fun skewRightRight (t1: t key item): t key item =
 (*
 *)
 
-fun decreaseLevel (t1: t key item): t key item =
+fun decreaseLevel [item] (t1: t item): t item =
     case t1 of
       Node {Level = lvP, Left = l, Right = r, ...} =>
           (case r of
             Node {Level = lvR, ...} =>
                      let val should_be = 1 + min (getLevel l) (getLevel r)
                      in if lvP > should_be
-                        then let val r' : t key item = if lvR > should_be
+                        then let val r' : t item = if lvR > should_be
                                             then setLevel should_be r
                                             else r
                                 in setRight r' (setLevel should_be t1)
@@ -312,10 +310,10 @@ fun decreaseLevel (t1: t key item): t key item =
 
 (*
 *)
-val rebalance : (t key item -> t key item) = (* with left to right function composition *)
+val rebalance [item] : (t item -> t item) = (* with left to right function composition *)
     decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
 
-val skewThenSplit : (t key item -> t key item) = skew >>> split
+val skewThenSplit [item] : (t item -> t item) = skew >>> split
 
 (* * Insert / delete  *)
 
@@ -323,7 +321,7 @@ val skewThenSplit : (t key item -> t key item) = skew >>> split
 *)
 
 
-fun insertWith (f: item -> item -> item) (k1: key) (v1: item) (t1: t key item): t key item =
+fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t item): t item =
     case t1 of
         Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
@@ -333,13 +331,13 @@ fun insertWith (f: item -> item -> item) (k1: key) (v1: item) (t1: t key item): 
               )
         | Empty => singleton k1 v1
 
-val insert (k1: key) (v1: item):  (t key item -> t key item) = insertWith const k1 v1
+val insert [item] (k1: Q.key) (v1: item):  (t item -> t item) = insertWith const k1 v1
 
 
 (*
 *)
 
-fun delete (k1: key) (t1: t key item): t key item =
+fun delete [item] (k1: Q.key) (t1: t item): t item =
     case t1 of
         Node {Key = k0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
@@ -359,25 +357,25 @@ fun delete (k1: key) (t1: t key item): t key item =
 
 (* * Folding *)
 
-fun foldr' [b] (op: key * item -> b -> b) (t1: t key item) (acc: b): b =
+fun foldr' [item] [b] (op: Q.key * item -> b -> b) (t1: t item) (acc: b): b =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-          (case (l: t key item, r: t key item) of
+          (case (l: t item, r: t item) of
                 (Empty, Empty) => op (k0, v0)  acc
                 | _ =>  foldr' op l (op (k0, v0) (foldr' op r acc))
                 )
       | Empty => acc
 
-fun foldr [b] (op: key * item -> b -> b) (acc: b) (t1: t key item): b = foldr' op t1 acc
+fun foldr [item] [b] (op: Q.key * item -> b -> b) (acc: b) (t1: t item): b = foldr' op t1 acc
 
-fun toList (t1: t key item): list (key * item) = foldr' (curry Cons) t1 []
+fun toList [item] (t1: t item): list (key * item) = foldr' (curry Cons) t1 []
 
-fun fromList (li: list (key * item)): t key item = List.foldl (uncurry insert) empty li
+fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
 
 
 (* * Adjust and mapping *)
 
-fun adjust' (f: item -> item) (k1: key) (t1: t key item): t key item =
+fun adjust' [item] (f: item -> item) (k1: Q.key) (t1: t item): t item =
     case t1 of
         Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
@@ -385,14 +383,14 @@ fun adjust' (f: item -> item) (k1: key) (t1: t key item): t key item =
               | GT => setRight (adjust' f k1 r) t1
               | EQ => setValue (f v0) t1
               )
-        | Empty => t1 (* case unreached if key non-membership is filtered out *)
+        | Empty => t1 (* case unreached if Q.key non-membership is filtered out *)
 
-fun adjust (f: item -> item) (k1: key) (t1: t key item): t key item =
+fun adjust [item] (f: item -> item) (k1: Q.key) (t1: t item): t item =
     if member k1 t1
        then adjust' f k1 t1
        else t1
 
-fun update' (f: item -> option item) (k1: key) (t1: t key item): t key item =
+fun update' [item] (f: item -> option item) (k1: Q.key) (t1: t item): t item =
     case t1 of
         Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
@@ -403,43 +401,35 @@ fun update' (f: item -> option item) (k1: key) (t1: t key item): t key item =
                         | None => delete k1 t1
                         )  
               )
-        | Empty => t1 (* case unreached if key non-membership is filtered out *)
+        | Empty => t1 (* case unreached if Q.key non-membership is filtered out *)
 
-fun update (f: item -> option item) (k1: key) (t1: t key item): t key item =
+fun update [item] (f: item -> option item) (k1: Q.key) (t1: t item): t item =
     if member k1 t1
        then update' f k1 t1
        else t1
 
-fun mapValues [w] (f: item -> w) (t1: t key item): t key w =
+fun mapValues [item] [w] (f: item -> w) (t1: t item): t w =
        case t1 of
          Node rc => Node (HR.overwrite rc {Value = f rc.Value,
                                            Left = mapValues f rc.Left,
                                            Right = mapValues f rc.Right})
          | Empty => Empty
 
-fun mapKeysMonotonic [key'] (f: key -> key') (t1: t key item): t key' item =
-       case t1 of
-         Node rc => Node (HR.overwrite rc {Key = f rc.Key,
-                                           Left = mapKeysMonotonic f rc.Left,
-                                           Right = mapKeysMonotonic f rc.Right})
-         | Empty => Empty
-
-
 (* short-circuiting exists *)
-fun exists (prop: key * item -> bool) (t1: t key item): bool =
+fun exists [item] (prop: Q.key * item -> bool) (t1: t item): bool =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
                   prop (k0, v0) || exists prop l || exists prop r 
       | Empty => False
 
 (* short-circuiting all *)
-fun all (prop: key * item -> bool) (t1: t key item): bool =
+fun all [item] (prop: Q.key * item -> bool) (t1: t item): bool =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
                   prop (k0, v0) && all prop l && all prop r
       | Empty => True
 
-fun find (prop: key * item -> bool) (t1: t key item): option (key * item) =
+fun find [item] (prop: Q.key * item -> bool) (t1: t item): option (key * item) =
     case t1 of
       Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
           if prop (k0, v0) then Some (k0, v0)
@@ -448,19 +438,19 @@ fun find (prop: key * item -> bool) (t1: t key item): option (key * item) =
 
 (* * Invariants *)
 
-(* BST property worth checking after MapKeysMonotonic:
-       all nodes on the left branch have lesser key values,
-       all nodes on the right branch have greater key values,
+(* BST property:
+       all nodes on the left branch have lesser Q.key values,
+       all nodes on the right branch have greater Q.key values,
 
  propMinMaxBST':
    @returns (propHolds, keyMin, keyMax)
 *)
 
-fun propMinMaxBST' (t1: t key item): (bool * key * key) =
+fun propMinMaxBST' [item] (t1: t item): (bool * Q.key * Q.key) =
     case t1 of
       | Empty => error <xml>propBST': empty tree</xml>
       | Node {Key = k0, Left = l, Right = r, ...} =>
-          (case (l: t key item, r: t key item) of
+          (case (l: t item, r: t item) of
              | (Empty, Empty) => (True, k0, k0)
              | (Empty, Node {...}) => let val (holdsR, minR, maxR) = propMinMaxBST' r
                                           val itHolds = holdsR && k0 < minR
@@ -485,7 +475,7 @@ fun propMinMaxBST' (t1: t key item): (bool * key * key) =
                                       end
              )
 
-fun propBST (t1: t key item): bool =
+fun propBST [item] (t1: t item): bool =
     case t1 of
       | Empty => True
       | Node {...} => let val (propHolds, _, _) = propMinMaxBST' t1
@@ -500,26 +490,26 @@ fun propBST (t1: t key item): bool =
   AATree prop5: all nodes with level > 1 have two children
 *)
 
-fun aaTreeProps (t1: t key item): bool =
+fun aaTreeProps [item] (t1: t item): bool =
     case t1 of
       | Empty => True
       | Node {Left = Empty, Right = Empty, Level = lvl, ...} => (* prop1 *) lvl = 1
       | Node {Left = l, Right = r, Level = lvParent, ...} =>
            let
                 val prop2 =
-                        case l: t key item of
+                        case l: t item of
                         | Node {Level = lvLChild, ...} => lvParent = 1 + lvLChild
                         | _ => True
 
                 val prop3 =
-                        case r: t key item of
+                        case r: t item of
                         | Node {Level = lvRChild, ...} => let val prcDiff = lvParent - lvRChild
                                                           in 0 <= prcDiff && prcDiff <= 1
                                                           end   
                         | _ => True
 
                 val prop4 =
-                        case r: t key item of
+                        case r: t item of
                         | Node {Right = Node {Level = lvRGChild, ...}, ...} => lvRGChild < lvParent
                         | _ => True
 
@@ -532,6 +522,6 @@ fun aaTreeProps (t1: t key item): bool =
               aaTreeProps l && aaTreeProps r
            end  
 
-fun valid (t1: t key item): bool = aaTreeProps t1 && propBST t1
+fun valid [item] (t1: t item): bool = aaTreeProps t1 && propBST t1
 
 end

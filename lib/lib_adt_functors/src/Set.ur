@@ -18,6 +18,8 @@ signature FSET = sig
   val exists: (item -> bool) -> t -> bool
   val find: (item -> bool) -> t -> option item
   val foldr: b ::: Type -> (item -> b -> b) -> b -> t -> b
+  val fromList: list item -> t
+  val toList: t -> list item
 end
 
 signature SSET = sig
@@ -31,11 +33,10 @@ functor MkSortedSet(Q: sig con item :: Type
                      end): (SSET where con item = Q.item) = struct
 
   structure T = AATreeMap.MkAATreeMap(struct type key = Q.item
-                                           type item = unit
-                                           val ord_key = Q.ord_item
+                                             val ord_key = Q.ord_item
                                     end)
 
-  type t = T.t Q.item unit
+  type t = T.t unit
   val empty: t = T.empty
   fun singleton (x: Q.item) = T.singleton x ()
   val null: t -> bool = T.null
@@ -68,6 +69,11 @@ functor MkSortedSet(Q: sig con item :: Type
         fun myop' (p: Q.item * unit): b -> b = myop p.1
     in T.foldr myop' z t1
     end
+
+  fun fromList (li: list Q.item): t = List.foldl insert empty li
+
+  fun toList (t1: t): list Q.item = foldr (curry Cons) [] t1
+
   type item = Q.item
 end
 
@@ -80,12 +86,11 @@ functor MkUnordHashSet(Q: sig con item :: Type
 
   structure T = HashTreeMap.MkHashEqTreeMap(struct
                      type key = Q.item
-                     type item = unit
                      val eq_key = Q.eq_item
                      val hashable_key = Q.hashable_item
                  end)
 
-  type t = T.t Q.item unit
+  type t = T.t unit
   val empty: t = T.empty
   fun singleton (x: Q.item) = T.singleton x ()
   val null: t -> bool = T.null
@@ -116,5 +121,10 @@ functor MkUnordHashSet(Q: sig con item :: Type
         fun myop' (p: Q.item * unit): b -> b = myop p.1
     in T.foldr myop' z t1
     end
+
+  fun fromList (li: list Q.item): t = List.foldl insert empty li
+
+  fun toList (t1: t): list Q.item = foldr (curry Cons) [] t1
+
   type item = Q.item
 end

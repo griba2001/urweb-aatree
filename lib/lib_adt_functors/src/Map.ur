@@ -6,68 +6,71 @@ open HTuple
 signature FMAP = sig
   con t :: Type -> Type
   con key :: Type
-  con item :: Type
-  val empty: t item
-  val singleton : key -> item -> t item
-  val null: t item -> bool
-  val size: t item -> int
-  val insert: key -> item -> t item -> t item
-  val insertWith: (item -> item -> item) -> key -> item -> t item -> t item
-  val delete: key -> t item -> t item
-  val lookup: key -> t item -> option item
-  val member: key -> t item -> bool
-  val adjust:  (item -> item) -> key -> t item -> t item
-  val update:  (item -> option item) -> key -> t item -> t item
-  val exists: (key * item -> bool) -> t item -> bool
-  val all: (key * item -> bool) -> t item -> bool
-  val find: (key * item -> bool) -> t item -> option (key * item)
-  val getAnyPair: t item -> option (key * item)
-  val mp: b ::: Type -> (item -> b) -> t item -> t b
-  val foldrWithPair: b ::: Type -> (key * item -> b -> b) -> b -> t item -> b
-  val foldr: b ::: Type -> (item -> b -> b) -> b -> t item -> b
+  val empty: item ::: Type -> t item
+  val singleton : item ::: Type -> key -> item -> t item
+  val null: item ::: Type -> t item -> bool
+  val size: item ::: Type -> t item -> int
+  val insert: item ::: Type -> key -> item -> t item -> t item
+  val insertWith: item ::: Type -> (item -> item -> item) -> key -> item -> t item -> t item
+  val delete: item ::: Type -> key -> t item -> t item
+  val lookup: item ::: Type -> key -> t item -> option item
+  val member: item ::: Type -> key -> t item -> bool
+  val adjust: item ::: Type -> (item -> item) -> key -> t item -> t item
+  val update: item ::: Type -> (item -> option item) -> key -> t item -> t item
+  val exists: item ::: Type -> (key * item -> bool) -> t item -> bool
+  val all: item ::: Type -> (key * item -> bool) -> t item -> bool
+  val find: item ::: Type -> (key * item -> bool) -> t item -> option (key * item)
+  val getAnyPair: item ::: Type -> t item -> option (key * item)
+  val mp: item ::: Type -> b ::: Type -> (item -> b) -> t item -> t b
+  val foldrWithPair: item ::: Type -> b ::: Type -> (key * item -> b -> b) -> b -> t item -> b
+  val foldr: item ::: Type -> b ::: Type -> (item -> b -> b) -> b -> t item -> b
+
+  val fromList: item ::: Type -> list (key * item) -> t item
+  val toList: item ::: Type -> t item -> list (key * item)
 end
 
 signature SMAP = sig
   include FMAP
-  val findMinByKey: t item -> option (key * item)
-  val findMaxByKey: t item -> option (key * item)
+  val findMinByKey: item ::: Type -> t item -> option (key * item)
+  val findMaxByKey: item ::: Type -> t item -> option (key * item)
 end
 
 functor MkSortedMap(Q: sig
                          con key :: Type
-                         con item :: Type
                          val ord_key: ord key
-                     end):(SMAP where con item = Q.item
-                                where con key = Q.key)  = struct
+                     end):(SMAP where con key = Q.key)  = struct
 
   structure T = AATreeMap.MkAATreeMap( Q)
 
-  type t v = T.t Q.key v
-  val empty: t Q.item = T.empty
-  val singleton: Q.key -> Q.item -> t Q.item = T.singleton
-  val null: t Q.item -> bool = T.null
-  val size: t Q.item -> int = T.size
-  val member: Q.key -> t Q.item -> bool = T.member
-  val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
-  val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
-  val insertWith: (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.item -> t Q.item = T.insertWith
-  val delete: Q.key -> t Q.item -> t Q.item = T.delete
-  val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
-  val update:  (Q.item -> option Q.item) -> Q.key -> t Q.item -> t Q.item = T.update
-  val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
-  val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
-  val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
-  val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
-  val foldrWithPair [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
-  fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
-      let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
+  type t v = T.t v
+  val empty [item]: t item = T.empty
+  val singleton [item]: Q.key -> item -> t item = T.singleton
+  val null [item]: t item -> bool = T.null
+  val size [item]: t item -> int = T.size
+  val member [item]: Q.key -> t item -> bool = T.member
+  val lookup [item]: Q.key -> t item -> option item = T.lookup
+  val insert [item]: Q.key -> item -> t item -> t item = T.insert
+  val insertWith [item]: (item -> item -> item) -> Q.key -> item -> t item -> t item = T.insertWith
+  val delete [item]: Q.key -> t item -> t item = T.delete
+  val adjust [item]:  (item -> item) -> Q.key -> t item -> t item = T.adjust
+  val update [item]:  (item -> option item) -> Q.key -> t item -> t item = T.update
+  val exists [item]: (Q.key * item -> bool) -> t item -> bool = T.exists
+  val all [item]: (Q.key * item -> bool) -> t item -> bool = T.all
+  val find [item]: (Q.key * item -> bool) -> t item -> option (Q.key * item) = T.find
+  val getAnyPair [item]: t item -> option (Q.key * item) = T.getAnyPair
+  val foldrWithPair [item] [b]: (Q.key * item -> b -> b) -> b -> t item -> b = T.foldr
+  fun foldr [item] [b] (myop: item -> b -> b): b -> t item -> b =
+      let fun myop' (p: Q.key * item): b -> b = myop p.2
       in T.foldr myop'
       end 
-  val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
-  val findMinByKey: t Q.item -> option (Q.key * Q.item) = T.findMin
-  val findMaxByKey: t Q.item -> option (Q.key * Q.item) = T.findMax
+  val mp [item] [b]: (item -> b) -> t item -> t b = T.mapValues
+  val findMinByKey [item]: t item -> option (Q.key * item) = T.findMin
+  val findMaxByKey [item]: t item -> option (Q.key * item) = T.findMax
+
+  fun fromList [item] (li: list (Q.key * item)): t item = List.foldl (uncurry insert) empty li
+  fun toList [item] (t1: t item): list (Q.key * item) = foldrWithPair (curry Cons) [] t1
+
   type key = Q.key
-  type item = Q.item
 end
 
 
@@ -75,37 +78,38 @@ structure HStruc = Hashable.Hashable
 
 functor MkUnordHashMap(Q: sig
                      con key :: Type
-                     con item :: Type
                      val eq_key: eq key
                      val hashable_key: HStruc.hashable key
-                 end): (FMAP where con item = Q.item
-                             where con key = Q.key) = struct
+                 end): (FMAP where con key = Q.key) = struct
 
   structure T = HashTreeMap.MkHashEqTreeMap( Q)
 
-  type t v = T.t Q.key v
-  val empty: t Q.item = T.empty
-  val singleton: Q.key -> Q.item -> t Q.item = T.singleton
-  val null: t Q.item -> bool = T.null
-  val size: t Q.item -> int = T.size
-  val member: Q.key -> t Q.item -> bool = T.member
-  val lookup: Q.key -> t Q.item -> option Q.item = T.lookup
-  val insert: Q.key -> Q.item -> t Q.item -> t Q.item = T.insert
-  val insertWith: (Q.item -> Q.item -> Q.item) -> Q.key -> Q.item -> t Q.item -> t Q.item = T.insertWith
-  val delete: Q.key -> t Q.item -> t Q.item = T.delete
-  val adjust:  (Q.item -> Q.item) -> Q.key -> t Q.item -> t Q.item = T.adjust
-  val update:  (Q.item -> option Q.item) -> Q.key -> t Q.item -> t Q.item = T.update
-  val exists: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.exists
-  val all: (Q.key * Q.item -> bool) -> t Q.item -> bool = T.all
-  val find: (Q.key * Q.item -> bool) -> t Q.item -> option (Q.key * Q.item) = T.find
-  val getAnyPair: t Q.item -> option (Q.key * Q.item) = T.getAnyPair
-  val mp [b]: (Q.item -> b) -> t Q.item -> t b = T.mapValues
-  val foldrWithPair [b] : (Q.key * Q.item -> b -> b) -> b -> t Q.item -> b = T.foldr
-  fun foldr [b] (myop: Q.item -> b -> b): b -> t Q.item -> b =
-      let fun myop' (p: Q.key * Q.item): b -> b = myop p.2
+  type t v = T.t v
+  val empty [item]: t item = T.empty
+  val singleton [item]: Q.key -> item -> t item = T.singleton
+  val null [item]: t item -> bool = T.null
+  val size [item]: t item -> int = T.size
+  val member [item]: Q.key -> t item -> bool = T.member
+  val lookup [item]: Q.key -> t item -> option item = T.lookup
+  val insert [item]: Q.key -> item -> t item -> t item = T.insert
+  val insertWith [item]: (item -> item -> item) -> Q.key -> item -> t item -> t item = T.insertWith
+  val delete [item]: Q.key -> t item -> t item = T.delete
+  val adjust [item]: (item -> item) -> Q.key -> t item -> t item = T.adjust
+  val update [item]:  (item -> option item) -> Q.key -> t item -> t item = T.update
+  val exists [item]: (Q.key * item -> bool) -> t item -> bool = T.exists
+  val all [item]: (Q.key * item -> bool) -> t item -> bool = T.all
+  val find [item]: (Q.key * item -> bool) -> t item -> option (Q.key * item) = T.find
+  val getAnyPair [item]: t item -> option (Q.key * item) = T.getAnyPair
+  val mp [item] [b]: (item -> b) -> t item -> t b = T.mapValues
+  val foldrWithPair [item] [b] : (Q.key * item -> b -> b) -> b -> t item -> b = T.foldr
+  fun foldr [item] [b] (myop: item -> b -> b): b -> t item -> b =
+      let fun myop' (p: Q.key * item): b -> b = myop p.2
       in T.foldr myop'
       end
+
+  fun fromList [item] (li: list (Q.key * item)): t item = List.foldl (uncurry insert) empty li
+  fun toList [item] (t1: t item): list (Q.key * item) = foldrWithPair (curry Cons) [] t1
+
   type key = Q.key
-  type item = Q.item
 end
 

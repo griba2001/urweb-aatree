@@ -1,0 +1,5 @@
+rewrite url Readme_test/main
+library lib_aatree
+
+$/list
+test/readme_test
