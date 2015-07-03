@@ -20,6 +20,7 @@ signature FSET = sig
   val foldr: b ::: Type -> (item -> b -> b) -> b -> t -> b
   val fromList: list item -> t
   val toList: t -> list item
+  val show_set: show item -> show t
 end
 
 signature SSET = sig
@@ -75,6 +76,11 @@ functor MkSortedSet(Q: sig con item :: Type
   fun toList (t1: t): list Q.item = foldr (curry Cons) [] t1
 
   type item = Q.item
+
+  val show_set (_:show item) =
+      let fun show' (t1: t) = "fromList: " ^ show (toList t1)
+      in mkShow show'
+      end
 end
 
 structure HStruc = Hashable.Hashable
@@ -127,4 +133,9 @@ functor MkUnordHashSet(Q: sig con item :: Type
   fun toList (t1: t): list Q.item = foldr (curry Cons) [] t1
 
   type item = Q.item
+
+  val show_set (_:show item) =
+      let fun show' (t1: t) = "fromList: " ^ show (toList t1)
+      in mkShow show'
+      end
 end

@@ -27,6 +27,8 @@ signature FMAP = sig
 
   val fromList: item ::: Type -> list (key * item) -> t item
   val toList: item ::: Type -> t item -> list (key * item)
+
+  val show_map: item ::: Type -> show key -> show item -> show (t item)
 end
 
 signature SMAP = sig
@@ -71,6 +73,12 @@ functor MkSortedMap(Q: sig
   fun toList [item] (t1: t item): list (Q.key * item) = foldrWithPair (curry Cons) [] t1
 
   type key = Q.key
+
+  val show_map [item] (_:show key) (_:show item) =
+      let fun show' (t1: t item) = "fromList: " ^ show (toList t1)
+      in mkShow show'
+      end
+
 end
 
 
@@ -111,5 +119,10 @@ functor MkUnordHashMap(Q: sig
   fun toList [item] (t1: t item): list (Q.key * item) = foldrWithPair (curry Cons) [] t1
 
   type key = Q.key
+
+  val show_map [item] (_:show key) (_:show item) =
+      let fun show' (t1: t item) = "fromList: " ^ show (toList t1)
+      in mkShow show'
+      end
 end
 

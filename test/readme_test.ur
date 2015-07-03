@@ -40,10 +40,10 @@ val myHashedMap = StringKeyedHashMap.fromList( ("ab", 1) :: ("cd", 2) :: [])
 
 fun main () : transaction page = return <xml>
 <body>
-        <p>{[IntSortedSet.toList mySortedSet]}</p>
-        <p>{[StringHashedSet.toList myHashedSet]}</p>
+        <p>{[mySortedSet]}</p>
+        <p>{[myHashedSet]}</p>
         <p/>  
-        <p>{[IntKeyedSortedMap.toList mySortedMap]}</p>
-        <p>{[StringKeyedHashMap.toList myHashedMap]}</p>
+        <p>{[mySortedMap]}</p>
+        <p>{[myHashedMap]}</p>
 </body>
 </xml>
