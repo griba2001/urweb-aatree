@@ -51,14 +51,14 @@ urweb listMap_test
 
 The functor structure makes possible to factor out the input type requirements for an instance.
 
-I was thinking the Haskell construction
+I was thinking that the Haskell construction
 
 ```haskell
 instance (Ord item) => SortedSet (Set item)
   where ...
 ```
 
-Equivalent in Ur/Web:
+has an equivalent in Ur/Web:
 
 ```ocaml
 functor MkSortedSet(Q: sig
