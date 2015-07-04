@@ -63,7 +63,7 @@ Equivalent in Ur/Web:
 ```ocaml
 functor MkSortedSet(Q: sig con item :: Type
                        val ord_item: ord item
-                     end)
+                     end) = struct ... end
 ```
 
 ####Example:
