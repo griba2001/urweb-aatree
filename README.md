@@ -54,14 +54,15 @@ The functor structure makes possible to factor out the input type requirements f
 I was thinking the Haskell construction
 
 ```haskell
-instance (Ord item) => SortedSet (set item)
+instance (Ord item) => SortedSet (Set item)
   where ...
 ```
 
 Equivalent in Ur/Web:
 
 ```ocaml
-functor MkSortedSet(Q: sig con item :: Type
+functor MkSortedSet(Q: sig
+                       con item :: Type
                        val ord_item: ord item
                      end) = struct ... end
 ```
