@@ -51,10 +51,10 @@ urweb listMap_test
 
 The functor structure makes possible to factor out the input type requirements for an instance.
 
-I was thinking the haskell construction
+I was thinking the Haskell construction
 
 ```haskell
-instance (Ord item) => SortedSet set item
+instance (Ord item) => SortedSet (set item)
   where ...
 ```
 
