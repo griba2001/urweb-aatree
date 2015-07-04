@@ -61,10 +61,9 @@ instance (Ord item) => SortedSet set item
 Equivalent in Ur/Web:
 
 ```ocaml
-structure IntSortedSet = Set.MkSortedSet( struct
-                                type item = int
-                                val ord_item = ord_int
-                         end)
+functor MkSortedSet(Q: sig con item :: Type
+                       val ord_item: ord item
+                     end)
 ```
 
 ####Example:
