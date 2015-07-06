@@ -369,15 +369,18 @@ fun delete [item] (k1: Q.key) (t1: t item): t item =
 fun foldr [item] [b] (op: Q.key * item -> b -> b) (acc: b) (t1: t item): b =
     case t1 of
       Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
-          (case (l: t item, r: t item) of
-                (None, None) => op (k0, v0)  acc
-                | _ => let
-                           val accRight = foldr op acc r  
-                           val acc' = op (k0, v0) accRight
-                       in
-                          foldr op acc' l
-                       end
-                )
+          let
+           val acc1 = if isSome r
+                      then foldr op acc r
+                      else acc
+
+           val acc2 = op (k0, v0) acc1
+
+          in
+             if isSome l
+             then foldr op acc2 l
+             else acc2
+          end   
       | None => acc
 
 fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
