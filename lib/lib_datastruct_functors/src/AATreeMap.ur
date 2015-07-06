@@ -209,16 +209,13 @@ fun skew [item] (t1: t item) : t item =
     case t1 of
         Some root =>
           (case root of
-            Node {Level = lvT, Left = l, ...} =>
-              (case l of
-                 Some nodeL =>
+            | Node {Level = lvT, Left = Some nodeL, ...} =>
                    (case nodeL of Node {Level = lvL, Right = lRight, ...} =>
                         if lvT = lvL
                         then Some <| setRight (Some <| setLeft lRight root) nodeL
                         else t1
                    ) 
-                 | None => t1
-                 )
+            | _ => t1
            ) 
         | None => t1
 
@@ -229,20 +226,20 @@ fun split [item] (t1: t item) : t item =
     case t1 of
       Some root =>
       (case root of
-        Node {Level = lvT, Right = r, ...} =>
-        (case r of
-          Some nodeR =>
-            (case nodeR of
-            Node {Level = lvR, Left = rLeft, Right = s, ...} =>
+        | Node {Level = lvT, Right = Some nodeR, ...} =>
+          (case nodeR of
+            | Node {Level = lvR, Left = rLeft, Right = s, ...} =>
               (case s of
                 Some (Node {Level = lvS, ...}) =>
                       if (lvT = lvS)
                       then Some <| setLevel (lvR +1) (setLeft (Some <| setRight rLeft root) nodeR)
                       else t1
                 | None => t1
-              ))
-          | None => t1
-          ))
+              )
+            | _ => t1
+          )
+        | _ => t1
+      )
      | None => t1
 
 (*
@@ -328,10 +325,6 @@ val skewThenSplit [item] : (t item -> t item) = skew >>> split
 
 (* * Insert / delete  *)
 
-(*
-*)
-
-
 fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t item): t item =
     case t1 of
         Some root =>
@@ -345,9 +338,6 @@ fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t it
         | None => singleton k1 v1
 
 val insert [item] (k1: Q.key) (v1: item):  (t item -> t item) = insertWith const k1 v1
-
-(*
-*)
 
 fun delete [item] (k1: Q.key) (t1: t item): t item =
     case t1 of
