@@ -74,7 +74,7 @@ structure HL = HList
 structure HO = HOption
 structure HR = HRecord
 
-datatype node v = Node of {Key: Q.key,
+datatype node v = Node of {Key: key,
                                 Value: v,
                                 Level: int,
                                 Left: option (node v),
@@ -85,7 +85,7 @@ type t v = option (node v)
 (* * Instances *)
 
 
-val eq_tree [item] = fn (_ : eq Q.key) (_ : eq item) =>
+val eq_tree [item] = fn (_ : eq key) (_ : eq item) =>
         let
                 fun eq' (t1: t item) (t2: t item) =
                    case (t1, t2) of
@@ -98,7 +98,7 @@ val eq_tree [item] = fn (_ : eq Q.key) (_ : eq item) =>
         end
 
 
-val show_tree [item] = fn (_ : show Q.key) (_ : show item) =>
+val show_tree [item] = fn (_ : show key) (_ : show item) =>
         let
            fun show' (t1: t item): string =
               case t1 of
@@ -114,7 +114,7 @@ fun setValue [item] (v1: item) (t1: node item): node item =
     case t1 of
         Node r => Node (HR.overwrite r {Value = v1})
 
-fun setKeyAndValue [item] (k1: Q.key) (v1: item) (t1: node item) : node item =
+fun setKeyAndValue [item] (k1: key) (v1: item) (t1: node item) : node item =
     case t1 of
         Node r => Node (HR.overwrite r {Key = k1, Value = v1})
 
@@ -139,7 +139,7 @@ fun getLevel [item] (t1: t item) : int =
 
 val empty [item] : t item = None
 
-fun singleton [item] (k1: Q.key) (v1: item): t item = Some (Node {Key = k1, Value = v1, Level = 1, Left = None, Right = None})
+fun singleton [item] (k1: key) (v1: item): t item = Some (Node {Key = k1, Value = v1, Level = 1, Left = None, Right = None})
 
 (* * Query *)
 
@@ -151,7 +151,7 @@ fun size [item] (t1: t item) : int =
      | None => 0
 
 
-fun lookup [item] (k1: Q.key) (t1: t item): option item =
+fun lookup [item] (k1: key) (t1: t item): option item =
     case t1 of
         Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
             (case compare k1 k0 of
@@ -161,10 +161,10 @@ fun lookup [item] (k1: Q.key) (t1: t item): option item =
                 )
         | None => None
 
-val member [item] (k1: Q.key): (t item -> bool) = lookup k1 >>> isSome
+val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
 (* get root pair to start minimum / maximum value folds *)
-fun getAnyPair [item] (t1: t item): option (Q.key * item) =
+fun getAnyPair [item] (t1: t item): option (key * item) =
     case t1 of
       None => None
       | Some( Node {Key = key, Value = item, ...}) => Some (key, item)
@@ -172,7 +172,7 @@ fun getAnyPair [item] (t1: t item): option (Q.key * item) =
 (* minimum, maximum to be used in deletes
 *)
 
-fun minimum [item] (root: node item): Q.key * item =
+fun minimum [item] (root: node item): key * item =
     case root of
         Node {Key = k0, Value = v0, Left = l, ...} =>
             case l: t item of
@@ -186,7 +186,7 @@ fun findMin [item] (t1: t item): option (key * item) =
         | None => None
                
 
-fun maximum [item] (root: node item): Q.key * item =
+fun maximum [item] (root: node item): key * item =
     case root of
         Node {Key = k0, Value = v0, Right = r, ...} =>
             case r: t item of
@@ -322,7 +322,7 @@ val skewThenSplit [item] : (t item -> t item) = skew >>> split
 
 (* * Insert *)
 
-fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t item): t item =
+fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (t1: t item): t item =
     case t1 of
         Some root =>
            (case root of
@@ -334,14 +334,14 @@ fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t it
               ))
         | None => singleton k1 v1
 
-val insert [item] (k1: Q.key) (v1: item):  (t item -> t item) = insertWith const k1 v1
+val insert [item] (k1: key) (v1: item):  (t item -> t item) = insertWith const k1 v1
 
 fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
 
 
 (* * Delete *)
 
-fun delete [item] (k1: Q.key) (t1: t item): t item =
+fun delete [item] (k1: key) (t1: t item): t item =
     case t1 of
         Some root =>
            (case root of Node {Key = k0, Left = l, Right = r, ...} =>
@@ -363,7 +363,7 @@ fun delete [item] (k1: Q.key) (t1: t item): t item =
 
 (* * Folding *)
 
-fun foldr [item] [b] (op: Q.key * item -> b -> b) (acc: b) (t1: t item): b =
+fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
     case t1 of
       Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
           let
@@ -385,7 +385,7 @@ fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
 
 (* * Adjust and mapping *)
 
-fun adjust' [item] (f: item -> item) (k1: Q.key) (t1: t item): t item =
+fun adjust' [item] (f: item -> item) (k1: key) (t1: t item): t item =
     case t1 of
         Some root => (case root of
             (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
@@ -394,14 +394,14 @@ fun adjust' [item] (f: item -> item) (k1: Q.key) (t1: t item): t item =
                 | GT => Some <| setRight (adjust' f k1 r) root
                 | EQ => Some <| setValue (f v0) root
               ))
-        | None => t1 (* case unreached if Q.key non-membership is filtered out *)
+        | None => t1 (* case unreached if key non-membership is filtered out *)
 
-fun adjust [item] (f: item -> item) (k1: Q.key) (t1: t item): t item =
+fun adjust [item] (f: item -> item) (k1: key) (t1: t item): t item =
     if member k1 t1
        then adjust' f k1 t1
        else t1
 
-fun update' [item] (f: item -> option item) (k1: Q.key) (t1: t item): t item =
+fun update' [item] (f: item -> option item) (k1: key) (t1: t item): t item =
     case t1 of
         Some root => (case root of
            Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
@@ -413,9 +413,9 @@ fun update' [item] (f: item -> option item) (k1: Q.key) (t1: t item): t item =
                         | None => delete k1 t1
                         )  
              ))
-        | None => t1 (* case unreached if Q.key non-membership is filtered out *)
+        | None => t1 (* case unreached if key non-membership is filtered out *)
 
-fun update [item] (f: item -> option item) (k1: Q.key) (t1: t item): t item =
+fun update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
     if member k1 t1
        then update' f k1 t1
        else t1
@@ -428,20 +428,20 @@ fun mapValues [item] [w] (f: item -> w) (t1: t item): t w =
          | None => None
 
 (* short-circuiting exists *)
-fun exists [item] (prop: Q.key * item -> bool) (t1: t item): bool =
+fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
     case t1 of
       Some (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
                   prop (k0, v0) || exists prop l || exists prop r 
       | None => False
 
 (* short-circuiting all *)
-fun all [item] (prop: Q.key * item -> bool) (t1: t item): bool =
+fun all [item] (prop: key * item -> bool) (t1: t item): bool =
     case t1 of
       Some (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
                   prop (k0, v0) && all prop l && all prop r
       | None => True
 
-fun find [item] (prop: Q.key * item -> bool) (t1: t item): option (key * item) =
+fun find [item] (prop: key * item -> bool) (t1: t item): option (key * item) =
     case t1 of
       Some (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
           if prop (k0, v0) then Some (k0, v0)
@@ -451,14 +451,14 @@ fun find [item] (prop: Q.key * item -> bool) (t1: t item): option (key * item) =
 (* * Invariants *)
 
 (* BST property:
-       all nodes on the left branch have lesser Q.key values,
-       all nodes on the right branch have greater Q.key values,
+       all nodes on the left branch have lesser key values,
+       all nodes on the right branch have greater key values,
 
  propMinMaxBST':
    @returns (propHolds, keyMin, keyMax)
 *)
 
-fun propMinMaxBST' [item] (root: node item): (bool * Q.key * Q.key) =
+fun propMinMaxBST' [item] (root: node item): (bool * key * key) =
     case root of
         Node {Key = k0, Left = l, Right = r, ...} =>
           case (l: t item, r: t item) of
