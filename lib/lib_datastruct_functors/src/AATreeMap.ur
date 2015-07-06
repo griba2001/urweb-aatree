@@ -143,10 +143,7 @@ fun singleton [item] (k1: Q.key) (v1: item): t item = Some (Node {Key = k1, Valu
 
 (* * Query *)
 
-fun null [item] (t1: t item): bool =
-    case t1 of
-        None => True
-        | _ => False
+val null [item]: t item -> bool = isNone
 
 fun size [item] (t1: t item) : int =
     case t1 of
