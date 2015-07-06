@@ -322,7 +322,8 @@ val rebalance [item] : (t item -> t item) = (* with left to right function compo
 
 val skewThenSplit [item] : (t item -> t item) = skew >>> split
 
-(* * Insert / delete  *)
+
+(* * Insert *)
 
 fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t item): t item =
     case t1 of
@@ -337,6 +338,11 @@ fun insertWith [item] (f: item -> item -> item) (k1: Q.key) (v1: item) (t1: t it
         | None => singleton k1 v1
 
 val insert [item] (k1: Q.key) (v1: item):  (t item -> t item) = insertWith const k1 v1
+
+fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
+
+
+(* * Delete *)
 
 fun delete [item] (k1: Q.key) (t1: t item): t item =
     case t1 of
@@ -357,22 +363,24 @@ fun delete [item] (k1: Q.key) (t1: t item): t item =
               ))
         | None => None
 
+
 (* * Folding *)
 
-fun foldr' [item] [b] (op: Q.key * item -> b -> b) (t1: t item) (acc: b): b =
+fun foldr [item] [b] (op: Q.key * item -> b -> b) (acc: b) (t1: t item): b =
     case t1 of
       Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
           (case (l: t item, r: t item) of
                 (None, None) => op (k0, v0)  acc
-                | _ =>  foldr' op l (op (k0, v0) (foldr' op r acc))
+                | _ => let
+                           val accRight = foldr op acc r  
+                           val acc' = op (k0, v0) accRight
+                       in
+                          foldr op acc' l
+                       end
                 )
       | None => acc
 
-fun foldr [item] [b] (op: Q.key * item -> b -> b) (acc: b) (t1: t item): b = foldr' op t1 acc
-
-fun toList [item] (t1: t item): list (key * item) = foldr' (curry Cons) t1 []
-
-fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
+fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
 
 
 (* * Adjust and mapping *)
