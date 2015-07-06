@@ -53,6 +53,7 @@ val valid : item ::: Type -> t item -> bool
 end = struct
 
 open Q
+open HTuple
 
 datatype entry v = Entry of key * v
 
@@ -97,7 +98,7 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (li: t item
 
 val insert [item] : key -> item -> t item -> t item = insertWith const
 
-fun fromList [item]  (li: list (key * item)): t item = L.mp Entry li
+fun fromList [item]  (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
 
 fun delete [item] (k1: key) (li: t item): t item =
 
