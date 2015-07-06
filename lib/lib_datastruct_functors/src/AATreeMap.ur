@@ -235,13 +235,10 @@ fun split [item] (t1: t item) : t item =
             (case nodeR of
             Node {Level = lvR, Left = rLeft, Right = s, ...} =>
               (case s of
-                Some nodeS =>
-                  (case nodeS of
-                    Node {Level = lvS, ...} =>
+                Some (Node {Level = lvS, ...}) =>
                       if (lvT = lvS)
                       then Some <| setLevel (lvR +1) (setLeft (Some <| setRight rLeft node1) nodeR)
                       else t1
-                  ) 
                 | None => t1
               ))
           | None => t1
