@@ -261,11 +261,11 @@ fun splitRight [item] (t1: t item): t item =
 fun skewRight [item] (t1: t item): t item =
     case t1 of
         Some root =>
-           (case root of Node {Right = r, ...} =>
-             (case r of
-                Some _ => Some <| setRight (skew r) root
-                | None => t1
-                ))
+           (case root of
+            | Node {Right = Some nodeR, ...} =>
+                    Some <| setRight (skew (Some nodeR)) root
+            | _ => t1
+            )
         | None => t1
 
 (*
