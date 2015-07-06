@@ -228,13 +228,12 @@ fun split [item] (t1: t item) : t item =
       (case root of
         | Node {Level = lvT, Right = Some nodeR, ...} =>
           (case nodeR of
-            | Node {Level = lvR, Left = rLeft, Right = s, ...} =>
-              (case s of
-                Some (Node {Level = lvS, ...}) =>
+            | Node {Level = lvR, Left = rLeft, Right = Some nodeS, ...} =>
+              (case nodeS of
+                Node {Level = lvS, ...} =>
                       if (lvT = lvS)
                       then Some <| setLevel (lvR +1) (setLeft (Some <| setRight rLeft root) nodeR)
                       else t1
-                | None => t1
               )
             | _ => t1
           )
@@ -275,18 +274,18 @@ fun skewRight [item] (t1: t item): t item =
 fun skewRightRight [item] (t1: t item): t item =
     case t1 of
         Some root =>
-          (case root of Node {Right = r, ...} =>
-          (case r of
-             Some nodeR =>
-               (case nodeR of Node {Right = s, ...} =>
-               (case s of
-                  Some _ => let val r' : t item = Some <| setRight (skew s) nodeR
-                                  in Some <| setRight r' root
-                                  end
-                  | None => t1
-                  ))
-             | _ => t1
-             ))
+          (case root of
+           | Node {Right = Some nodeR, ...} =>
+                  (case nodeR of
+                  | Node {Right = Some nodeS, ...} =>
+                        let val nodeR' : node item = setRight (skew (Some nodeS)) nodeR
+                        in
+                            Some <| setRight (Some nodeR') root
+                        end
+                  | _ => t1
+                  )
+           | _ => t1
+           )
        | _ => t1
 
 (*
