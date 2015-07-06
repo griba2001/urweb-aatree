@@ -47,11 +47,11 @@ urweb listMap_test
 
 ---------------------
 
-####Considerations
+####Considerations:
 
 The functor structure makes possible to factor out the input type requirements for an instance.
 
-I was thinking that the Haskell construction
+I was thinking that the Haskell existential instance definition
 
 ```haskell
 instance (Ord item) => SortedSet (Set item)
