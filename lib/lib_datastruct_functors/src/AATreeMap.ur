@@ -248,11 +248,11 @@ fun splitRight [item] (t1: t item): t item =
     case t1 of
         | Some root =>
           (case root of
-            Node {Right = r, ...} =>
-             (case r of
-               | Some _ => Some <| setRight (split r) root
-               | None => t1
-               ))
+           | Node {Right = Some nodeR, ...} =>
+               Some <| setRight (split (Some nodeR)) root
+
+           | _ => t1
+           )
         | None => t1
 
 (*
