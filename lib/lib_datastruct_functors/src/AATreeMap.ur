@@ -385,40 +385,74 @@ fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
 
 (* * Adjust and mapping *)
 
-fun adjust' [item] (f: item -> item) (k1: key) (t1: t item): t item =
-    case t1 of
-        Some root => (case root of
-            (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
-                (case compare k1 k0 of
-                | LT => Some <| setLeft (adjust' f k1 l) root
-                | GT => Some <| setRight (adjust' f k1 r) root
-                | EQ => Some <| setValue (f v0) root
-              ))
-        | None => t1 (* case unreached if key non-membership is filtered out *)
+val adjust [item] (f: item -> item) (k1: key) (t1: t item): t item =
+    let snd (adjust' t1)
+    where
+        fun adjust' (t2: t item): (bool * t item) = 
+        case t2 of
+                Some root => (case root of
+                   Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+                        (case compare k1 k0 of
+                        | EQ => (True, Some <| setValue (f v0) root)
 
-fun adjust [item] (f: item -> item) (k1: key) (t1: t item): t item =
-    if member k1 t1
-       then adjust' f k1 t1
-       else t1
+                        | LT => let val (adjusted, newLeft) = adjust' l
+                                    val newVal = if adjusted
+                                                 then Some <| setLeft newLeft root
+                                                 else t2
+                                in
+                                        (adjusted, newVal)
+                                end
 
-fun update' [item] (f: item -> option item) (k1: key) (t1: t item): t item =
-    case t1 of
-        Some root => (case root of
-           Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-             (case compare k1 k0 of
-                LT => rebalance (Some <| setLeft (update' f k1 l) root)
-                | GT => rebalance (Some <| setRight (update' f k1 r) root)
-                | EQ => (case f v0 of
-                        | Some v1 => Some <| setValue v1 root
-                        | None => delete k1 t1
-                        )  
-             ))
-        | None => t1 (* case unreached if key non-membership is filtered out *)
+                        | GT => let val (adjusted, newRight) = adjust' r
+                                    val newVal = if adjusted
+                                                 then Some <| setRight newRight root
+                                                 else t2
+                                in
+                                        (adjusted, newVal)
+                                end
+                ))
+                | None => (False, t2)
+    end
 
-fun update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
-    if member k1 t1
-       then update' f k1 t1
-       else t1
+
+datatype updated = Upd_Adjusted | Upd_Deleted | Upd_NoModif
+
+val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
+    let snd (update' t1)
+    where
+        fun update' (t2: t item): (updated * t item) =
+        case t2 of
+                Some root => (case root of
+                   Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+
+                        (case compare k1 k0 of
+
+                        | EQ => (case f v0 of
+                                | Some v1 => (Upd_Adjusted, Some <| setValue v1 root)
+                                | None => (Upd_Deleted, delete k1 t2)
+                                )
+
+                        | LT => let val (updated, newLeft) = update' l
+                                    val newVal = case updated of
+                                        | Upd_Adjusted => Some <| setLeft newLeft root
+                                        | Upd_Deleted => rebalance <| Some <| setLeft newLeft root
+                                        | Upd_NoModif => t2
+                                in
+                                  (updated, newVal)
+                                end
+
+                        | GT => let val (updated, newRight) = update' r
+                                    val newVal = case updated of
+                                        | Upd_Adjusted => Some <| setRight newRight root
+                                        | Upd_Deleted => rebalance <| Some <| setRight newRight root 
+                                        | Upd_NoModif => t2
+                                in
+                                  (updated, newVal)
+                                end
+                ))
+                | None => (Upd_NoModif, t2)
+    end
+
 
 fun mapValues [item] [w] (f: item -> w) (t1: t item): t w =
        case t1 of
