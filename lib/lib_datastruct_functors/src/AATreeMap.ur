@@ -224,7 +224,7 @@ fun split [item] (root: node item) : node item =
               (case nodeS of
                 Node {Level = lvS, ...} =>
                       if (lvT = lvS)
-                      then setLevel (lvR +1) (setLeft (Some <| setRight rLeft root) nodeR)
+                      then setLevel (lvR +1) <| setLeft (Some <| setRight rLeft root) nodeR
                       else root
               )
             | _ => root
