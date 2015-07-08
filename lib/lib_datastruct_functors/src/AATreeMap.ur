@@ -202,96 +202,75 @@ fun findMax [item] (t1: t item): option (key * item) =
 
 (* skew: remove left horizontal links with right rotation
 *)
-fun skew [item] (t1: t item) : t item =
-    case t1 of
-        Some root =>
-          (case root of
+fun skew [item] (root: node item) : node item =
+          case root of
             | Node {Level = lvT, Left = Some nodeL, ...} =>
-                   (case nodeL of Node {Level = lvL, Right = lRight, ...} =>
+                   (case nodeL of
+                    | Node {Level = lvL, Right = lRight, ...} =>
                         if lvT = lvL
-                        then Some <| setRight (Some <| setLeft lRight root) nodeL
-                        else t1
+                        then setRight (Some <| setLeft lRight root) nodeL
+                        else root
                    ) 
-            | _ => t1
-           ) 
-        | None => t1
+            | _ => root
 
 (* split: remove consecutive horizontal links
 *)
 
-fun split [item] (t1: t item) : t item =
-    case t1 of
-      Some root =>
-      (case root of
+fun split [item] (root: node item) : node item =
+      case root of
         | Node {Level = lvT, Right = Some nodeR, ...} =>
           (case nodeR of
             | Node {Level = lvR, Left = rLeft, Right = Some nodeS, ...} =>
               (case nodeS of
                 Node {Level = lvS, ...} =>
                       if (lvT = lvS)
-                      then Some <| setLevel (lvR +1) (setLeft (Some <| setRight rLeft root) nodeR)
-                      else t1
+                      then setLevel (lvR +1) (setLeft (Some <| setRight rLeft root) nodeR)
+                      else root
               )
-            | _ => t1
+            | _ => root
           )
-        | _ => t1
-      )
-     | None => t1
+        | _ => root
 
 (*
 *)
 
-fun splitRight [item] (t1: t item): t item =
-    case t1 of
-        | Some root =>
-          (case root of
+fun splitRight [item] (root: node item): node item =
+          case root of
            | Node {Right = Some nodeR, ...} =>
-               Some <| setRight (split (Some nodeR)) root
+               setRight (Some <| split nodeR) root
 
-           | _ => t1
-           )
-        | None => t1
+           | _ => root
 
 (*
 *)
 
-fun skewRight [item] (t1: t item): t item =
-    case t1 of
-        Some root =>
-           (case root of
+fun skewRight [item] (root: node item): node item =
+           case root of
             | Node {Right = Some nodeR, ...} =>
-                    Some <| setRight (skew (Some nodeR)) root
-            | _ => t1
-            )
-        | None => t1
+                    setRight (Some <| skew nodeR) root
+            | _ => root
 
 (*
 *)
 
-fun skewRightRight [item] (t1: t item): t item =
-    case t1 of
-        Some root =>
-          (case root of
+fun skewRightRight [item] (root: node item): node item =
+           case root of
            | Node {Right = Some nodeR, ...} =>
                   (case nodeR of
                   | Node {Right = Some nodeS, ...} =>
-                        let val nodeR' : node item = setRight (skew (Some nodeS)) nodeR
+                        let val nodeR' : node item = setRight (Some <| skew nodeS) nodeR
                         in
-                            Some <| setRight (Some nodeR') root
+                            setRight (Some nodeR') root
                         end
-                  | _ => t1
+                  | _ => root
                   )
-           | _ => t1
-           )
-       | _ => t1
+           | _ => root
 
 (*
 *)
 
-fun decreaseLevel [item] (t1: t item): t item =
-    case t1 of
-      Some root =>
-          (case root of Node {Level = lvP, Left = l, Right = r, ...} =>
+fun decreaseLevel [item] (root: node item): node item =
+          case root of Node {Level = lvP, Left = l, Right = r, ...} =>
           (case r of
             Some nodeR =>
                  (case nodeR of Node {Level = lvR, ...} =>
@@ -300,24 +279,22 @@ fun decreaseLevel [item] (t1: t item): t item =
                         then let val r' : t item = if lvR > lvl_should_be
                                             then Some <| setLevel lvl_should_be nodeR
                                             else r
-                                in Some <| setRight r' (setLevel lvl_should_be root)
+                                in setRight r' (setLevel lvl_should_be root)
                                 end
-                        else t1
+                        else root
                      end)
+
             | None => let val lvl_should_be = 1 + getLevel l
                      in if lvP > lvl_should_be
-                           then Some <| setLevel lvl_should_be root
-                           else t1
+                           then setLevel lvl_should_be root
+                           else root
                      end
-            ))  
-      | None => None
+            )
 
 (*
 *)
-val rebalance [item] : (t item -> t item) = (* with left to right function composition *)
+val rebalance [item] : (node item -> node item) = (* with left to right function composition *)
     decreaseLevel >>> skew >>> skewRight >>> skewRightRight >>> split >>> splitRight
-
-val skewThenSplit [item] : (t item -> t item) = skew >>> split
 
 
 (* * Insert *)
@@ -328,8 +305,8 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (t1: t item
            (case root of
            Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
-              LT => skewThenSplit (Some <| setLeft (insertWith f k1 v1 l) root)
-              | GT => skewThenSplit (Some <| setRight (insertWith f k1 v1 r) root)
+              LT => (skew >>> split >>> Some) <| setLeft (insertWith f k1 v1 l) root
+              | GT => (skew >>> split >>> Some) <| setRight (insertWith f k1 v1 r) root
               | EQ => Some <| setKeyAndValue k1 (f v1 v0) root
               ))
         | None => singleton k1 v1
@@ -346,15 +323,15 @@ fun delete [item] (k1: key) (t1: t item): t item =
         Some root =>
            (case root of Node {Key = k0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
-              LT => rebalance (Some <| setLeft (delete k1 l) root)
-              | GT => rebalance (Some <| setRight (delete k1 r) root)
+              LT => (rebalance >>> Some) <| setLeft (delete k1 l) root
+              | GT => (rebalance >>> Some) <| setRight (delete k1 r) root
               | EQ => (case (l, r) of
                          (None, None) => None  (* deleted *)
                          | (None, Some nodeR) => let val (succK, succV) = minimum nodeR
-                                       in rebalance (Some <| setKeyAndValue succK succV (setRight (delete succK r) root))
+                                       in (rebalance >>> Some) <| setKeyAndValue succK succV (setRight (delete succK r) root)
                                        end
                          | (Some nodeL, _) => let val (predK, predV) = maximum nodeL
-                                   in rebalance (Some <| setKeyAndValue predK predV (setLeft (delete predK l) root))
+                                   in (rebalance >>> Some) <| setKeyAndValue predK predV (setLeft (delete predK l) root)
                                    end
                          )
               ))
@@ -435,7 +412,7 @@ val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
                         | LT => let val (updated, newLeft) = update' l
                                     val newVal = case updated of
                                         | Upd_Adjusted => Some <| setLeft newLeft root
-                                        | Upd_Deleted => rebalance <| Some <| setLeft newLeft root
+                                        | Upd_Deleted => (rebalance >>> Some) <| setLeft newLeft root
                                         | Upd_NoModif => t2
                                 in
                                   (updated, newVal)
@@ -444,7 +421,7 @@ val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
                         | GT => let val (updated, newRight) = update' r
                                     val newVal = case updated of
                                         | Upd_Adjusted => Some <| setRight newRight root
-                                        | Upd_Deleted => rebalance <| Some <| setRight newRight root 
+                                        | Upd_Deleted => (rebalance >>> Some) <| setRight newRight root 
                                         | Upd_NoModif => t2
                                 in
                                   (updated, newVal)
