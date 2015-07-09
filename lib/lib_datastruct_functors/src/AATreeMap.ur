@@ -341,21 +341,21 @@ fun delete [item] (k1: key) (t1: t item): t item =
 (* * Folding *)
 
 fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
-    case t1 of
-      Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
-          let
-             (* foldr over acc if isSome *)   
-             fun g (t2 : t item): (b -> b) =
-                        if isNone t2
-                        then id
-                        else flip (foldr op) t2
-
-             (* compose foldings*)
-             val f = g l <<< op (k0, v0) <<< g r
-          in
-             f acc  
-          end   
+  let case t1 of
       | None => acc
+      | Some node => foldr' node acc
+  where
+
+    val rec foldr': node item -> (b -> b) =
+            fn (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
+                 g l <<< op (k0, v0) <<< g r
+
+    and g: t item -> (b -> b) = fn t2 =>
+        (case t2 of
+        | None => id
+        | Some node => foldr' node
+        )
+  end
 
 fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
 
