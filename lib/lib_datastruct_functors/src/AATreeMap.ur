@@ -344,16 +344,16 @@ fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
     case t1 of
       Some( Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
           let
-           val acc1 = if isSome r
-                      then foldr op acc r
-                      else acc
+             (* foldr over acc if isSome *)   
+             fun g (t2 : t item): (b -> b) =
+                        if isNone t2
+                        then id
+                        else flip (foldr op) t2
 
-           val acc2 = op (k0, v0) acc1
-
+             (* compose foldings*)
+             val f = g l <<< op (k0, v0) <<< g r
           in
-             if isSome l
-             then foldr op acc2 l
-             else acc2
+             f acc  
           end   
       | None => acc
 
@@ -392,7 +392,7 @@ val adjust [item] (f: item -> item) (k1: key) (t1: t item): t item =
     end
 
 
-datatype updated = Upd_Adjusted | Upd_Deleted | Upd_NoModif
+datatype updated = Upd_Adjusted | Upd_Deleted | Upd_UnModified
 
 val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
     let snd (update' t1)
@@ -413,7 +413,7 @@ val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
                                     val newVal = case updated of
                                         | Upd_Adjusted => Some <| setLeft newLeft root
                                         | Upd_Deleted => (rebalance >>> Some) <| setLeft newLeft root
-                                        | Upd_NoModif => t2
+                                        | Upd_UnModified => t2
                                 in
                                   (updated, newVal)
                                 end
@@ -422,12 +422,12 @@ val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
                                     val newVal = case updated of
                                         | Upd_Adjusted => Some <| setRight newRight root
                                         | Upd_Deleted => (rebalance >>> Some) <| setRight newRight root 
-                                        | Upd_NoModif => t2
+                                        | Upd_UnModified => t2
                                 in
                                   (updated, newVal)
                                 end
                 ))
-                | None => (Upd_NoModif, t2)
+                | None => (Upd_UnModified, t2)
     end
 
 
