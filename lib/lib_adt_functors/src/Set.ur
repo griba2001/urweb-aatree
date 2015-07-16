@@ -46,30 +46,17 @@ functor MkSortedSet(Q: sig con item :: Type
   fun insert (x: Q.item) : t -> t = T.insert x ()
   val delete: Q.item -> t -> t = T.delete
 
-  fun all (prop: Q.item -> bool): t -> bool =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.all prop'
-      end
+  fun all (prop: Q.item -> bool): t -> bool = T.all (fst >>> prop)
 
-  fun exists (prop: Q.item -> bool): t -> bool =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.exists prop'
-      end
+  fun exists (prop: Q.item -> bool): t -> bool = T.exists (fst >>> prop)
 
-  fun find (prop: Q.item -> bool): t -> option Q.item =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.find prop' >>> Monad.liftM fst
-      end
+  fun find (prop: Q.item -> bool): t -> option Q.item = T.find (fst >>> prop) >>> Monad.liftM fst
 
   val getAny: t -> option Q.item = T.getAnyPair >>> Monad.liftM fst
   val findMin: t -> option Q.item = T.findMin >>> Monad.liftM fst
   val findMax: t -> option Q.item = T.findMax >>> Monad.liftM fst
 
-  val foldr [b] (myop: Q.item -> b -> b) (z: b) (t1: t) =
-    let
-        fun myop' (p: Q.item * unit): b -> b = myop p.1
-    in T.foldr myop' z t1
-    end
+  val foldr [b] (myop: Q.item -> b -> b): b -> t -> b = T.foldr (fst >>> myop)
 
   fun fromList (li: list Q.item): t = List.foldl insert empty li
 
@@ -105,28 +92,15 @@ functor MkUnordHashSet(Q: sig con item :: Type
   fun insert (x: Q.item) : t -> t = T.insert x ()
   val delete: Q.item -> t -> t = T.delete
 
-  fun all (prop: Q.item -> bool): t -> bool =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.all prop'
-      end
+  fun all (prop: Q.item -> bool): t -> bool = T.all (fst >>> prop)
 
-  fun exists (prop: Q.item -> bool): t -> bool =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.exists prop'
-      end
+  fun exists (prop: Q.item -> bool): t -> bool = T.exists (fst >>> prop)
 
-  fun find (prop: Q.item -> bool): t -> option Q.item =
-      let fun prop' (p:Q.item * unit): bool = prop p.1
-      in T.find prop' >>> Monad.liftM fst
-      end
+  fun find (prop: Q.item -> bool): t -> option Q.item = T.find (fst >>> prop) >>> Monad.liftM fst
 
   val getAny: t -> option Q.item = T.getAnyPair >>> Monad.liftM fst
 
-  val foldr [b] (myop: Q.item -> b -> b) (z: b) (t1: t) =
-    let
-        fun myop' (p: Q.item * unit): b -> b = myop p.1
-    in T.foldr myop' z t1
-    end
+  val foldr [b] (myop: Q.item -> b -> b): b -> t -> b = T.foldr (fst >>> myop)
 
   fun fromList (li: list Q.item): t = List.foldl insert empty li
 
