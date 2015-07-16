@@ -55,6 +55,14 @@ end = struct
 open Q
 open HTuple
 
+(* I use a specific entry datatype to define a specific equality
+to prevent key multiplicity
+
+Two entries are equal it its keys are equal
+
+So I can use equality to detect if key exists in the ListMap
+ *)
+
 datatype entry v = Entry of key * v
 
 type t v = list (entry v)
