@@ -159,15 +159,13 @@ fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
     in update' li empty
     end
 
-fun withEntryOp [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b =
-      let val Entry (k0, v0) = e
-      in f (k0, v0) z
-      end   
+(* Convert (key * item -> b -> b) in (entry item -> b -> b) *)
+fun withEntryOp [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b = f (fromEntry e) z
 
-fun withEntryProp [item] (prop: key * item -> bool) (e: entry item): bool =
-      let val Entry (k0, v0) = e
-      in prop (k0, v0)
-      end
+
+(* Convert (key * item -> bool) in (entry item -> bool) *)
+fun withEntryProp [item] (prop: key * item -> bool) (e: entry item): bool = prop (fromEntry e)
+
 
 fun foldr [item] [b] (myop: key * item -> b -> b): (b -> t item -> b) =
       List.foldr (withEntryOp myop)
