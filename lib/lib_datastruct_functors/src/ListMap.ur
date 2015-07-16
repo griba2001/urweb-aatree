@@ -59,6 +59,8 @@ datatype entry v = Entry of key * v
 
 type t v = list (entry v)
 
+val fromEntry[v]: entry v -> key * v = fn (Entry (k0, v0)) => (k0, v0)
+
 val eq_entry [item]: eq (entry item) =
    let fun eq' (e1: entry item) (e2: entry item) =
            let val Entry (k1, _) = e1
@@ -125,14 +127,7 @@ fun lookup [item] (k1: key) (li: t item) : option item =
 
 fun member [item] (k1: key): t item -> bool = lookup k1 >>> Option.isSome
 
-fun toList [item] (li: t item): list (key * item) =
-    let fun fromEntry (e: entry item) =
-             (let val Entry (k0, v0) = e
-             in (k0, v0)
-             end)  
-    in L.mp fromEntry li
-    end
-
+fun toList [item] (li: t item): list (key * item) = L.mp fromEntry li
 
 fun adjust [item] (f: item -> item) (k1: key) (li: t item) : t item =
     let fun adjust' (li': t item) (acc: t item): t item =
@@ -164,55 +159,36 @@ fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
     in update' li empty
     end
 
-
-fun withEntry [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b =
+fun withEntryOp [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b =
       let val Entry (k0, v0) = e
       in f (k0, v0) z
       end   
 
+fun withEntryProp [item] (prop: key * item -> bool) (e: entry item): bool =
+      let val Entry (k0, v0) = e
+      in prop (k0, v0)
+      end
+
 fun foldr [item] [b] (myop: key * item -> b -> b): (b -> t item -> b) =
-      List.foldr (withEntry myop) 
+      List.foldr (withEntryOp myop)
 
 fun getAnyPair [item] (li: t item): option (key * item) =
       case li of
         [] => None
-        | (Entry (k0, v0)) :: _ => Some (k0, v0)
+        | e :: _ => (Some <<< fromEntry) e
 
 fun mapValues [item] [w] (f: item -> w) (li: t item): t w =
-       let fun f' (e: entry item): entry w =
-               let val Entry (key, item) = e
-               in Entry (key, f item)
-               end
-       in
-          List.mp f' li
-       end
 
-fun exists [item] (prop: key * item -> bool) (li: t item): bool =
-    let fun prop' (e: entry item): bool =
-          let val Entry (k, v) = e
-          in prop (k, v)
-          end
-    in
-       List.exists prop' li
-    end  
+     List.mp (fromEntry >>> HTuple.fmap f >>> Entry) li
 
-fun all [item] (prop: key * item -> bool) (li: t item): bool =
-    let fun prop' (e: entry item): bool =
-          let val Entry (k, v) = e
-          in prop (k, v)
-          end
-    in
-       List.all prop' li
-    end
+
+fun exists [item] (prop: key * item -> bool) (li: t item): bool = List.exists (withEntryProp prop) li
+
+fun all [item] (prop: key * item -> bool) (li: t item): bool = List.all (withEntryProp prop) li
 
 fun find [item] (prop: key * item -> bool) (li: t item): option (key * item) =
-     case li of
-       | [] => None
-       | (Entry (k0, v0)) :: es => if prop (k0, v0)
-                                      then Some (k0, v0)
-                                      else find prop es
 
-
+           List.find (withEntryProp prop) li |> Option.mp fromEntry
 
 (* invariants *)
 
