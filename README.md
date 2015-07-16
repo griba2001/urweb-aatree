@@ -118,7 +118,3 @@ fun main () : transaction page = return <xml>
 </xml>
 
 ```
-Last changes:
-
-Removed from functors input the unconstrained types (the item from Maps).
-Added fromList / toList to ...Set, ...Map
