@@ -167,11 +167,11 @@ fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
     in update' li empty
     end
 
-(* Convert (key * item -> b -> b) in (entry item -> b -> b) *)
+(* Convert function (key * item -> b -> b) to (entry item -> b -> b) *)
 fun withEntryOp [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b = f (fromEntry e) z
 
 
-(* Convert (key * item -> bool) in (entry item -> bool) *)
+(* Convert function (key * item -> bool) to (entry item -> bool) *)
 fun withEntryProp [item] (prop: key * item -> bool) (e: entry item): bool = prop (fromEntry e)
 
 
