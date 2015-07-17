@@ -188,7 +188,7 @@ fun toList [item] (d1: t item): list (key * item) =
 
 val getAnyPair [item] (t1: t item) : option (key * item) =
 
-       pair <- T.getAnyPair t1 ; (snd >>> B.getAnyPair) pair
+       (_, bkt) <- T.getAnyPair t1 ; B.getAnyPair bkt
 
 (* short-circuiting exists *)
 fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
