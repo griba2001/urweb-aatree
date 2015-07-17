@@ -128,10 +128,13 @@ val size [item] (d1:t item) : int =
     end
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item): t item =
-     let val hk = hash k1
-     in case T.lookup hk d1 of
-          None => T.insert hk (B.singleton k1 v1) d1
-          | Some _ => T.adjust (B.insertWith f k1 v1) hk d1
+     let
+         case T.lookup hk d1 of
+          | None => T.insert hk (B.singleton k1 v1) d1
+          | Some _ => T.adjust insertWithInBucket hk d1
+     where
+        val hk = hash k1
+        val insertWithInBucket: bucket item -> bucket item = B.insertWith f k1 v1 
      end
 
 val insert [item]: (key -> item -> t item -> t item) = insertWith const
@@ -140,27 +143,32 @@ fun liftBucketToOption [item] (bkt: bucket item) = if B.null bkt then None else 
 
 fun delete [item] (k1: key) (d1: t item): t item =
      let
-        T.update f' (hash k1) d1
+        T.update deleteInBucket (hash k1) d1
      where
-        val f': bucket item -> option (bucket item) = B.delete k1 >>> liftBucketToOption
+        val deleteInBucket: bucket item -> option (bucket item) = B.delete k1 >>> liftBucketToOption
      end
 
 fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
      let 
-        T.adjust f' (hash k1) d1
+        T.adjust adjustInBucket (hash k1) d1
      where
-        val f': bucket item -> bucket item = B.adjust f k1
+        val adjustInBucket: bucket item -> bucket item = B.adjust f k1
      end
 
 fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
      let
-        T.update f' (hash k1) d1
+        T.update updateInBucket (hash k1) d1
      where
-        val f': bucket item -> option (bucket item) = B.update f k1 >>> liftBucketToOption
+        val updateInBucket: bucket item -> option (bucket item) = B.update f k1 >>> liftBucketToOption
      end
 
 
-fun mapValues [item] [b] (f: item -> b) (t1: t item): t b = T.mapValues (B.mapValues f) t1
+fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
+    let
+        T.mapValues mapValsInBucket t1
+    where
+        val mapValsInBucket: bucket item -> bucket b = B.mapValues f
+    end
 
 fun lookup [item] (k1: key) (d1: t item): option item =
 
