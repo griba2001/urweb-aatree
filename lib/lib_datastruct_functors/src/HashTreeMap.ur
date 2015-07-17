@@ -199,12 +199,8 @@ fun all [item] (prop: key * item -> bool) (t1: t item): bool =
     T.all (snd >>> B.all prop) t1
 
 fun find [item] (prop: key * item -> bool) (t1: t item): option (key * item) =
-    let case T.find (snd >>> prop') t1 of
-         None => None
-         | Some (_, bkt) => B.find prop bkt
-    where
-      fun prop' (bkt: bucket item):bool = isSome (B.find prop bkt)
-    end
+
+    (_, bkt) <- T.find (snd >>> B.find prop >>> isSome) t1 ; B.find prop bkt 
   
 (* * Invariants *)
 
