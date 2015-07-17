@@ -183,14 +183,18 @@ fun fromList [item] (li: list (key * item)): t item =
      List.foldl (uncurry insert) empty li
 
 fun foldr [item] [b] (myop: key * item -> b -> b) (z: b) (d1: t item): b =
-     let fun myop' (p: int * (bucket item)) (acc: b): b = B.foldr myop acc p.2
-     in T.foldr myop' z d1
+     let 
+        T.foldr (snd >>> myop') z d1
+     where
+        fun myop' (p: bucket item) (acc: b): b = B.foldr myop acc p
      end
 
 fun toList [item] (d1: t item): list (key * item) =
-     let fun myop' (p: int * (bucket item)) (acc: list (key * item)): list (key * item) =
-          B.foldr (curry Cons) acc p.2
-     in T.foldr myop' [] d1
+     let
+        T.foldr (snd >>> myop') [] d1
+     where
+        fun myop' (p: bucket item) (acc: list (key * item)): list (key * item) =
+          B.foldr (curry Cons) acc p
      end
 
 fun getAnyPair [item] (d1: t item): option (key * item) =
@@ -203,24 +207,18 @@ fun getAnyPair [item] (d1: t item): option (key * item) =
 
 (* short-circuiting exists *)
 fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
-    let T.exists prop' t1
-    where 
-      fun prop' (p: int * bucket item):bool = B.exists prop p.2
-    end
+    T.exists (snd >>> B.exists prop) t1
 
 (* short-circuiting all *)
 fun all [item] (prop: key * item -> bool) (t1: t item): bool =
-    let T.all prop' t1
-    where
-      fun prop' (p: int * bucket item):bool = B.all prop p.2
-    end
+    T.all (snd >>> B.all prop) t1
 
 fun find [item] (prop: key * item -> bool) (t1: t item): option (key * item) =
-    let case T.find prop' t1 of
+    let case T.find (snd >>> prop') t1 of
          None => None
          | Some (_, bkt) => B.find prop bkt
     where
-      fun prop' (p: int * bucket item):bool = isSome (B.find prop p.2)
+      fun prop' (bkt: bucket item):bool = isSome (B.find prop bkt)
     end
   
 (* * Invariants *)
@@ -236,9 +234,9 @@ val valid [item]: (t item -> bool) = propBucketsAllValidAndNonEmpty
 (* * statistics *)
 
 fun maxBucketSize [item] (t1:t item): int =
-        let T.foldr myop 0 t1
+        let T.foldr (snd >>> myop) 0 t1
         where
-          fun myop (p: int * (bucket item)) (acc: int): int = max acc (B.size p.2)
+          fun myop (bkt: bucket item) (acc: int): int = max acc (B.size bkt)
         end
    
 end
