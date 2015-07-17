@@ -122,9 +122,9 @@ fun singleton [item] (k1: key) (v1: item) :t item = T.singleton (hash k1) (B.sin
 val null [item] : (t item -> bool) = T.null
 
 val size [item] (d1:t item) : int =
-    let T.foldr myop 0 d1
+    let T.foldr (snd >>> myop) 0 d1
     where
-      fun myop (pair: int * bucket item) (acc: int):int = acc + B.size pair.2
+      fun myop (bkt: bucket item) (acc: int):int = acc + B.size bkt
     end
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item): t item =
@@ -136,46 +136,35 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item
 
 val insert [item]: (key -> item -> t item -> t item) = insertWith const
 
+fun liftToOption [item] (bkt: bucket item) = if B.null bkt then None else Some bkt
+
 fun delete [item] (k1: key) (d1: t item): t item =
-     let val hk: int = hash k1
-         fun f' (bktActual: bucket item): option (bucket item) =
-                let val bktNew = B.delete k1 bktActual
-                in if B.null bktNew
-                         then None
-                         else Some bktNew
-                end
-     in T.update f' hk d1
+     let
+        T.update f' (hash k1) d1
+     where
+        val f': bucket item -> option (bucket item) = B.delete k1 >>> liftToOption
      end
 
 fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
-     let val hk: int = hash k1
-         fun f' (bktActual: bucket item): bucket item = B.adjust f k1 bktActual
-     in T.adjust f' hk d1
+     let 
+        T.adjust f' (hash k1) d1
+     where
+        val f': bucket item -> bucket item = B.adjust f k1
      end
 
 fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
-     let val hk: int = hash k1
-         fun f' (bktActual: bucket item): option (bucket item) =
-                let val bktNew = B.update f k1 bktActual
-                in if B.null bktNew
-                         then None
-                         else Some bktNew
-                end
-     in T.update f' hk d1   
+     let
+        T.update f' (hash k1) d1
+     where
+        val f': bucket item -> option (bucket item) = B.update f k1 >>> liftToOption
      end
 
 
-fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
-     let val f' = B.mapValues f
-     in T.mapValues f' t1
-     end 
+fun mapValues [item] [b] (f: item -> b) (t1: t item): t b = T.mapValues (B.mapValues f) t1
 
 fun lookup [item] (k1: key) (d1: t item): option item =
-     let val hk: int = hash k1
-     in case T.lookup hk d1 of
-          None => None
-          | Some mybucket => B.lookup k1 mybucket
-     end
+
+    bkt <- T.lookup (hash k1) d1 ; B.lookup k1 bkt
 
 val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
@@ -199,7 +188,7 @@ fun toList [item] (d1: t item): list (key * item) =
 
 val getAnyPair [item] (t1: t item) : option (key * item) =
 
-       optPair <- T.getAnyPair t1 ; (snd >>> B.getAnyPair) optPair
+       pair <- T.getAnyPair t1 ; (snd >>> B.getAnyPair) pair
 
 (* short-circuiting exists *)
 fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
