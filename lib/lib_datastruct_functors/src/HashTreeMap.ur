@@ -136,13 +136,13 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item
 
 val insert [item]: (key -> item -> t item -> t item) = insertWith const
 
-fun liftToOption [item] (bkt: bucket item) = if B.null bkt then None else Some bkt
+fun liftBucketToOption [item] (bkt: bucket item) = if B.null bkt then None else Some bkt
 
 fun delete [item] (k1: key) (d1: t item): t item =
      let
         T.update f' (hash k1) d1
      where
-        val f': bucket item -> option (bucket item) = B.delete k1 >>> liftToOption
+        val f': bucket item -> option (bucket item) = B.delete k1 >>> liftBucketToOption
      end
 
 fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
@@ -156,7 +156,7 @@ fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
      let
         T.update f' (hash k1) d1
      where
-        val f': bucket item -> option (bucket item) = B.update f k1 >>> liftToOption
+        val f': bucket item -> option (bucket item) = B.update f k1 >>> liftBucketToOption
      end
 
 
