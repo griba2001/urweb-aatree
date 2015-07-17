@@ -141,11 +141,14 @@ val insert [item]: (key -> item -> t item -> t item) = insertWith const
 
 fun liftBucketToOption [item] (bkt: bucket item) = if B.null bkt then None else Some bkt
 
+(* liftBucketToOption used with T.update ensures that
+  the hashTree node will be deleted if bucket is emptied *)
+
 fun delete [item] (k1: key) (d1: t item): t item =
      let
-        T.update bucket_delete (hash k1) d1
+        T.update (bucket_delete >>> liftBucketToOption) (hash k1) d1
      where
-        val bucket_delete: bucket item -> option (bucket item) = B.delete k1 >>> liftBucketToOption
+        val bucket_delete: bucket item -> bucket item = B.delete k1
      end
 
 fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
@@ -157,9 +160,9 @@ fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
 
 fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
      let
-        T.update bucket_update (hash k1) d1
+        T.update (bucket_update >>> liftBucketToOption) (hash k1) d1
      where
-        val bucket_update: bucket item -> option (bucket item) = B.update f k1 >>> liftBucketToOption
+        val bucket_update: bucket item -> bucket item = B.update f k1
      end
 
 
