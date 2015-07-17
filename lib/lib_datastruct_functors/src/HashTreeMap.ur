@@ -188,7 +188,8 @@ fun foldr [item] [b] (myop: key * item -> b -> b) (z: b) (d1: t item): b =
      end
 
 fun toList [item] (d1: t item): list (key * item) =
-     let fun myop' (p: int * (bucket item)) (acc: list (key * item)): list (key * item) = B.foldr (curry Cons) acc p.2
+     let fun myop' (p: int * (bucket item)) (acc: list (key * item)): list (key * item) =
+          B.foldr (curry Cons) acc p.2
      in T.foldr myop' [] d1
      end
 
