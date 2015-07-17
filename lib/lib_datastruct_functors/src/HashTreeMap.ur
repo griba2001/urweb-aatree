@@ -225,10 +225,9 @@ fun find [item] (prop: key * item -> bool) (t1: t item): option (key * item) =
 (* * Invariants *)
 
 val propBucketsAllValidAndNonEmpty [item] (t1: t item): bool =
-    let T.foldr myop True t1
+    let T.all (snd >>> prop) t1
     where
-      fun myop (p: int * bucket item) (acc: bool): bool =
-                  acc && not (B.null p.2) && B.valid p.2
+      fun prop (bkt: bucket item) = (not <<< B.null) bkt && B.valid bkt
     end
 
 val valid [item]: (t item -> bool) = propBucketsAllValidAndNonEmpty
