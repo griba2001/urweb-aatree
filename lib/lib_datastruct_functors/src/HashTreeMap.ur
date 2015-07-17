@@ -197,13 +197,9 @@ fun toList [item] (d1: t item): list (key * item) =
           B.foldr (curry Cons) acc p
      end
 
-fun getAnyPair [item] (d1: t item): option (key * item) =
-    let val optHPair: option (int * bucket item) = T.getAnyPair d1
-    in
-       case optHPair of
-         None => None
-         | Some (_, mybucket) => B.getAnyPair mybucket
-    end
+val getAnyPair [item] (t1: t item) : option (key * item) =
+
+       optPair <- T.getAnyPair t1 ; (snd >>> B.getAnyPair) optPair
 
 (* short-circuiting exists *)
 fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
