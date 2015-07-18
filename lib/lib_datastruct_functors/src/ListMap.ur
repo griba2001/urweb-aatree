@@ -150,7 +150,7 @@ fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
               | [] => li (* not found, return original *)
               | (y: entry item) :: ys =>
                        (let val Entry (k0, v0) = y
-                        in if k0 <> k1 (* found *)
+                        in if k0 <> k1 
                                 then (* push into acc *) update' ys (y :: acc)
                                 else (* found *) case f v0 of
                                        | Some v => (* adjust it *)
