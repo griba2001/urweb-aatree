@@ -145,7 +145,7 @@ fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
                        (let val Entry (k0, v0) = y
                         in if k0 = k1 (* found *)
                                 then case f v0 of
-                                       | Some v => (* update it *)
+                                       | Some v => (* adjust it *)
                                                  L.revAppend acc (Entry (k0, v) :: ys) 
                                        | None => (* delete it *)
                                                  L.revAppend acc ys
