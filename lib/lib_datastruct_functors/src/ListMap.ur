@@ -99,7 +99,7 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (li: t item
               | [] => Entry (k1, v1) :: li (* not found, push new entry *)
               | (y: entry item) :: ys => (let val Entry (k0, v0) = y
                             in if k0 = k1
-                                  then L.append (L.rev acc) (Entry (k0, (f v1 v0)) :: ys)
+                                  then L.revAppend acc <| Entry (k0, (f v1 v0)) :: ys
                                   else insert' ys (y :: acc)
                             end)
     in insert' li empty
@@ -118,7 +118,7 @@ fun delete [item] (k1: key) (li: t item): t item =
          | (y: entry item) :: ys =>
              (let val Entry (k0, v0) = y
               in if k0 = k1
-                    then List.append (List.rev acc) ys
+                    then L.revAppend acc ys
                     else del' ys (y :: acc)
               end) 
    in del' li empty
@@ -137,46 +137,35 @@ fun member [item] (k1: key): t item -> bool = lookup k1 >>> Option.isSome
 
 fun toList [item] (li: t item): list (key * item) = L.mp fromEntry li
 
-fun adjust [item] (f: item -> item) (k1: key) (li: t item) : t item =
-    let fun adjust' (li': t item) (acc: t item): t item =
-            case li' of
-              | [] => li (* not found, return original *)
-              | (y: entry item) :: ys =>
-                           (let val Entry (k0, v0) = y
-                            in if k0 = k1
-                                  then L.append (L.rev acc) (Entry (k0, (f v0)) :: ys)
-                                  else adjust' ys (y :: acc)
-                            end)
-    in adjust' li empty
-    end
-
 fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
     let fun update' (li': t item) (acc: t item): t item =
             case li' of
               | [] => li (* not found, return original *)
               | (y: entry item) :: ys =>
                        (let val Entry (k0, v0) = y
-                        in if k0 <> k1
-                                then update' ys (y :: acc)
-                                else case f v0 of
+                        in if k0 = k1 (* found *)
+                                then case f v0 of
                                        | Some v => (* update it *)
-                                                 L.append (L.rev acc) (Entry (k0, v) :: ys)
+                                                 L.revAppend acc (Entry (k0, v) :: ys) 
                                        | None => (* delete it *)
-                                                 L.append (L.rev acc) ys
+                                                 L.revAppend acc ys
+
+                                else update' ys (y :: acc)
                         end)
     in update' li empty
     end
 
-(* Convert function (key * item -> b -> b) to (entry item -> b -> b) *)
-fun withEntryOp [item] [b] (f: key * item -> b -> b) (e: entry item) (z: b): b = f (fromEntry e) z
+val adjust [item] (f: item -> item): key -> t item -> t item = update (Some <<< f)
 
 
-(* Convert function (key * item -> bool) to (entry item -> bool) *)
-fun withEntryProp [item] (prop: key * item -> bool) (e: entry item): bool = prop (fromEntry e)
+(* Convert function (key * item -> w) to (entry item -> w) *)
+fun withEntry [item] [w] (f: key * item -> w) (e: entry item): w = f (fromEntry e)
 
 
 fun foldr [item] [b] (myop: key * item -> b -> b): (b -> t item -> b) =
-      List.foldr (withEntryOp myop)
+
+      List.foldr (withEntry myop)
+
 
 fun getAnyPair [item] (li: t item): option (key * item) =
       case li of
@@ -188,13 +177,13 @@ fun mapValues [item] [w] (f: item -> w) (li: t item): t w =
      List.mp (fromEntry >>> HTuple.fmap f >>> Entry) li
 
 
-fun exists [item] (prop: key * item -> bool) (li: t item): bool = List.exists (withEntryProp prop) li
+fun exists [item] (prop: key * item -> bool) (li: t item): bool = List.exists (withEntry prop) li
 
-fun all [item] (prop: key * item -> bool) (li: t item): bool = List.all (withEntryProp prop) li
+fun all [item] (prop: key * item -> bool) (li: t item): bool = List.all (withEntry prop) li
 
 fun find [item] (prop: key * item -> bool) (li: t item): option (key * item) =
 
-           List.find (withEntryProp prop) li |> Option.mp fromEntry
+           List.find (withEntry prop) li |> Option.mp fromEntry
 
 (* invariants *)
 
