@@ -129,12 +129,9 @@ val size [item] (d1:t item) : int =
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item): t item =
      let
-         case T.lookup hk d1 of
-          | None => T.insert hk (B.singleton k1 v1) d1
-          | Some _ => T.adjust bucket_insertWith hk d1
+         T.insertWith bucket_insertWith (hash k1) (B.singleton k1 v1) d1
      where
-        val hk = hash k1
-        val bucket_insertWith: bucket item -> bucket item = B.insertWith f k1 v1
+        fun bucket_insertWith (_: bucket item) (bkt: bucket item): bucket item = B.insertWith f k1 v1 bkt
      end
 
 val insert [item]: (key -> item -> t item -> t item) = insertWith const
