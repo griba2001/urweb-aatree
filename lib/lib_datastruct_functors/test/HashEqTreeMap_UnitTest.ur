@@ -21,9 +21,9 @@ end)
 fun unitTest (testdata: list (string * int)): transaction (xbody * list (string * int) * int) =
 
    (* Assert: testdata must not have repeated keys *)
-   let val keys: list string = List.mp HT.fst testdata
-   in if List.length keys <> List.length (HL.nub keys) 
-      then error <xml>Error: Invalid test data (repeated keys)</xml>
+   let val keys: list string = HT.fst <| HL.unzip testdata
+   in if keys <> HL.nub keys
+      then error <xml>Error: Invalid test data (repeated keys) {[testdata]}</xml>
       else
         let 
             val sortedInput : list (string * int) = List.sort (HO.gtBy HT.fst) testdata

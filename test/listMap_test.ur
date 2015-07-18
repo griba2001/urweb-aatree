@@ -9,14 +9,15 @@ structure T = ListMap_UnitTest
 
 fun getRandString (topLen: int): transaction string =
     let fun f (i: int): string = str1 (chr (i + ord( strsub "A" 0)))
-    in li <- HSR.getSysRandomIntList topLen 0 27 ;
+    in li <- HSR.getSysRandomIntList topLen 0 26 ;
        return (HS.concat (List.mp f li))
     end
 
 fun getTestData (): transaction (list (string * int)) =
      li <- HSR.getSysRandomIntList 40 0 10 ;
      strs <- List.mapM getRandString li ;
-     return (HL.zip (HL.nub strs) li)
+     strs' <- return (HL.nub strs) ;
+     return (HL.zip strs' li)
 
 
 fun main () =

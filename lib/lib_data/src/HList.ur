@@ -55,4 +55,14 @@ fun zip [a][b] (xs: list a) (ys: list b): list (a * b) =
              | _ => List.rev acc
       in
          zip' xs ys []
-      end   
+      end
+
+fun unzip [a][b] (li: list (a * b)): (list a) * (list b) =
+      let
+          unzip' [] [] li
+      where
+         fun unzip' (acc_xs: list a) (acc_ys: list b) (li: list (a * b)) =
+            case li of
+              | [] => (List.rev acc_xs, List.rev acc_ys)
+              | (x, y) :: rest => unzip' (x :: acc_xs) (y :: acc_ys) rest
+      end       
