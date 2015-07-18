@@ -94,17 +94,19 @@ fun singleton [item] (k1: key) (v1: item): t item = Entry (k1, v1) :: []
 fun size [item] (t1: t item): int = L.length t1
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (li: t item) : t item =
-    let fun insert' (li': t item) (acc: t item): t item =
+    let
+       insert' li empty
+    where
+       fun insert' (li': t item) (acc: t item): t item =
             case li' of
               | [] => Entry (k1, v1) :: li (* not found, push new entry *)
               | (y: entry item) :: ys => (let val Entry (k0, v0) = y
-                            in if k0 = k1
-                                  then L.revAppend acc <| Entry (k0, (f v1 v0)) :: ys
-                                  else insert' ys (y :: acc)
+                            in if k0 <> k1
+                                  then (* push into acc *) insert' ys (y :: acc)
+                                  else (* found *) L.revAppend acc <| Entry (k0, (f v1 v0)) :: ys
                             end)
-    in insert' li empty
+    
     end
-
 
 val insert [item] : key -> item -> t item -> t item = insertWith const
 
@@ -112,25 +114,27 @@ fun fromList [item]  (li: list (key * item)): t item = List.foldl (uncurry inser
 
 fun delete [item] (k1: key) (li: t item): t item =
 
-   let fun del' (li': t item) (acc: t item): t item =
+   let
+      del' li empty
+   where
+       fun del' (li': t item) (acc: t item): t item =
        case li' of
          | [] => li (* not found, returns original list *)
          | (y: entry item) :: ys =>
              (let val Entry (k0, v0) = y
-              in if k0 = k1
-                    then L.revAppend acc ys
-                    else del' ys (y :: acc)
+              in if k0 <> k1
+                    then (* push into acc *) del' ys (y :: acc)
+                    else (* found *) L.revAppend acc ys
               end) 
-   in del' li empty
    end
 
 fun lookup [item] (k1: key) (li: t item) : option item =
     case li of
       [] => None
       | (y: entry item) :: ys => (let val Entry (k0, v0) = y
-                   in if k0 = k1
-                      then Some v0
-                      else lookup k1 ys
+                   in if k0 <> k1
+                      then lookup k1 ys
+                      else (* found *) Some v0
                    end)
 
 fun member [item] (k1: key): t item -> bool = lookup k1 >>> Option.isSome
@@ -138,21 +142,23 @@ fun member [item] (k1: key): t item -> bool = lookup k1 >>> Option.isSome
 fun toList [item] (li: t item): list (key * item) = L.mp fromEntry li
 
 fun update [item] (f: item -> option item) (k1: key) (li: t item) : t item =
-    let fun update' (li': t item) (acc: t item): t item =
+    let
+       update' li empty
+    where
+        fun update' (li': t item) (acc: t item): t item =
             case li' of
               | [] => li (* not found, return original *)
               | (y: entry item) :: ys =>
                        (let val Entry (k0, v0) = y
-                        in if k0 = k1 (* found *)
-                                then case f v0 of
+                        in if k0 <> k1 (* found *)
+                                then (* push into acc *) update' ys (y :: acc)
+                                else (* found *) case f v0 of
                                        | Some v => (* adjust it *)
                                                  L.revAppend acc (Entry (k0, v) :: ys) 
                                        | None => (* delete it *)
                                                  L.revAppend acc ys
 
-                                else update' ys (y :: acc)
                         end)
-    in update' li empty
     end
 
 val adjust [item] (f: item -> item): key -> t item -> t item = update (Some <<< f)
