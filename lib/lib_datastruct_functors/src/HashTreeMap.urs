@@ -1,4 +1,3 @@
-signature BUCKET_MAP = Common.DSMAP
 
 signature HASHTREE_MAP = sig
   include Common.DSMAP

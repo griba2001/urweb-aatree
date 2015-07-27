@@ -13,7 +13,7 @@ open HFunction
 functor MkListMap(Q: sig
                          con key :: Type
                          val eq_key: eq key
-end): LIST_MAP where con key = Q.key = struct
+end): (LIST_MAP where con key = Q.key) = struct
 
 open Q
 open HTuple

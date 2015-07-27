@@ -16,8 +16,8 @@ functor MkHashTreeMap(P:sig
                          con key :: Type
                          val hashable_key: hashable key
                       end
-                      structure BktMap: BUCKET_MAP where con key = Q.key
-end): HASHTREE_MAP where con key = P.Q.key = struct
+                      structure BktMap: (BUCKET_MAP where con key = Q.key)
+end): (HASHTREE_MAP where con key = P.Q.key) = struct
 
 structure B = P.BktMap
 

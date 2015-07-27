@@ -16,7 +16,7 @@ end
 functor MkAATreeMap(Q: sig
                          con key :: Type
                          val ord_key: ord key
-end): AA_TREE_MAP where con key = Q.key = struct
+end): (AA_TREE_MAP where con key = Q.key) = struct
 
 open Q
 
