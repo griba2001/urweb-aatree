@@ -3,6 +3,7 @@ library ../lib_hashable/
 
 $/option
 $/monad
+src/Common
 src/AATreeMap
 src/ListMap
 src/HashTreeMap

@@ -1,5 +1,12 @@
 (* HashEqTreeMap *)
 
+signature BUCKET_MAP = Common.DSMAP
+
+signature HASHTREE_MAP = sig
+  include Common.DSMAP
+  val maxBucketSize: item ::: Type -> t item -> int
+end
+
 open Hashable.Hashable
 open Hashable
 
@@ -9,92 +16,8 @@ functor MkHashTreeMap(P:sig
                          con key :: Type
                          val hashable_key: hashable key
                       end
-                      structure BktMap: sig
-                        con t :: Type -> Type
-
-                        val empty : item ::: Type -> t item
-
-                        val null : item ::: Type -> t item -> bool
-
-                        val singleton : item ::: Type -> Q.key -> item -> t item
-
-                        val size : item ::: Type -> t item -> int
-
-                        val insert : item ::: Type -> Q.key -> item -> t item -> t item
-
-                        val insertWith : item ::: Type -> (item -> item -> item) -> Q.key -> item -> t item -> t item
-
-                        val adjust: item ::: Type -> (item -> item) -> Q.key -> t item -> t item
-
-                        val update: item ::: Type -> (item -> option item) -> Q.key -> t item -> t item
-
-                        val delete: item ::: Type -> Q.key -> t item -> t item
-
-                        val lookup: item ::: Type -> Q.key -> t item -> option item
-
-                        val member : item ::: Type -> Q.key -> t item -> bool
-
-                        val foldr : item ::: Type -> b ::: Type -> (Q.key * item -> b -> b) -> b -> t item -> b
-
-                        val getAnyPair : item ::: Type -> t item -> option (Q.key * item)
-
-                        val mapValues : item ::: Type -> item' ::: Type -> (item -> item') -> t item -> t item'
-
-                        val exists : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
-
-                        val all : item ::: Type -> (Q.key * item -> bool) -> t item -> bool
-
-                        val find : item ::: Type -> (Q.key * item -> bool) -> t item -> option (Q.key * item)
-
-                        val valid : item ::: Type -> t item -> bool
-                      end
-end): sig
-
-        con t :: Type -> Type
-
-        val empty : item ::: Type -> t item
-
-        val singleton : item ::: Type -> P.Q.key -> item -> t item
-
-        val null : item ::: Type -> t item -> bool
-
-        val size : item ::: Type -> t item -> int
-
-        val lookup: item ::: Type -> P.Q.key -> t item -> option item
-
-        val member: item ::: Type -> P.Q.key -> t item -> bool
-
-        val getAnyPair: item ::: Type -> t item -> option (P.Q.key * item)
-
-        val insert: item ::: Type -> P.Q.key -> item -> t item -> t item
-
-        val insertWith: item ::: Type -> (item -> item -> item) -> P.Q.key -> item -> t item -> t item
-
-        val fromList: item ::: Type -> list (P.Q.key * item) -> t item
-
-        val delete: item ::: Type -> P.Q.key -> t item -> t item
-
-        val adjust: item ::: Type -> (item -> item) -> P.Q.key -> t item -> t item
-
-        val update: item ::: Type -> (item -> option item) -> P.Q.key -> t item -> t item
-
-        val mapValues : item ::: Type -> b ::: Type -> (item -> b) -> t item -> t b
-
-        val foldr: item ::: Type -> b ::: Type -> (P.Q.key * item -> b -> b) -> b -> t item -> b
-
-        val toList : item ::: Type -> t item -> list (P.Q.key * item)
-
-        val exists : item ::: Type -> (P.Q.key * item -> bool) -> t item -> bool
-
-        val all : item ::: Type -> (P.Q.key * item -> bool) -> t item -> bool
-
-        val find : item ::: Type -> (P.Q.key * item -> bool) -> t item -> option (P.Q.key * item)
-
-        val valid : item ::: Type ->  t item -> bool
-
-        val maxBucketSize: item ::: Type -> t item -> int
-
-end = struct
+                      structure BktMap: BUCKET_MAP where con key = Q.key
+end): HASHTREE_MAP where con key = P.Q.key = struct
 
 structure B = P.BktMap
 
