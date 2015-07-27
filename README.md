@@ -39,6 +39,10 @@ Repeating page retrieval makes the test use different input random data.
 urweb listMap_test
 
 # test as above.
+
+urweb unordHashTree_test
+
+# test as above.
 ```
 
 ---------------------

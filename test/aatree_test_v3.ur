@@ -1,20 +1,12 @@
 (* aatree_test_v2 *)
 
-structure HL = HList
 structure HSR = HSRandom
 
-structure ATUT = AATreeMap_UnitTest
-
-fun getTestData (): transaction (list (int * string)) =
-    let fun f (i: int): int * string = (i, str1 (chr (i + 48)))
-    in li <- HSR.getSysRandomIntList 20 0 50 ;
-       return (List.mp f (HL.nub li))
-    end
-
+structure T = AATreeMap_UnitTest
 
 fun main () =
-        testdata <- getTestData () ;
-        (failedResults, listFromTree) <- ATUT.unitTest (testdata) ;
+        testdata <- HSR.getRand_UniqueKey_IntXStringList () ;
+        (failedResults, listFromTree) <- T.unitTest (testdata) ;
         return <xml>
 <body><br/>
 <p>

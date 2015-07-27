@@ -22,7 +22,7 @@ fun unitTest (testdata: list (string * int)): transaction (xbody * list (string 
 
    (* Assert: testdata must not have repeated keys *)
    let val keys: list string = HT.fst <| HL.unzip testdata
-   in if keys <> HL.nub keys
+   in if List.length keys <> List.length (HL.nub keys)
       then error <xml>Error: Invalid test data (repeated keys) {[testdata]}</xml>
       else
         let 

@@ -1,5 +1,10 @@
 rewrite url Aatree_test_v3/main
 library lib/lib_datastruct_functors
+benignEffectful HSRandom.getSysRandomIntList
+benignEffectful HSRandom.sysNextp
+benignEffectful HSRandom.getRandString
+benignEffectful HSRandom.getRand_UniqueKey_StringXIntList
+benignEffectful HSRandom.getRand_UniqueKey_IntXStringList
 
 $/list
 $/string
