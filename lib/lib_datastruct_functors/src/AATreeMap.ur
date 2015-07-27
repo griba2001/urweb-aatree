@@ -134,24 +134,18 @@ fun minimum [item] (root: node item): key * item =
                None => (k0, v0)
                | Some nodeL => minimum nodeL
 
-
-fun findMin [item] (t1: t item): option (key * item) =
-    case t1 of
-        Some root => Some <| minimum root
-        | None => None
                
-
 fun maximum [item] (root: node item): key * item =
     case root of
         Node {Key = k0, Value = v0, Right = r, ...} =>
             case r: t item of
                None => (k0, v0)
                | Some nodeR => maximum nodeR
-               
-fun findMax [item] (t1: t item): option (key * item) =
-    case t1 of
-        Some root => Some <| maximum root
-        | None => None
+
+
+val findMin [item]: t item -> option (key * item) = Monad.liftM minimum
+
+val findMax [item]: t item -> option (key * item) = Monad.liftM maximum
 
 (* * Node balancing *)
 

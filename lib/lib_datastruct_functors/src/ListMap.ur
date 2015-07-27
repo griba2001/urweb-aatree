@@ -50,11 +50,11 @@ val show_entry [item]  (_: show key) (_: show item): show (entry item) =
 
 val empty [item] : t item = []
 
-fun null [item] (t1: t item): bool = HL.null t1
+val null [item]: t item -> bool = HL.null
 
 fun singleton [item] (k1: key) (v1: item): t item = Entry (k1, v1) :: []
 
-fun size [item] (t1: t item): int = L.length t1
+val size [item]: t item -> int = L.length
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (li: t item) : t item =
     let
