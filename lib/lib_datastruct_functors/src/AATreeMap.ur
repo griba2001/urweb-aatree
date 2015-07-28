@@ -148,10 +148,10 @@ val findMax [item]: t item -> option (key * item) = Monad.liftM maximum
 *)
 fun skew [item] (root: node item) : node item =
           case root of
-            | Node {Level = lvT, Left = Some nodeL, ...} =>
+            | Node {Level = lvParent, Left = Some nodeL, ...} =>
                    (case nodeL of
                     | Node {Level = lvL, Right = lRight, ...} =>
-                        if lvT = lvL
+                        if lvParent = lvL
                         then setRight (Some <| setLeft lRight root) nodeL
                         else root
                    ) 
@@ -162,12 +162,12 @@ fun skew [item] (root: node item) : node item =
 
 fun split [item] (root: node item) : node item =
       case root of
-        | Node {Level = lvT, Right = Some nodeR, ...} =>
+        | Node {Level = lvParent, Right = Some nodeR, ...} =>
           (case nodeR of
             | Node {Level = lvR, Left = rLeft, Right = Some nodeS, ...} =>
               (case nodeS of
                 Node {Level = lvS, ...} =>
-                      if (lvT = lvS)
+                      if (lvParent = lvS)
                       then setLevel (lvR +1) <| setLeft (Some <| setRight rLeft root) nodeR
                       else root
               )
