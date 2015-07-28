@@ -244,16 +244,17 @@ val rebalance [item] : (node item -> node item) = (* with left to right function
 (* * Insert *)
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (t1: t item): t item =
-    case t1 of
-        Some root =>
-           (case root of
-           Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
-           (case compare k1 k0 of
-              LT => (skew >>> split >>> Some) <| setLeft (insertWith f k1 v1 l) root
-              | GT => (skew >>> split >>> Some) <| setRight (insertWith f k1 v1 r) root
-              | EQ => Some <| setKeyAndValue k1 (f v1 v0) root
-              ))
-        | None => singleton k1 v1
+    let HO.option (singleton k1 v1) (insertWith' >>> Some) t1
+    where
+        fun insertWith' (root: node item): node item =
+           case root of
+             Node {Key = k0, Value = v0, Left = l, Right = r, ...} =>
+             (case compare k1 k0 of
+                | LT => (skew >>> split) <| setLeft (insertWith f k1 v1 l) root
+                | GT => (skew >>> split) <| setRight (insertWith f k1 v1 r) root
+                | EQ => setKeyAndValue k1 (f v1 v0) root
+              )
+    end
 
 val insert [item] (k1: key) (v1: item):  (t item -> t item) = insertWith const k1 v1
 
@@ -263,24 +264,27 @@ fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert
 (* * Delete *)
 
 fun delete [item] (k1: key) (t1: t item): t item =
-    case t1 of
-        Some root =>
-           (case root of Node {Key = k0, Left = l, Right = r, ...} =>
+    let
+        HO.option t1 delete' t1
+    where
+      fun delete' (root: node item): t item =
+         case root of Node {Key = k0, Left = l, Right = r, ...} =>
            (case compare k1 k0 of
               LT => (rebalance >>> Some) <| setLeft (delete k1 l) root
               | GT => (rebalance >>> Some) <| setRight (delete k1 r) root
               | EQ => (case (l, r) of
-                         (None, None) => None  (* deleted *)
-                         | (None, Some nodeR) => let val (succK, succV) = minimum nodeR
+                         (None, None) => (* it is a leaf => delete it *) None
+                         | (None, Some nodeR) => (* replace it with successor and rebalance it *)
+                                       let val (succK, succV) = minimum nodeR
                                        in (rebalance >>> Some) <| setKeyAndValue succK succV (setRight (delete succK r) root)
                                        end
-                         | (Some nodeL, _) => let val (predK, predV) = maximum nodeL
+                         | (Some nodeL, _) => (* replace it with predecessor and rebalance it *)
+                                   let val (predK, predV) = maximum nodeL
                                    in (rebalance >>> Some) <| setKeyAndValue predK predV (setLeft (delete predK l) root)
                                    end
                          )
-              ))
-        | None => None
-
+              )
+    end
 
 (* * Folding *)
 
