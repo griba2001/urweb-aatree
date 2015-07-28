@@ -353,8 +353,8 @@ fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
            case root of
                Node rc => Node (HR.overwrite rc {
                                     Value = f rc.Value,
-                                    Left = mapValues f rc.Left,
-                                    Right = mapValues f rc.Right
+                                    Left = Monad.liftM mapValues' rc.Left,
+                                    Right = Monad.liftM mapValues' rc.Right
                                     })
     end
 
