@@ -2,9 +2,9 @@
 
 structure HM = HMonad
 
-fun assertFailure (msg: string) = return <xml><p>{[msg]}</p></xml>
+fun assertFailure (msg: string) = return <xml><p>Failure: {[msg]}</p></xml>
 
-fun assertFailureX (xmsg: xbody) = return <xml><p>{xmsg}</p></xml>
+fun assertFailureX (xmsg: xbody) = return <xml><p>Failure: {xmsg}</p></xml>
 
 fun assertBool msg b = HM.xunless b (assertFailure msg)
 
