@@ -285,20 +285,15 @@ fun delete [item] (k1: key) (t1: t item): t item =
 (* * Folding *)
 
 fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
-  let case t1 of
-      | None => acc
-      | Some node => foldr' node acc
+  let
+        HO.option id foldr' t1 <| acc
   where
 
     val rec foldr': node item -> (b -> b) =
             fn (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
                  g l <<< op (k0, v0) <<< g r
 
-    and g: t item -> (b -> b) = fn t2 =>
-        (case t2 of
-        | None => id
-        | Some node => foldr' node
-        )
+    and g: t item -> (b -> b) = fn t2 => HO.option id foldr' t2
   end
 
 fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
