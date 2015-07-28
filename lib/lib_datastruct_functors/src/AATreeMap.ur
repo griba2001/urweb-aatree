@@ -345,12 +345,18 @@ val update [item] (f: item -> option item) (k1: key) (t1: t item): t item =
 
 val adjust [item] (f: item -> item): key -> t item -> t item = update (Some <<< f)
 
-fun mapValues [item] [w] (f: item -> w) (t1: t item): t w =
-       case t1 of
-         Some(Node rc) => Some (Node (HR.overwrite rc {Value = f rc.Value,
-                                           Left = mapValues f rc.Left,
-                                           Right = mapValues f rc.Right}))
-         | None => None
+fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
+    let
+       Monad.liftM mapValues' t1
+    where
+       fun mapValues' (root: node item): node b =
+           case root of
+               Node rc => Node (HR.overwrite rc {
+                                    Value = f rc.Value,
+                                    Left = mapValues f rc.Left,
+                                    Right = mapValues f rc.Right
+                                    })
+    end
 
 (* short-circuiting exists *)
 fun exists [item] (prop: key * item -> bool) (t1: t item): bool =
