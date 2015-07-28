@@ -1,8 +1,6 @@
 (* Arne Anderson Tree *)
 
 
-(*
-*)
 signature AA_TREE_MAP = sig
   include Common.DSMAP
 
@@ -24,6 +22,7 @@ open HFunction
 open HTuple
 open HOrd
 open Option
+open Monad
 structure HS = HString
 structure HL = HList
 structure HO = HOption
@@ -123,24 +122,19 @@ fun lookup [item] (k1: key) (t1: t item): option item =
 val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
 (* get root pair to start minimum / maximum value folds *)
-val getAnyPair [item]: t item -> option (key * item) = Monad.liftM getNodeKeyValuePair
+val getAnyPair [item]: t item -> option (key * item) = liftM getNodeKeyValuePair
 
-(* minimum, maximum to be used in deletes
-*)
 
-fun minimum [item] (root: node item): key * item =
-    case root of
-        Node {Key = k0, Value = v0, Left = l, ...} => HO.option (k0, v0) minimum l
-
+val rec minimum [item]: node item -> key * item =
+       fn (Node {Key = k0, Value = v0, Left = l, ...}) => HO.option (k0, v0) minimum l
                
-fun maximum [item] (root: node item): key * item =
-    case root of
-        Node {Key = k0, Value = v0, Right = r, ...} => HO.option (k0, v0) maximum r
+val rec maximum [item]: node item -> key * item =
+       fn (Node {Key = k0, Value = v0, Right = r, ...}) => HO.option (k0, v0) maximum r
 
 
-val findMin [item]: t item -> option (key * item) = Monad.liftM minimum
+val findMin [item]: t item -> option (key * item) = liftM minimum
 
-val findMax [item]: t item -> option (key * item) = Monad.liftM maximum
+val findMax [item]: t item -> option (key * item) = liftM maximum
 
 (* * Node balancing *)
 
@@ -351,14 +345,14 @@ val adjust [item] (f: item -> item): key -> t item -> t item = update (Some <<< 
 
 fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
     let
-       Monad.liftM mapValues' t1
+       liftM mapValues' t1
     where
        fun mapValues' (root: node item): node b =
            case root of
                Node rc => Node (HR.overwrite rc {
                                     Value = f rc.Value,
-                                    Left = Monad.liftM mapValues' rc.Left,
-                                    Right = Monad.liftM mapValues' rc.Right
+                                    Left = liftM mapValues' rc.Left,
+                                    Right = liftM mapValues' rc.Right
                                     })
     end
 
