@@ -274,13 +274,17 @@ fun delete [item] (k1: key) (t1: t item): t item =
               | GT => (rebalance >>> Some) <| setRight (delete k1 r) root
               | EQ => (case (l, r) of
                          (None, None) => (* it is a leaf => delete it *) None
-                         | (None, Some nodeR) => (* replace it with successor and rebalance it *)
+                         | (None, Some nodeR) => (* replace with successor and rebalance *)
                                        let val (succK, succV) = minimum nodeR
-                                       in (rebalance >>> Some) <| setKeyAndValue succK succV (setRight (delete succK r) root)
+                                       in root |> setRight (delete succK r)
+                                               |> setKeyAndValue succK succV
+                                               |> (rebalance >>> Some)    
                                        end
-                         | (Some nodeL, _) => (* replace it with predecessor and rebalance it *)
+                         | (Some nodeL, _) => (* replace with predecessor and rebalance *)
                                    let val (predK, predV) = maximum nodeL
-                                   in (rebalance >>> Some) <| setKeyAndValue predK predV (setLeft (delete predK l) root)
+                                   in root |> setLeft (delete predK l)
+                                           |> setKeyAndValue predK predV
+                                           |> (rebalance >>> Some) 
                                    end
                          )
               )
