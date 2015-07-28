@@ -11,6 +11,7 @@ fun unfoldrM [m][a][b] (_:monad m) (f: b -> m (option (a * b))) (seed: b) : m (l
                           return (a :: rest)
        | None => return []
 
+(*
 fun unfoldrOptionM [m][a][b] (_:monad m) (f: b -> m (option ((option a) * b))) (seed: b) : m (list a) =
     res <- f seed ;
     case res of
@@ -20,4 +21,4 @@ fun unfoldrOptionM [m][a][b] (_:monad m) (f: b -> m (option ((option a) * b))) (
                             | None => return rest
                           )
        | None => return []
-
+*)
