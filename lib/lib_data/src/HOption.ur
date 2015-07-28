@@ -22,5 +22,5 @@ val optAlternative [a] (x: option a) (lazy_y: unit -> option a): option a =
 fun option [a] [b] (def: b) (f: a -> b) (x: option a): b =
         case x of
           None => def
-          | Some y => f y
+          | Some v => f v
     
