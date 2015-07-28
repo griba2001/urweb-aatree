@@ -90,6 +90,10 @@ fun getLevel [item] (t1: t item) : int =
      | Some (Node {Level = lvl, ...}) => lvl
      | None => 0
 
+fun getNodeKeyValuePair [item] (t1: node item): (key * item) =
+   case t1 of
+     Node r => (r.Key, r.Value)
+
 (* * Construction *)
 
 val empty [item] : t item = None
@@ -119,28 +123,19 @@ fun lookup [item] (k1: key) (t1: t item): option item =
 val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
 (* get root pair to start minimum / maximum value folds *)
-fun getAnyPair [item] (t1: t item): option (key * item) =
-    case t1 of
-      None => None
-      | Some( Node {Key = key, Value = item, ...}) => Some (key, item)
+val getAnyPair [item]: t item -> option (key * item) = Monad.liftM getNodeKeyValuePair
 
 (* minimum, maximum to be used in deletes
 *)
 
 fun minimum [item] (root: node item): key * item =
     case root of
-        Node {Key = k0, Value = v0, Left = l, ...} =>
-            case l: t item of
-               None => (k0, v0)
-               | Some nodeL => minimum nodeL
+        Node {Key = k0, Value = v0, Left = l, ...} => HO.option (k0, v0) minimum l
 
                
 fun maximum [item] (root: node item): key * item =
     case root of
-        Node {Key = k0, Value = v0, Right = r, ...} =>
-            case r: t item of
-               None => (k0, v0)
-               | Some nodeR => maximum nodeR
+        Node {Key = k0, Value = v0, Right = r, ...} => HO.option (k0, v0) maximum r
 
 
 val findMin [item]: t item -> option (key * item) = Monad.liftM minimum

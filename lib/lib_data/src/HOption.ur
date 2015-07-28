@@ -14,7 +14,13 @@ val optTest [a] (f: a -> bool) (x: a): option a =
         if f x then Some x
                else None
 
-val optAlternative [a] (x: option a) (lazyY: unit -> option a): option a =
+val optAlternative [a] (x: option a) (lazy_y: unit -> option a): option a =
         case x of
           | Some _ => x
-          | None => lazyY () 
+          | None => lazy_y ()
+
+fun option [a] [b] (def: b) (f: a -> b) (x: option a): b =
+        case x of
+          None => def
+          | Some y => f y
+    
