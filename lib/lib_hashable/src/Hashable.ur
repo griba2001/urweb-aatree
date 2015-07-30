@@ -31,7 +31,7 @@ fun defaultHashWithSalt [a] (_:hashable a) (salt: int) (x: a): a = combine salt 
 val hashable_int: hashable int = mkHashable combine
 
 val hashable_float: hashable float = 
-    let fun hashWithSalt' (salt: int) (x: float):int = hashWithSalt salt (B.fromFloat x)
+    let fun hashWithSalt' (salt: int) (x: float):int = hashWithSalt salt (B.floatAsWord x)
     in mkHashable hashWithSalt'
     end
 

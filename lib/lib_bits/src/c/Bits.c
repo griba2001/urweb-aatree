@@ -22,7 +22,7 @@ uw_Basis_int uw_Bits_notb(uw_context ctx, uw_Basis_int x) {
              return ~x ;
 }
 
-uw_Basis_int uw_Bits_fromFloat(uw_context ctx, uw_Basis_float x) {
+uw_Basis_int uw_Bits_floatAsWord(uw_context ctx, uw_Basis_float x) {
         return (uw_Basis_int) x ;
 }
 
