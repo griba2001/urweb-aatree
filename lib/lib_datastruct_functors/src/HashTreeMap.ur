@@ -104,17 +104,17 @@ fun fromList [item] (li: list (key * item)): t item =
 
 fun foldr [item] [b] (myop: key * item -> b -> b) (z: b) (d1: t item): b =
      let 
-        T.foldr (snd >>> myop') z d1
+        T.foldr (snd >>> bucket_foldr) z d1
      where
-        fun myop' (p: bucket item) (acc: b): b = B.foldr myop acc p
+        fun bucket_foldr (bkt: bucket item) (acc: b): b = B.foldr myop acc bkt
      end
 
 fun toList [item] (d1: t item): list (key * item) =
      let
-        T.foldr (snd >>> myop') [] d1
+        T.foldr (snd >>> bucket_foldrToList) [] d1
      where
-        fun myop' (p: bucket item) (acc: list (key * item)): list (key * item) =
-          B.foldr (curry Cons) acc p
+        fun bucket_foldrToList (bkt: bucket item) (acc: list (key * item)): list (key * item) =
+          B.foldr (curry Cons) acc bkt
      end
 
 val getAnyPair [item] (t1: t item) : option (key * item) =
