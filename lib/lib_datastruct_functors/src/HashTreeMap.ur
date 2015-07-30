@@ -110,12 +110,9 @@ fun foldr [item] [b] (myop: key * item -> b -> b) (z: b) (d1: t item): b =
      end
 
 fun toList [item] (d1: t item): list (key * item) =
-     let
-        T.foldr (snd >>> bucket_foldrToList) [] d1
-     where
-        fun bucket_foldrToList (bkt: bucket item) (acc: list (key * item)): list (key * item) =
-          B.foldr (curry Cons) acc bkt
-     end
+
+        T.foldr (snd >>> B.toList >>> List.revAppend) [] d1
+
 
 val getAnyPair [item] (t1: t item) : option (key * item) =
 
