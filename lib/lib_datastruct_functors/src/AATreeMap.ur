@@ -250,7 +250,7 @@ fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (t1: t item
               )
     end
 
-val insert [item] (k1: key) (v1: item):  (t item -> t item) = insertWith const k1 v1
+val insert [item]: key -> item -> t item -> t item = insertWith const
 
 fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert) empty li
 
@@ -288,14 +288,14 @@ fun delete [item] (k1: key) (t1: t item): t item =
 
 fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
   let
-        HO.option id foldr' t1 <| acc
+        g t1 acc
   where
 
     val rec foldr': node item -> (b -> b) =
             fn (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
                  g l <<< op (k0, v0) <<< g r
 
-    and g: t item -> (b -> b) = fn t2 => HO.option id foldr' t2
+    and g: t item -> (b -> b) = fn tree => HO.option id foldr' tree
   end
 
 fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1
