@@ -67,6 +67,8 @@ functor MkSortedSet(Q: sig
                      end) = struct ... end
 ```
 
+factoring out the "ord item" constraint from the methods signature.
+
 ####Example:
 
 
