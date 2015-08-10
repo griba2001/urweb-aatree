@@ -18,10 +18,6 @@ cd lib/lib_bits/src/c
 gcc -c Bits.c
 cd ../../../..
 
-cd test/util/c/
-gcc -c Random.c
-cd ../../..
-
 urweb aatree_test_v3
 
 # execution
