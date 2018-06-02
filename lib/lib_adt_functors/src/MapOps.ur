@@ -25,7 +25,7 @@ functor MkMapOps (M:Map.FMAP): sig
   val findMapBy: item ::: Type -> b ::: Type -> eq b -> (M.key * item -> b) -> (b -> b -> b) ->  M.t item -> option (M.key * item)
   val findByOrd: item ::: Type -> b ::: Type -> ord b -> (M.key * item -> b) -> (b -> b -> b) ->  M.t item -> option (M.key * item)
 
-  val count: item ::: Type -> (M.key * item -> bool) -> M.t item -> int
+  val count: item ::: Type -> (M.key * item -> bool) -> M.t item -> int  
 
 end = struct
       open M
@@ -110,7 +110,7 @@ end = struct
 
                 let val optZ : option (key * item) = getAnyPair d1
 
-                fun myop (x: key * item) (acc: key * item): key * item =
+                    fun myop (x: key * item) (acc: key * item): key * item =
                         let val acc_p = proj acc
                         in if compare (f acc_p (proj x)) acc_p = EQ then acc else x
                         end
@@ -120,13 +120,13 @@ end = struct
                         | Some z => Some (foldrWithPair myop z d1)
                 end
 
-        fun count [item]: (prop: key * item -> bool) (t1: t item): int =
+        fun count [item] (prop: key * item -> bool) (t1: t item): int =
                 let
                       foldrWithPair incrOnProp 0 t1
                 where
-                   fun incrOnProp (pair: key * item) (acc: int):int = 
-                          if prop pair then acc + 1 
-                                       else acc
+                   fun incrOnProp (pair: key * item) (acc: int): int = 
+                          (if prop pair then acc + 1 
+                                       else acc)
                 end
 
 end
