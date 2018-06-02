@@ -120,13 +120,13 @@ end = struct
                         | Some z => Some (foldrWithPair myop z d1)
                 end
 
-        fun count [item] (prop: key * item -> bool) (t1: t item): int =
+        fun count [item] (prop: key * item -> bool) (d1: t item): int =
                 let
-                      foldrWithPair incrOnProp 0 t1
+                      foldrWithPair incrOnProp 0 d1
                 where
                    fun incrOnProp (pair: key * item) (acc: int): int = 
-                          (if prop pair then acc + 1 
-                                       else acc)
+                          if prop pair then acc + 1 
+                                       else acc
                 end
 
 end
