@@ -126,11 +126,11 @@ val getAnyPair [item]: t item -> option (key * item) = liftM getNodeKeyValuePair
 
 (* minimum: leftmost (k,v) *)
 val rec minimum [item]: node item -> key * item =
-       fn (Node {Key = k0, Value = v0, Left = l, ...}) => HO.withDefault (k0, v0) minimum l
+       fn (Node {Key = k0, Value = v0, Left = l, ...}) => HO.fromOptionDefMap (k0, v0) minimum l
 
 (* maximum: rightmost (k,v) *)               
 val rec maximum [item]: node item -> key * item =
-       fn (Node {Key = k0, Value = v0, Right = r, ...}) => HO.withDefault (k0, v0) maximum r
+       fn (Node {Key = k0, Value = v0, Right = r, ...}) => HO.fromOptionDefMap (k0, v0) maximum r
 
 
 val findMin [item]: t item -> option (key * item) = liftM minimum
@@ -239,7 +239,7 @@ val rebalance [item] : (node item -> node item) = (* with left to right function
 (* * Insert *)
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (t1: t item): t item =
-    let HO.withDefault (singleton k1 v1) (insertWith' >>> Some) t1
+    let HO.fromOptionDefMap (singleton k1 v1) (insertWith' >>> Some) t1
     where
         fun insertWith' (root: node item): node item =
            case root of
@@ -260,7 +260,7 @@ fun fromList [item] (li: list (key * item)): t item = List.foldl (uncurry insert
 
 fun delete [item] (k1: key) (t1: t item): t item =
     let
-        HO.withDefault t1 delete' t1
+        HO.fromOptionDefMap t1 delete' t1
     where
       fun delete' (root: node item): t item =
          case root of Node {Key = k0, Left = l, Right = r, ...} =>
@@ -296,7 +296,7 @@ fun foldr [item] [b] (op: key * item -> b -> b) (acc: b) (t1: t item): b =
             fn (Node {Key = k0, Value = v0, Left = l, Right = r, ...}) =>
                  g l <<< op (k0, v0) <<< g r
 
-    and g: t item -> (b -> b) = fn tree => HO.withDefault id foldr' tree
+    and g: t item -> (b -> b) = fn tree => HO.fromOptionDefMap id foldr' tree
   end
 
 fun toList [item] (t1: t item): list (key * item) = foldr (curry Cons) [] t1

@@ -19,7 +19,7 @@ val orElse [a] (x: option a) (lazy_y: unit -> option a): option a =
           | Some _ => x
           | None => lazy_y ()
 
-fun withDefault [a] [b] (def: b) (f: a -> b) (x: option a): b =
+fun fromOptionDefMap [a] [b] (def: b) (f: a -> b) (x: option a): b =
         case x of
           None => def
           | Some v => f v
