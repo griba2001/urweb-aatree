@@ -49,16 +49,7 @@ urweb unordHashTree_test
 
 ####Considerations:
 
-The functor structure makes possible to factor out the input type requirements for an instance.
-
-I was thinking that the Haskell existential instance definition
-
-```haskell
-instance (Ord item) => SortedSet (Set item)
-  where ...
-```
-
-has an equivalent in Ur/Web:
+Like Haskell instance constraints
 
 ```ocaml
 functor MkSortedSet(Q: sig
@@ -67,7 +58,7 @@ functor MkSortedSet(Q: sig
                      end) = struct ... end
 ```
 
-factoring out the "ord item" constraint from the methods signature.
+we factor out the "ord item" constraint from the methods signature.
 
 ####Example:
 
