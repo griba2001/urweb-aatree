@@ -9,10 +9,6 @@ structure Util = struct
 (* Haskell's defaultSalt: if B.wordSize = 64 then 0xdc36d1615b7400a4 else 0x087fc72c *)
 val defaultSalt : int = -2578643520546668380 (* Basis.int is a long long *)
 
-(*
-fun defaultHashWithSalt [a] (_:hashable a) (salt: int) (x: a): a = combine salt (hash x)
-*)
-
 fun combine (h1: int) (h2: int):int = B.xorb (h1 * 16777619) h2
 
 val distinguisher: int = 6148914691236517205 (* 0x5555555555555555 *)
@@ -39,6 +35,10 @@ structure HashableInstances = struct
 
 open HashableClass
 open Util
+
+(*
+fun defaultHashWithSalt [a] (_:hashable a) (salt: int) (x: a): a = combine salt (hash x)
+*)
 
 val hashable_int: hashable int = mkHashable combine
 
