@@ -7,14 +7,14 @@ signature HASHTREE_MAP = sig
   val maxBucketSize: item ::: Type -> t item -> int
 end
 
-open Hashable.Hashable
-open Hashable
+structure HC = Hashable.HashableClass
+(* open Hashable *)
 
 (* internal *)
 functor MkHashTreeMap(P:sig
                       structure Q: sig
                          con key :: Type
-                         val hashable_key: hashable key
+                         val hashable_key: HC.hashable key
                       end
                       structure BktMap: (BUCKET_MAP where con key = Q.key)
 end): (HASHTREE_MAP where con key = P.Q.key) = struct
@@ -40,7 +40,7 @@ type t v = T.t (bucket v)
 
 val empty [item]: t item = T.empty
 
-fun singleton [item] (k1: key) (v1: item) :t item = T.singleton (hash k1) (B.singleton k1 v1)
+fun singleton [item] (k1: key) (v1: item) :t item = T.singleton (HC.hash k1) (B.singleton k1 v1)
 
 val null [item] : (t item -> bool) = T.null
 
@@ -52,7 +52,7 @@ val size [item] (d1:t item) : int =
 
 fun insertWith [item] (f: item -> item -> item) (k1: key) (v1: item) (d1: t item): t item =
      let
-         T.insertWith bucket_insertWith (hash k1) (B.singleton k1 v1) d1
+         T.insertWith bucket_insertWith (HC.hash k1) (B.singleton k1 v1) d1
      where
         fun bucket_insertWith (_: bucket item) (bkt: bucket item): bucket item = B.insertWith f k1 v1 bkt
      end
@@ -66,21 +66,21 @@ fun liftBucketToOption [item] (bkt: bucket item) = if B.null bkt then None else 
 
 fun delete [item] (k1: key) (d1: t item): t item =
      let
-        T.update (bucket_delete >>> liftBucketToOption) (hash k1) d1
+        T.update (bucket_delete >>> liftBucketToOption) (HC.hash k1) d1
      where
         val bucket_delete: bucket item -> bucket item = B.delete k1
      end
 
 fun adjust [item] (f: item -> item) (k1: key) (d1: t item): t item =
      let 
-        T.adjust bucket_adjust (hash k1) d1
+        T.adjust bucket_adjust (HC.hash k1) d1
      where
         val bucket_adjust: bucket item -> bucket item = B.adjust f k1
      end
 
 fun update [item] (f: item -> option item) (k1: key) (d1: t item): t item =
      let
-        T.update (bucket_update >>> liftBucketToOption) (hash k1) d1
+        T.update (bucket_update >>> liftBucketToOption) (HC.hash k1) d1
      where
         val bucket_update: bucket item -> bucket item = B.update f k1
      end
@@ -95,7 +95,7 @@ fun mapValues [item] [b] (f: item -> b) (t1: t item): t b =
 
 fun lookup [item] (k1: key) (d1: t item): option item =
 
-    bkt <- T.lookup (hash k1) d1 ; B.lookup k1 bkt
+    bkt <- T.lookup (HC.hash k1) d1 ; B.lookup k1 bkt
 
 val member [item] (k1: key): (t item -> bool) = lookup k1 >>> isSome
 
@@ -153,7 +153,7 @@ end
 
 functor MkHashEqTreeMap(S: sig
                          con key :: Type
-                         val hashable_key: hashable key
+                         val hashable_key: HC.hashable key
                          val eq_key: eq key
                       end) = MkHashTreeMap(struct
                                         structure Q = S
@@ -162,7 +162,7 @@ functor MkHashEqTreeMap(S: sig
 
 functor MkHashOrdTreeMap(S: sig
                          con key :: Type
-                         val hashable_key: hashable key
+                         val hashable_key: HC.hashable key
                          val ord_key: ord key
                       end) = MkHashTreeMap(struct
                                         structure Q = S

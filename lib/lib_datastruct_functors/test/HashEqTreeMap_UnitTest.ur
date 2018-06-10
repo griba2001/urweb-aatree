@@ -5,10 +5,12 @@ structure U = HUrUnit
 structure HL = HList
 structure HT = HTuple
 structure HO = HOrd
+structure HC = Hashable.HashableClass
+structure HI = Hashable.HashableInstances
 
-val hashable_int: Hashable.Hashable.hashable int = Hashable.hashable_int
+val hashable_int: HC.hashable int = HI.hashable_int
 
-val hashable_string: Hashable.Hashable.hashable string = Hashable.hashable_string
+val hashable_string: HC.hashable string = HI.hashable_string
 
 structure Q = HashTreeMap.MkHashEqTreeMap(struct
   type key = string

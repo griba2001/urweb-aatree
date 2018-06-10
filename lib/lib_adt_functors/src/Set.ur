@@ -79,11 +79,9 @@ functor MkSortedSet(Q: sig con item :: Type
       end
 end
 
-structure HStruc = Hashable.Hashable
-
 functor MkUnordHashSet(Q: sig con item :: Type
                      val eq_item: eq item
-                     val hashable_item: HStruc.hashable item
+                     val hashable_item: Hashable.HashableClass.hashable item
                  end): (FSET where con item = Q.item) = struct
 
   structure T = HashTreeMap.MkHashEqTreeMap(struct

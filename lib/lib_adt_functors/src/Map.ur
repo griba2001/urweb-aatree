@@ -95,12 +95,10 @@ functor MkSortedMap(Q: sig
 end
 
 
-structure HStruc = Hashable.Hashable
-
 functor MkUnordHashMap(Q: sig
                      con key :: Type
-                     val eq_key: eq key
-                     val hashable_key: HStruc.hashable key
+                     val eq_key: eq key 
+                     val hashable_key: Hashable.HashableClass.hashable key
                  end): (FMAP where con key = Q.key) = struct
 
   structure T = HashTreeMap.MkHashEqTreeMap( Q)
