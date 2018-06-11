@@ -8,11 +8,12 @@ structure IntSetOps = SetOps.MkSetOps (IntSortedSet)
 val mySortedSet = IntSortedSet.fromList (3 :: 1 :: 2 :: [])
 
 
+structure HI = Hashable.HashableInstances
 
 structure StringHashedSet = Set.MkUnordHashSet( struct
                       type item = string
                       val eq_item = eq_string
-                      val hashable_item = Hashable.hashable_string
+                      val hashable_item = HI.hashable_string
                     end)
 
 structure StringSetOps = SetOps.MkSetOps (StringHashedSet)
@@ -31,7 +32,7 @@ val mySortedMap = IntKeyedSortedMap.fromList( (1, "ab") :: (2, "cd") :: [])
 structure StringKeyedHashMap = Map.MkUnordHashMap( struct
                       type key = string
                       val eq_key = eq_string
-                      val hashable_key = Hashable.hashable_string
+                      val hashable_key = HI.hashable_string
                     end)
 
 structure StringKMapOps = MapOps.MkMapOps (StringKeyedHashMap)
